@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 待办事项管理器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 Python 待办事项管理器</h1>
+            <p class="subtitle">基于 Flask 构建</p>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="todoInput" placeholder="添加新的待办事项..." />
+            <button id="addBtn" class="add-btn">
+                <span>+</span> 添加
+            </button>
+        </div>
+
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="active">进行中</button>
+            <button class="filter-btn" data-filter="completed">已完成</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalCount">0</span>
+                <span class="stat-label">总计</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="activeCount">0</span>
+                <span class="stat-label">进行中</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="completedCount">0</span>
+                <span class="stat-label">已完成</span>
+            </div>
+        </div>
+
+        <ul id="todoList" class="todo-list"></ul>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🎯</div>
+            <p>还没有待办事项</p>
+            <p class="empty-hint">添加一个新任务开始吧！</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

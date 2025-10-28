@@ -1,0 +1,78 @@
+{
+  "id": "custom_20251025_170644",
+  "name": "我的TDSQL模型库",
+  "description": "基于我的实际项目经验构建的模型库",
+  "version": "v1.0.0",
+  "author": "用户自定义",
+  "industry": "互联网",
+  "created_at": "2025-10-25T17:06:44.425339",
+  "updated_at": "2025-10-25T17:06:44.426112",
+  "cases": [
+    {
+      "id": "case_1",
+      "timestamp": "2025-10-25T17:06:44.425906",
+      "input": {
+        "total_data_size_gb": 500,
+        "table_count": 800,
+        "qps": 5000,
+        "tps": 2000,
+        "concurrent_connections": 500,
+        "need_high_availability": true,
+        "need_disaster_recovery": false,
+        "need_read_write_split": true,
+        "data_growth_rate": 20,
+        "industry": "互联网"
+      },
+      "output": {
+        "architecture_type": "distributed",
+        "node_count": 4,
+        "shard_count": 2,
+        "replica_count": 2,
+        "proxy_count": 2,
+        "estimated_cost": 800000
+      },
+      "metadata": {
+        "scenario": "社交平台",
+        "verified": true,
+        "notes": "实际生产环境案例"
+      }
+    },
+    {
+      "id": "case_2",
+      "timestamp": "2025-10-25T17:06:44.426109",
+      "input": {
+        "total_data_size_gb": 200,
+        "table_count": 300,
+        "qps": 2000,
+        "tps": 800,
+        "concurrent_connections": 200,
+        "need_high_availability": true,
+        "need_disaster_recovery": false,
+        "need_read_write_split": false,
+        "data_growth_rate": 15,
+        "industry": "互联网"
+      },
+      "output": {
+        "architecture_type": "standalone",
+        "node_count": 2,
+        "shard_count": 1,
+        "replica_count": 1,
+        "proxy_count": 1,
+        "estimated_cost": 300000
+      },
+      "metadata": {
+        "scenario": "内容管理系统",
+        "verified": true,
+        "notes": "中小型应用"
+      }
+    }
+  ],
+  "metadata": {
+    "total_cases": 2,
+    "accuracy": "N/A",
+    "industries": [
+      "互联网"
+    ],
+    "features": []
+  }
+}

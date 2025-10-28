@@ -1,0 +1,10 @@
+{
+  "qps": 5000,
+  "tps": 1500,
+  "data_volume": 500,
+  "concurrent_users": 1000,
+  "data_growth_rate": 0.3,
+  "ha_level": "high",
+  "industry": "finance",
+  "peak_qps": 7500
+}

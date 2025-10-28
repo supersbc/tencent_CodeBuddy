@@ -1,0 +1,602 @@
+[
+  {
+    "id": "tencent_cloud_official_case_1",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219389",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 10
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 500000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_2",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219406",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 11
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 600000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_3",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219410",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 12
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 700000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_4",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219413",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 13
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 800000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_5",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219415",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 14
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 900000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_6",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219417",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 15
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1000000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_7",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219418",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 16
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1100000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_8",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219421",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 17
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1200000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_9",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219423",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 18
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1300000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_10",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219425",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 19
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 1400000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_11",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219427",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 1500000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_12",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219430",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 21
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1600000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_13",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219431",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 22
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1700000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_14",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219433",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 23
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1800000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_15",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219435",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 24
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1900000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_16",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219436",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 25
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 2000000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_17",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219438",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 26
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 2100000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_18",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219440",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 27
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 2200000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_19",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219441",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 28
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 2300000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  },
+  {
+    "id": "tencent_cloud_official_case_20",
+    "source": "tencent_cloud_official",
+    "timestamp": "2025-10-25T16:55:12.219443",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 29
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2400000
+    },
+    "metadata": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    }
+  }
+]

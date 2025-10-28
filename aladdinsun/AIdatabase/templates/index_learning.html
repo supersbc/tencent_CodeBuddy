@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 架构智能预测系统 - 自我学习版</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .learning-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .learning-section h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .feedback-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        .case-form {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .train-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .train-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            background: white;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .back-nav-btn {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-nav-btn">← 返回导航</a>
+        <header class="header">
+            <h1>🧠 TDSQL 架构智能预测系统</h1>
+            <p class="subtitle">支持自我学习和持续优化的深度学习系统</p>
+            <div style="margin-top: 15px;">
+                <a href="/model_library" style="display: inline-block; background: #667eea; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                    📚 模型库管理
+                </a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- 学习统计区域 -->
+            <div class="learning-section">
+                <h2>📊 学习统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-number" id="totalCases">0</span>
+                        <span class="stat-label">训练案例</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="trainedCases">0</span>
+                        <span class="stat-label">已训练</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="modelAccuracy">--</span>
+                        <span class="stat-label">预测准确率</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="lastTraining">未训练</span>
+                        <span class="stat-label">最后训练</span>
+                    </div>
+                </div>
+                <button class="train-btn" onclick="trainModel()" style="margin-top: 20px;">
+                    🚀 开始训练模型
+                </button>
+            </div>
+
+            <!-- 标签页 -->
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('predict')">📊 预测分析</button>
+                <button class="tab" onclick="switchTab('submit')">📝 提交案例</button>
+                <button class="tab" onclick="switchTab('feedback')">💬 反馈优化</button>
+            </div>
+
+            <!-- 预测分析标签页 -->
+            <div id="predictTab" class="tab-content active">
+                <!-- 文件上传区域 -->
+                <div class="upload-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                    <h2 style="color: white; margin-bottom: 15px;">📤 智能识别上传</h2>
+                    <p style="opacity: 0.9; margin-bottom: 20px;">上传截图或Excel文件，系统将自动识别并填充表单</p>
+                    
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div style="flex: 1;">
+                            <input type="file" id="fileUpload" accept="image/*,.xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
+                            <button onclick="document.getElementById('fileUpload').click()" class="btn" style="background: white; color: #667eea; width: 100%; padding: 15px; font-size: 16px; font-weight: 600;">
+                                📁 选择文件（图片/Excel）
+                            </button>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center;">
+                            <div id="uploadStatus">未选择文件</div>
+                        </div>
+                    </div>
+                    
+                    <div id="previewSection" style="margin-top: 20px; display: none;">
+                        <img id="imagePreview" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+
+                <div class="manual-input-section">
+                    <h2>✏️ 输入数据库参数</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>数据总量 (GB)</label>
+                            <input type="number" id="dataSizeInput" placeholder="例如: 8640">
+                        </div>
+                        <div class="input-group">
+                            <label>表数量</label>
+                            <input type="number" id="tableCountInput" placeholder="例如: 150">
+                        </div>
+                        <div class="input-group">
+                            <label>QPS</label>
+                            <input type="number" id="qpsInput" placeholder="例如: 50000">
+                        </div>
+                        <div class="input-group">
+                            <label>TPS</label>
+                            <input type="number" id="tpsInput" placeholder="例如: 20000">
+                        </div>
+                        <div class="input-group">
+                            <label>并发连接数</label>
+                            <input type="number" id="connectionsInput" placeholder="例如: 5000">
+                        </div>
+                        <div class="input-group">
+                            <label>数据增长率 (%/年)</label>
+                            <input type="number" id="growthRateInput" placeholder="例如: 30">
+                        </div>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="haCheckbox" checked> 需要高可用</label>
+                        <label><input type="checkbox" id="drCheckbox"> 需要容灾</label>
+                        <label><input type="checkbox" id="rwSplitCheckbox" checked> 需要读写分离</label>
+                    </div>
+                    <button id="manualAnalyzeBtn" class="btn btn-secondary" onclick="analyzeManualInput()">
+                        📝 开始预测
+                    </button>
+                </div>
+
+                <!-- 结果展示 -->
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <h2>📋 预测结果</h2>
+                    <div class="result-card">
+                        <h3>🏗️ 推荐架构</h3>
+                        <div id="architectureResult"></div>
+                    </div>
+                    <div class="result-card">
+                        <h3>🖥️ 服务器清单</h3>
+                        <div id="serverResult"></div>
+                    </div>
+                    <div class="result-card" id="networkResultCard" style="display: none;">
+                        <div id="networkResult"></div>
+                    </div>
+                    <div class="result-card" id="storageResultCard" style="display: none;">
+                        <div id="storageResult"></div>
+                    </div>
+                    <div class="result-card" id="infrastructureResultCard" style="display: none;">
+                        <div id="infrastructureResult"></div>
+                    </div>
+                    <div class="result-card">
+                        <h3>💰 成本估算</h3>
+                        <div id="costResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交案例标签页 -->
+            <div id="submitTab" class="tab-content">
+                <div class="feedback-section">
+                    <h2>📝 提交实际案例</h2>
+                    <p>提交您的实际迁移案例，帮助系统学习和优化</p>
+                    
+                    <!-- 案例文件上传 -->
+                    <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h3 style="color: white; margin-bottom: 10px;">📤 快速上传案例</h3>
+                        <p style="opacity: 0.9; margin-bottom: 15px; font-size: 14px;">上传包含实际部署数据的截图或Excel文件</p>
+                        <div style="display: flex; gap: 15px;">
+                            <input type="file" id="caseFileUpload" accept="image/*,.xlsx,.xls" style="display: none;" onchange="handleCaseFileUpload(event)">
+                            <button onclick="document.getElementById('caseFileUpload').click()" class="btn" style="background: white; color: #28a745; flex: 1; padding: 12px; font-weight: 600;">
+                                📁 选择案例文件
+                            </button>
+                            <div id="caseUploadStatus" style="flex: 1; background: rgba(255,255,255,0.2); padding: 12px; border-radius: 8px; text-align: center; font-size: 14px;">
+                                未选择文件
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="case-form">
+                        <h3>输入参数</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>数据总量 (GB)</label>
+                                <input type="number" id="caseDataSize" placeholder="实际数据量">
+                            </div>
+                            <div class="input-group">
+                                <label>QPS</label>
+                                <input type="number" id="caseQPS" placeholder="实际 QPS">
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 20px;">实际架构</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>架构类型</label>
+                                <select id="caseArchType" class="input-group input">
+                                    <option value="standalone">单机架构</option>
+                                    <option value="distributed">分布式架构</option>
+                                    <option value="hybrid">混合架构</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>节点数量</label>
+                                <input type="number" id="caseNodeCount" placeholder="实际节点数">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>备注说明</label>
+                            <textarea id="caseFeedback" rows="3" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;" placeholder="描述实际部署情况、遇到的问题等..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="submitCase()" style="margin-top: 20px;">
+                            ✅ 提交案例
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 反馈优化标签页 -->
+            <div id="feedbackTab" class="tab-content">
+                <div class="feedback-section">
+                    <h2>💬 预测反馈</h2>
+                    <p>对预测结果进行评价，帮助系统持续优化</p>
+                    
+                    <div class="case-form">
+                        <div class="input-group">
+                            <label>预测准确性评分</label>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button class="btn" onclick="setRating(1)">⭐</button>
+                                <button class="btn" onclick="setRating(2)">⭐⭐</button>
+                                <button class="btn" onclick="setRating(3)">⭐⭐⭐</button>
+                                <button class="btn" onclick="setRating(4)">⭐⭐⭐⭐</button>
+                                <button class="btn" onclick="setRating(5)">⭐⭐⭐⭐⭐</button>
+                            </div>
+                            <input type="hidden" id="feedbackRating" value="5">
+                        </div>
+                        
+                        <div class="input-group" style="margin-top: 20px;">
+                            <label>反馈意见</label>
+                            <textarea id="feedbackComment" rows="4" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;" placeholder="请描述预测结果与实际情况的差异..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="submitFeedback()" style="margin-top: 20px;">
+                            📤 提交反馈
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载动画 -->
+            <div id="loadingSection" class="loading-section" style="display: none;">
+                <div class="spinner"></div>
+                <p id="loadingText">正在处理中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='enhanced_display.js') }}"></script>
+    <script src="{{ url_for('static', filename='script_learning.js') }}"></script>
+</body>
+</html>

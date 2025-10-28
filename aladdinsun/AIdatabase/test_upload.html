@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传测试 - TDSQL 智能规划系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #475569;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        
+        .file-info {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .file-info.show {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h2 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .info-card h3 {
+            color: #1e293b;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .info-card p {
+            color: #475569;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success {
+            color: #059669;
+            background: #d1fae5;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .error {
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        details {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        
+        summary {
+            color: #3b82f6;
+            font-weight: 500;
+            padding: 5px 0;
+        }
+        
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 文件上传测试</h1>
+        <p class="subtitle">测试图片、PDF、Excel、JSON 文件上传与识别功能</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">点击选择文件或拖拽文件到此处</div>
+            <div class="upload-hint">支持: PNG, JPG, JPEG, GIF, BMP, PDF, Excel, JSON (最大 32MB)</div>
+            <input type="file" id="fileInput" style="display: none;" 
+                   accept=".png,.jpg,.jpeg,.gif,.bmp,.pdf,.xlsx,.xls,.json">
+        </div>
+        
+        <div class="file-info" id="fileInfo">
+            <p><strong>已选择文件:</strong> <span id="fileName"></span></p>
+            <p><strong>文件大小:</strong> <span id="fileSize"></span></p>
+            <p><strong>文件类型:</strong> <span id="fileType"></span></p>
+            <button class="btn" id="uploadBtn" onclick="uploadFile()">开始上传</button>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+    
+    <script>
+        let selectedFile = null;
+        
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const result = document.getElementById('result');
+        
+        // 点击上传区域
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // 文件选择
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelect(e.target.files[0]);
+        });
+        
+        // 拖拽事件
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFileSelect(e.dataTransfer.files[0]);
+        });
+        
+        function handleFileSelect(file) {
+            if (!file) return;
+            
+            selectedFile = file;
+            
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            document.getElementById('fileType').textContent = file.type || '未知';
+            
+            fileInfo.classList.add('show');
+            result.classList.remove('show');
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+        
+        async function uploadFile() {
+            if (!selectedFile) return;
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '上传中...';
+            
+            result.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>正在分析文件...</p>
+                </div>
+            `;
+            result.classList.add('show');
+            
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5173/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    displayError(data.error);
+                } else {
+                    displayResult(data);
+                }
+            } catch (error) {
+                displayError('上传失败: ' + error.message);
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '开始上传';
+            }
+        }
+        
+        function displayResult(data) {
+            let html = '<div class="success">✅ 文件分析成功！</div>';
+            
+            html += '<h2>📊 分析结果</h2>';
+            
+            // 文件信息
+            if (data.filename) {
+                html += '<div class="info-card">';
+                html += '<h3>📄 文件信息</h3>';
+                html += `<p><strong>文件名:</strong> ${data.filename}</p>`;
+                
+                if (data.extracted_data && data.extracted_data.method) {
+                    html += `<p><strong>识别方式:</strong> ${data.extracted_data.method}</p>`;
+                }
+                
+                if (data.extracted_data && data.extracted_data.image_info) {
+                    const info = data.extracted_data.image_info;
+                    html += `<p><strong>图片信息:</strong> ${info.width}x${info.height} (${info.format})</p>`;
+                }
+                
+                html += '</div>';
+            }
+            
+            // 提取的参数
+            if (data.extracted_data && data.extracted_data.data) {
+                html += '<div class="info-card">';
+                html += '<h3>📋 提取的参数</h3>';
+                const params = data.extracted_data.data;
+                for (const [key, value] of Object.entries(params)) {
+                    if (key !== 'note') {
+                        html += `<p><strong>${key}:</strong> ${value}</p>`;
+                    }
+                }
+                if (params.note) {
+                    html += `<p style="color: #64748b; font-style: italic; margin-top: 10px;">💡 ${params.note}</p>`;
+                }
+                html += '</div>';
+            }
+            
+            // OCR 文本
+            if (data.extracted_data && data.extracted_data.ocr_text) {
+                html += '<div class="info-card">';
+                html += '<details>';
+                html += '<summary>📝 查看 OCR 识别文本</summary>';
+                html += `<pre>${escapeHtml(data.extracted_data.ocr_text)}</pre>`;
+                html += '</details>';
+                html += '</div>';
+            }
+            
+            // 架构推荐
+            if (data.architecture) {
+                html += '<div class="info-card">';
+                html += '<h3>🏗️ 架构推荐</h3>';
+                html += `<p><strong>架构类型:</strong> ${data.architecture.architecture_type || 'N/A'}</p>`;
+                html += `<p><strong>节点数量:</strong> ${data.architecture.node_count || 'N/A'}</p>`;
+                html += `<p><strong>分片数量:</strong> ${data.architecture.shard_count || 'N/A'}</p>`;
+                html += `<p><strong>副本数量:</strong> ${data.architecture.replica_count || 'N/A'}</p>`;
+                html += `<p><strong>置信度:</strong> ${(data.architecture.confidence * 100).toFixed(2)}%</p>`;
+                html += '</div>';
+            }
+            
+            // 原始数据
+            html += '<div class="info-card">';
+            html += '<details>';
+            html += '<summary>🔍 查看完整 JSON 响应</summary>';
+            html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            html += '</details>';
+            html += '</div>';
+            
+            result.innerHTML = html;
+        }
+        
+        function displayError(message) {
+            result.innerHTML = `
+                <div class="error">❌ ${message}</div>
+                <p style="color: #64748b; margin-top: 15px;">
+                    请检查：<br>
+                    1. 文件格式是否支持<br>
+                    2. 文件大小是否超过 32MB<br>
+                    3. 服务是否正常运行
+                </p>
+            `;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

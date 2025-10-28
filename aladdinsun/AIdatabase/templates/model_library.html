@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型库管理 - TDSQL架构预测</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .library-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .library-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        
+        .library-card.installed {
+            border: 2px solid #28a745;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.installed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-badge.not-installed {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .library-name {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding-right: 100px;
+        }
+        
+        .library-version {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .library-desc {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .library-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .library-industries {
+            margin: 12px 0;
+        }
+        
+        .industry-tag {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 3px;
+        }
+        
+        .library-features {
+            margin: 15px 0;
+        }
+        
+        .feature-item {
+            font-size: 13px;
+            color: #555;
+            margin: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .feature-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .library-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .custom-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 返回导航</a>
+        
+        <div class="header">
+            <h1>📚 模型库管理中心</h1>
+            <p>选择和管理TDSQL架构预测模型库，提升预测准确率</p>
+            <div style="margin-top: 20px; display: flex; gap: 15px;">
+                <button class="btn btn-success" onclick="showCreateLibraryDialog()">
+                    ➕ 创建自定义模型库
+                </button>
+                <button class="btn btn-primary" onclick="showImportLibraryDialog()">
+                    📥 导入模型库
+                </button>
+            </div>
+        </div>
+        
+        <div id="libraryGrid" class="library-grid">
+            <div class="loading">正在加载模型库列表...</div>
+        </div>
+    </div>
+    
+    <!-- 创建自定义模型库对话框 -->
+    <div id="createLibraryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">➕ 创建自定义模型库</div>
+            <div class="form-group">
+                <label class="form-label">模型库名称 *</label>
+                <input type="text" id="libraryName" class="form-input" placeholder="例如：我的金融模型库">
+            </div>
+            <div class="form-group">
+                <label class="form-label">描述</label>
+                <textarea id="libraryDescription" class="form-input form-textarea" placeholder="简要描述这个模型库的用途和特点"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">行业类型</label>
+                <select id="libraryIndustry" class="form-input">
+                    <option value="通用">通用</option>
+                    <option value="金融">金融</option>
+                    <option value="电商">电商</option>
+                    <option value="游戏">游戏</option>
+                    <option value="互联网">互联网</option>
+                    <option value="政务">政务</option>
+                    <option value="医疗">医疗</option>
+                    <option value="教育">教育</option>
+                    <option value="物流">物流</option>
+                    <option value="制造业">制造业</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">作者</label>
+                <input type="text" id="libraryAuthor" class="form-input" placeholder="您的名字或团队名称" value="User">
+            </div>
+            <div class="form-group">
+                <label class="form-label">版本号</label>
+                <input type="text" id="libraryVersion" class="form-input" placeholder="例如：v1.0.0" value="v1.0.0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="createCustomLibrary()">创建</button>
+                <button class="btn btn-secondary" onclick="closeCreateLibraryDialog()">取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 导入模型库对话框 -->
+    <div id="importLibraryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📥 导入模型库</div>
+            <div class="form-group">
+                <label class="form-label">选择模型库文件 (JSON格式)</label>
+                <input type="file" id="importFile" class="form-input" accept=".json">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="importLibrary()">导入</button>
+                <button class="btn btn-secondary" onclick="closeImportLibraryDialog()">取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 加载模型库列表
+        async function loadLibraries() {
+            try {
+                const response = await fetch('/api/model_libraries');
+                const result = await response.json();
+                const libraries = (result && result.success) ? (result.libraries || []) : [];
+                
+                const grid = document.getElementById('libraryGrid');
+                grid.innerHTML = '';
+                
+                if (!libraries.length) {
+                    grid.innerHTML = '<div class="loading">暂无可用模型库</div>';
+                    return;
+                }
+                
+                libraries.forEach(lib => {
+                    const card = createLibraryCard(lib);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('加载失败:', error);
+                document.getElementById('libraryGrid').innerHTML = 
+                    '<div class="loading">加载失败，请刷新重试</div>';
+            }
+        }
+        
+        // 创建模型库卡片
+        function createLibraryCard(lib) {
+            const card = document.createElement('div');
+            card.className = 'library-card' + (lib.installed ? ' installed' : '');
+            
+            const isCustom = lib.type === 'custom';
+            const customBadge = isCustom ? '<span class="custom-badge">自定义</span>' : '';
+            
+            const statusBadge = lib.installed ? 
+                '<span class="status-badge installed">✓ 已安装</span>' :
+                '<span class="status-badge not-installed">未安装</span>';
+            
+            const industries = lib.industries.map(ind => 
+                `<span class="industry-tag">${ind}</span>`
+            ).join('');
+            
+            const features = lib.features.map(feat => 
+                `<div class="feature-item">${feat}</div>`
+            ).join('');
+            
+            let actions;
+            if (isCustom) {
+                // 自定义库的操作按钮
+                actions = `
+                    <button class="btn btn-success" onclick="useLibrary('${lib.id}')">
+                        使用此模型库
+                    </button>
+                    <button class="btn btn-primary" onclick="exportLibrary('${lib.id}')">
+                        导出
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteLibrary('${lib.id}')">
+                        删除
+                    </button>
+                `;
+            } else if (lib.installed) {
+                // 已安装的预置库
+                actions = `
+                    <button class="btn btn-success" onclick="useLibrary('${lib.id}')">
+                        使用此模型库
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteLibrary('${lib.id}')">
+                        删除
+                    </button>
+                `;
+            } else {
+                // 未安装的预置库
+                actions = `
+                    <button class="btn btn-primary" onclick="downloadLibrary('${lib.id}')">
+                        下载安装
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDetails('${lib.id}')">
+                        查看详情
+                    </button>
+                `;
+            }
+            
+            card.innerHTML = `
+                ${statusBadge}
+                <div class="library-name">${lib.name}${customBadge}</div>
+                <div class="library-version">版本: ${lib.version}</div>
+                <div class="library-desc">${lib.description}</div>
+                
+                <div class="library-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">案例数</div>
+                        <div class="stat-value">${lib.cases}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">准确率</div>
+                        <div class="stat-value">${lib.accuracy}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">大小</div>
+                        <div class="stat-value">${lib.size}</div>
+                    </div>
+                </div>
+                
+                <div class="library-industries">
+                    ${industries}
+                </div>
+                
+                <div class="library-features">
+                    ${features}
+                </div>
+                
+                <div class="library-actions">
+                    ${actions}
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // 下载模型库
+        async function downloadLibrary(libraryId) {
+            if (!confirm('确定要下载此模型库吗？')) return;
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '下载中...';
+            
+            try {
+                const response = await fetch(`/api/model_libraries/${libraryId}/download`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result && result.success) {
+                    const size = result.result && result.result.size ? (result.result.size/1024).toFixed(2) + 'KB' : '-';
+                    const cases = result.result && result.result.cases ? result.result.cases : '-';
+                    alert(`✅ 下载成功！\n案例数: ${cases}\n大小: ${size}`);
+                    loadLibraries(); // 重新加载列表
+                } else {
+                    alert('下载失败: ' + (result && result.error ? result.error : '未知错误'));
+                    btn.disabled = false;
+                    btn.textContent = '下载安装';
+                }
+            } catch (error) {
+                alert('下载失败: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '下载安装';
+            }
+        }
+        
+        // 使用模型库
+        async function useLibrary(libraryId) {
+            if (!confirm('确定要切换到此模型库吗？系统将使用此模型库进行预测。')) return;
+            
+            try {
+                const response = await fetch(`/api/model_libraries/${libraryId}/activate`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result && result.success) {
+                    alert('✅ 已切换到此模型库！');
+                } else {
+                    alert('切换失败: ' + (result && result.error ? result.error : '未知错误'));
+                }
+            } catch (error) {
+                alert('切换失败: ' + error.message);
+            }
+        }
+        
+        // 删除模型库
+        async function deleteLibrary(libraryId) {
+            alert('删除模型库功能暂未开放，请手动删除本地 model_libraries 目录下对应文件。');
+        }
+        
+        // 查看详情
+        function viewDetails(libraryId) {
+            alert('详情功能开发中...');
+        }
+        
+        // 显示创建对话框
+        function showCreateLibraryDialog() {
+            document.getElementById('createLibraryModal').classList.add('active');
+        }
+        
+        // 关闭创建对话框
+        function closeCreateLibraryDialog() {
+            document.getElementById('createLibraryModal').classList.remove('active');
+        }
+        
+        // 创建自定义模型库
+        async function createCustomLibrary() {
+            const name = document.getElementById('libraryName').value.trim();
+            const description = document.getElementById('libraryDescription').value.trim();
+            const industry = document.getElementById('libraryIndustry').value;
+            const author = document.getElementById('libraryAuthor').value.trim();
+            const version = document.getElementById('libraryVersion').value.trim();
+            
+            if (!name) {
+                alert('请输入模型库名称');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/create_custom_library', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        industry: industry,
+                        author: author,
+                        version: version
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ 自定义模型库创建成功！\n库ID: ${result.library_id}\n\n现在可以开始添加案例了。`);
+                    closeCreateLibraryDialog();
+                    loadLibraries(); // 重新加载列表
+                    
+                    // 清空表单
+                    document.getElementById('libraryName').value = '';
+                    document.getElementById('libraryDescription').value = '';
+                    document.getElementById('libraryIndustry').value = '通用';
+                    document.getElementById('libraryAuthor').value = 'User';
+                    document.getElementById('libraryVersion').value = 'v1.0.0';
+                } else {
+                    alert('创建失败: ' + result.error);
+                }
+            } catch (error) {
+                alert('创建失败: ' + error.message);
+            }
+        }
+        
+        // 显示导入对话框
+        function showImportLibraryDialog() {
+            document.getElementById('importLibraryModal').classList.add('active');
+        }
+        
+        // 关闭导入对话框
+        function closeImportLibraryDialog() {
+            document.getElementById('importLibraryModal').classList.remove('active');
+        }
+        
+        // 导入模型库
+        async function importLibrary() {
+            alert('导入模型库功能暂未开放，请使用“创建自定义模型库”并手动添加案例。');
+        }
+        
+        // 导出模型库
+        async function exportLibrary(libraryId) {
+            try {
+                const response = await fetch(`/api/export_library/${libraryId}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('导出失败: ' + data.error);
+                    return;
+                }
+                
+                // 创建下载链接
+                const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${data.name}_${data.version}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('✅ 模型库已导出！');
+            } catch (error) {
+                alert('导出失败: ' + error.message);
+            }
+        }
+        
+        // 页面加载时获取模型库列表
+        window.onload = loadLibraries;
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const createModal = document.getElementById('createLibraryModal');
+            const importModal = document.getElementById('importLibraryModal');
+            
+            if (event.target === createModal) {
+                closeCreateLibraryDialog();
+            }
+            if (event.target === importModal) {
+                closeImportLibraryDialog();
+            }
+        }
+    </script>
+</body>
+</html>

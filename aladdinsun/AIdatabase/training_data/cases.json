@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "input": {
+      "industry": "金融",
+      "qps": 5000
+    },
+    "output": {
+      "architecture_type": "主从架构",
+      "nodes": 3
+    },
+    "timestamp": "2025-10-25T18:42:10.109933"
+  }
+]
