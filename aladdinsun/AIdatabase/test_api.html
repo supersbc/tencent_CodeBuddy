@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>API测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        #result { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+        pre { background: white; padding: 10px; border: 1px solid #ddd; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>TDSQL系统 API 测试</h1>
+    
+    <div>
+        <button onclick="testHealth()">测试健康检查</button>
+        <button onclick="testStatus()">测试状态</button>
+        <button onclick="testLibraries()">测试模型库列表</button>
+        <button onclick="testTrainingStats()">测试训练统计</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        function showResult(title, data) {
+            document.getElementById('result').innerHTML = 
+                `<h3>${title}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+        
+        function testHealth() {
+            fetch('/api/health')
+                .then(res => res.json())
+                .then(data => showResult('健康检查结果', data))
+                .catch(err => showResult('错误', {error: err.message}));
+        }
+        
+        function testStatus() {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => showResult('系统状态', data))
+                .catch(err => showResult('错误', {error: err.message}));
+        }
+        
+        function testLibraries() {
+            fetch('/api/model_libraries')
+                .then(res => res.json())
+                .then(data => {
+                    const summary = {
+                        success: data.success,
+                        total: data.total,
+                        libraries: data.libraries ? data.libraries.map(lib => ({
+                            id: lib.id,
+                            name: lib.name,
+                            cases: lib.cases,
+                            installed: lib.installed
+                        })) : []
+                    };
+                    showResult('模型库列表', summary);
+                })
+                .catch(err => showResult('错误', {error: err.message}));
+        }
+        
+        function testTrainingStats() {
+            fetch('/api/training_stats')
+                .then(res => res.json())
+                .then(data => showResult('训练统计', data))
+                .catch(err => showResult('错误', {error: err.message}));
+        }
+    </script>
+</body>
+</html>

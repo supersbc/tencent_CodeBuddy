@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 架构智能预测系统 v3.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #64748b;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: bold;
+        }
+        .tab:hover { color: #667eea; }
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            min-height: 400px;
+        }
+        .tab-content.active { display: block; }
+        .upload-area {
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 60px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .required { color: red; }
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .library-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .library-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        .result-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: none;
+        }
+        .result-section.show { display: block; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .recommendation {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .recommendation.info {
+            background: #e0f2fe;
+            border-color: #0284c7;
+        }
+        .recommendation.success {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+        .recommendation.warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        .back-nav-btn {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-nav-btn">← 返回导航</a>
+        <h1>🚀 TDSQL 架构智能预测系统</h1>
+        <p class="subtitle">v3.0 完整功能版 - 智能分析 · 精准推荐 · 持续学习</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('upload')">📤 文件上传</button>
+            <button class="tab" onclick="switchTab('manual')">✍️ 手动输入</button>
+            <button class="tab" onclick="switchTab('multi')">🏢 多系统环境</button>
+            <button class="tab" onclick="switchTab('library')">📚 案例库</button>
+            <button class="tab" onclick="switchTab('learning')">🧠 自我学习</button>
+        </div>
+
+        <!-- 文件上传 -->
+        <div id="upload-tab" class="tab-content active">
+            <h2>上传文件进行分析</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">支持 Excel、JSON 等格式</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <div style="font-size: 64px; margin-bottom: 20px;">📁</div>
+                <h3>拖拽文件到此处或点击上传</h3>
+                <p style="color: #64748b; margin-top: 10px;">支持 .xlsx, .xls, .json 格式</p>
+            </div>
+            <input type="file" id="fileInput" style="display: none;" 
+                   accept=".xlsx,.xls,.json,.png,.jpg,.jpeg,.gif,.bmp,.pdf"
+                   onchange="handleFileUpload(this.files[0])">
+        </div>
+
+        <!-- 手动输入 -->
+        <div id="manual-tab" class="tab-content">
+            <h2>手动输入参数</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">填写业务参数，系统将智能推荐架构方案</p>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="margin-right: 20px;">
+                    <input type="radio" name="inputMode" value="simplified" checked onchange="loadParameterForm()">
+                    简化模式 (快速评估)
+                </label>
+                <label>
+                    <input type="radio" name="inputMode" value="advanced" onchange="loadParameterForm()">
+                    专业模式 (详细规划)
+                </label>
+            </div>
+            
+            <div id="formContainer"></div>
+            
+            <button onclick="submitManualInput()" class="btn btn-primary" style="margin-top: 20px;">
+                🔍 开始分析
+            </button>
+        </div>
+
+        <!-- 多系统环境 -->
+        <div id="multi-tab" class="tab-content">
+            <h2>多系统环境分析</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">上传包含多个系统信息的Excel文件</p>
+            
+            <div style="margin-bottom: 20px;">
+                <a href="/download/template" class="btn btn-secondary" download>
+                    📥 下载Excel模板
+                </a>
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('multiSystemFile').click()">
+                <div style="font-size: 64px; margin-bottom: 20px;">🏢</div>
+                <h3>上传多系统环境文件</h3>
+                <p style="color: #64748b; margin-top: 10px;">请使用提供的Excel模板</p>
+            </div>
+            <input type="file" id="multiSystemFile" style="display: none;" 
+                   accept=".xlsx,.xls,.png,.jpg,.jpeg,.gif,.bmp,.pdf"
+                   onchange="handleFileUpload(this.files[0])">
+        </div>
+
+        <!-- 案例库 -->
+        <div id="library-tab" class="tab-content">
+            <h2>模型库案例</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">浏览和使用预训练模型库</p>
+            <div id="libraryList"></div>
+        </div>
+
+        <!-- 自我学习 -->
+        <div id="learning-tab" class="tab-content">
+            <h2>自我学习系统</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">提交实际案例，帮助系统持续优化</p>
+            
+            <div id="learningStats" style="margin-bottom: 30px;"></div>
+            
+            <h3>提交新案例</h3>
+            <form id="caseForm" onsubmit="submitCase(event)">
+                <div class="form-group">
+                    <label>案例名称 <span class="required">*</span></label>
+                    <input type="text" id="caseName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>输入参数 (JSON格式) <span class="required">*</span></label>
+                    <textarea id="caseInput" rows="6" required placeholder='{"industry": "金融", "qps": 5000, ...}'></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>实际架构结果 (JSON格式) <span class="required">*</span></label>
+                    <textarea id="caseOutput" rows="6" required placeholder='{"architecture_type": "主从架构", "nodes": 3, ...}'></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">📤 提交案例</button>
+            </form>
+        </div>
+
+        <!-- 结果展示 -->
+        <div id="resultSection" class="result-section"></div>
+    </div>
+
+    <script>
+        // 标签切换
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'library') loadLibraries();
+            else if (tabName === 'learning') loadLearningStats();
+            else if (tabName === 'manual') loadParameterForm();
+        }
+
+        // 文件上传
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.onclick = () => document.getElementById('fileInput').click();
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFileUpload(e.dataTransfer.files[0]);
+        });
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            showLoading('正在分析文件...');
+            
+            fetch('/api/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert('分析失败: ' + data.error);
+                    hideLoading();
+                } else {
+                    displayResult(data);
+                }
+            })
+            .catch(err => {
+                alert('处理失败: ' + err.message);
+                hideLoading();
+            });
+        }
+
+        // 加载参数表单
+        function loadParameterForm() {
+            const mode = document.querySelector('input[name="inputMode"]:checked').value;
+            const container = document.getElementById('formContainer');
+            container.innerHTML = '<p style="color: #64748b;">加载中...</p>';
+            
+            fetch('/api/parameter_config?mode=' + mode)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        container.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                        return;
+                    }
+                    
+                    let html = '<form id="paramForm">';
+                    
+                    (data.groups || []).forEach(group => {
+                        html += `<div style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                            <h3 style="margin-bottom: 15px; color: #1e293b;">${group.name}</h3>`;
+                        
+                        (group.fields || []).forEach(field => {
+                            html += '<div class="form-group">';
+                            
+                            if (field.type === 'select') {
+                                html += `<label>${field.label} ${field.required ? '<span class="required">*</span>' : ''}</label>
+                                    <select name="${field.name}" ${field.required ? 'required' : ''}>
+                                        ${(field.options || []).map(opt => 
+                                            `<option value="${opt.value}" ${opt.value === field.default ? 'selected' : ''}>${opt.label}</option>`
+                                        ).join('')}
+                                    </select>`;
+                            } else if (field.type === 'number') {
+                                html += `<label>${field.label} ${field.required ? '<span class="required">*</span>' : ''}</label>
+                                    <input type="number" name="${field.name}" value="${field.default || 0}" ${field.required ? 'required' : ''}>`;
+                            } else if (field.type === 'checkbox') {
+                                html += `<label>
+                                    <input type="checkbox" name="${field.name}" ${field.default ? 'checked' : ''}>
+                                    ${field.label}
+                                </label>`;
+                            } else {
+                                html += `<label>${field.label} ${field.required ? '<span class="required">*</span>' : ''}</label>
+                                    <input type="text" name="${field.name}" value="${field.default || ''}" ${field.required ? 'required' : ''}>`;
+                            }
+                            
+                            if (field.description) {
+                                html += `<p style="font-size: 13px; color: #64748b; margin-top: 5px;">${field.description}</p>`;
+                            }
+                            
+                            html += '</div>';
+                        });
+                        
+                        html += '</div>';
+                    });
+                    
+                    html += '</form>';
+                    container.innerHTML = html;
+                })
+                .catch(err => {
+                    container.innerHTML = `<p style="color: red;">加载失败: ${err.message}</p>`;
+                });
+        }
+
+        // 提交手动输入
+        function submitManualInput() {
+            const form = document.getElementById('paramForm');
+            if (!form) {
+                alert('请先加载表单');
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input && input.type === 'checkbox') {
+                    data[key] = input.checked;
+                } else if (input && input.type === 'number') {
+                    data[key] = parseFloat(value) || 0;
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            showLoading('正在分析...');
+            
+            fetch('/api/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.error) {
+                    alert('分析失败: ' + result.error);
+                    hideLoading();
+                } else {
+                    displayResult(result);
+                }
+            })
+            .catch(err => {
+                alert('分析失败: ' + err.message);
+                hideLoading();
+            });
+        }
+
+        // 加载案例库
+        function loadLibraries() {
+            const container = document.getElementById('libraryList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>加载中...</p></div>';
+            
+            fetch('/api/model_libraries')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        container.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                        return;
+                    }
+                    
+                    const libraries = data.libraries || [];
+                    
+                    let html = '<div class="library-grid">';
+                    libraries.forEach(lib => {
+                        const badge = lib.installed 
+                            ? '<span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;">已安装</span>'
+                            : '<span style="background: #6b7280; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;">未安装</span>';
+                        
+                        html += `<div class="library-card" onclick="viewLibrary('${lib.id}')">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <h4 style="margin: 0;">${lib.name}</h4>
+                                ${badge}
+                            </div>
+                            <p style="color: #64748b; font-size: 14px; margin: 10px 0;">${lib.description}</p>
+                            <div style="margin-top: 15px; font-size: 13px; color: #64748b;">
+                                📊 ${lib.cases} 案例 | 🎯 ${lib.accuracy}
+                            </div>
+                        </div>`;
+                    });
+                    html += '</div>';
+                    
+                    container.innerHTML = html;
+                })
+                .catch(err => {
+                    container.innerHTML = `<p style="color: red;">加载失败: ${err.message}</p>`;
+                });
+        }
+
+        function viewLibrary(libraryId) {
+            showLoading('加载详情...');
+            
+            fetch(`/api/library/${libraryId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('加载失败: ' + data.error);
+                        hideLoading();
+                        return;
+                    }
+                    
+                    const resultSection = document.getElementById('resultSection');
+                    resultSection.classList.add('show');
+                    
+                    let html = `<h2>📚 ${data.name}</h2>
+                        <p style="color: #64748b; margin: 15px 0;">${data.description}</p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                            <div style="padding: 15px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #667eea;">${data.cases}</div>
+                                <div style="color: #64748b; margin-top: 5px;">案例数量</div>
+                            </div>
+                            <div style="padding: 15px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #10b981;">${data.accuracy}</div>
+                                <div style="color: #64748b; margin-top: 5px;">准确率</div>
+                            </div>
+                            <div style="padding: 15px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${data.version}</div>
+                                <div style="color: #64748b; margin-top: 5px;">版本</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            ${data.installed 
+                                ? '<button onclick="alert(\'已选择此模型库\')" class="btn btn-primary">✅ 使用此模型库</button>'
+                                : `<button onclick="downloadLibrary('${data.id}')" class="btn btn-primary">📥 下载并安装</button>`
+                            }
+                        </div>`;
+                    
+                    resultSection.innerHTML = html;
+                })
+                .catch(err => {
+                    alert('加载失败: ' + err.message);
+                    hideLoading();
+                });
+        }
+
+        function downloadLibrary(libraryId) {
+            if (!confirm('确定要下载此模型库吗？')) return;
+            
+            showLoading('下载中...');
+            
+            fetch(`/api/download_library/${libraryId}`, {method: 'POST'})
+                .then(res => res.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        alert('下载成功！');
+                        loadLibraries();
+                    } else {
+                        alert('下载失败: ' + (data.error || '未知错误'));
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    alert('下载失败: ' + err.message);
+                });
+        }
+
+        // 加载学习统计
+        function loadLearningStats() {
+            const container = document.getElementById('learningStats');
+            
+            fetch('/api/training_stats')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        container.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                        return;
+                    }
+                    
+                    container.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="padding: 20px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #667eea;">${data.total_cases || 0}</div>
+                                <div style="color: #64748b; margin-top: 8px;">训练案例</div>
+                            </div>
+                            <div style="padding: 20px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #10b981;">${data.accuracy || 'N/A'}</div>
+                                <div style="color: #64748b; margin-top: 8px;">预测准确率</div>
+                            </div>
+                            <div style="padding: 20px; background: white; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; font-weight: bold; color: #f59e0b;">${data.model_version || 'v3.0'}</div>
+                                <div style="color: #64748b; margin-top: 8px;">模型版本</div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(err => {
+                    container.innerHTML = `<p style="color: red;">加载失败: ${err.message}</p>`;
+                });
+        }
+
+        // 提交案例
+        function submitCase(event) {
+            event.preventDefault();
+            
+            try {
+                const inputData = JSON.parse(document.getElementById('caseInput').value);
+                const outputData = JSON.parse(document.getElementById('caseOutput').value);
+                
+                showLoading('提交中...');
+                
+                fetch('/api/submit_case', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        input_data: inputData,
+                        actual_result: outputData
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        alert(`案例提交成功！\n总案例数: ${data.total_cases}`);
+                        document.getElementById('caseForm').reset();
+                        loadLearningStats();
+                    } else {
+                        alert('提交失败: ' + (data.error || '未知错误'));
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    alert('提交失败: ' + err.message);
+                });
+            } catch (e) {
+                alert('JSON格式错误: ' + e.message);
+            }
+        }
+
+        // 显示结果
+        function displayResult(data) {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('show');
+            
+            let html = '<h2>📊 分析结果</h2>';
+            
+            // 显示文件信息（如果是文件上传）
+            if (data.filename) {
+                html += '<div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6;">';
+                html += `<p><strong>📄 文件名:</strong> ${data.filename}</p>`;
+                if (data.extracted_data && data.extracted_data.method) {
+                    html += `<p><strong>🔍 识别方式:</strong> ${data.extracted_data.method}</p>`;
+                }
+                if (data.extracted_data && data.extracted_data.image_info) {
+                    const info = data.extracted_data.image_info;
+                    html += `<p><strong>🖼️ 图片信息:</strong> ${info.width}x${info.height} (${info.format})</p>`;
+                }
+                if (data.extracted_data && data.extracted_data.ocr_text) {
+                    html += `<details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #3b82f6;">查看OCR识别文本</summary>
+                        <pre style="background: white; padding: 10px; margin-top: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;">${data.extracted_data.ocr_text}</pre>
+                    </details>`;
+                }
+                html += '</div>';
+            }
+            
+            // 显示提取的数据
+            if (data.extracted_data && data.extracted_data.data) {
+                html += '<h3>📋 提取的参数</h3>';
+                html += '<div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">';
+                const extractedData = data.extracted_data.data;
+                for (const [key, value] of Object.entries(extractedData)) {
+                    if (key !== 'method' && key !== 'note') {
+                        html += `<p><strong>${key}:</strong> ${value}</p>`;
+                    }
+                }
+                if (extractedData.note) {
+                    html += `<p style="color: #64748b; font-style: italic; margin-top: 10px;">💡 ${extractedData.note}</p>`;
+                }
+                html += '</div>';
+            }
+            
+            if (data.architecture) {
+                html += '<h3>🏗️ 推荐架构</h3>';
+                html += '<div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">';
+                html += `<p><strong>架构类型:</strong> ${data.architecture.type || 'N/A'}</p>`;
+                html += `<p><strong>节点数量:</strong> ${data.architecture.nodes || 'N/A'}</p>`;
+                html += `<p><strong>部署模式:</strong> ${data.architecture.deployment || 'N/A'}</p>`;
+                html += '</div>';
+            }
+            
+            if (data.resources) {
+                html += '<h3>💻 资源配置</h3>';
+                html += '<div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">';
+                html += `<p><strong>CPU:</strong> ${data.resources.cpu_cores || 'N/A'} 核</p>`;
+                html += `<p><strong>内存:</strong> ${data.resources.memory_gb || 'N/A'} GB</p>`;
+                html += `<p><strong>存储:</strong> ${data.resources.storage_gb || 'N/A'} GB</p>`;
+                html += `<p><strong>网络:</strong> ${data.resources.network_bandwidth || 'N/A'}</p>`;
+                html += '</div>';
+            }
+            
+            if (data.recommendations && data.recommendations.length > 0) {
+                html += '<h3>💡 优化建议</h3>';
+                data.recommendations.forEach(rec => {
+                    html += `<div class="recommendation ${rec.type}">
+                        <strong>${rec.title}</strong>: ${rec.content}
+                    </div>`;
+                });
+            }
+            
+            resultSection.innerHTML = html;
+        }
+
+        function showLoading(message = '处理中...') {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('show');
+            resultSection.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function hideLoading() {
+            // 由displayResult处理
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('load', () => {
+            loadParameterForm();
+        });
+    </script>
+</body>
+</html>

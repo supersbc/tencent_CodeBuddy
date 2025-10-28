@@ -1,0 +1,10 @@
+{
+  "qps": 8000,
+  "tps": 2400,
+  "data_volume": 1000,
+  "concurrent_users": 2000,
+  "data_growth_rate": 0.4,
+  "ha_level": "high",
+  "industry": "ecommerce",
+  "peak_qps": 12000
+}

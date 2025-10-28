@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 部署资源预测系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .input-section {
+            padding: 40px;
+            background: linear-gradient(to bottom, #f8f9fa, white);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #764ba2;
+            background: #f8f9fa;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #764ba2;
+            background: #f0f0ff;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-info {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input.auto-filled {
+            background: #fff3cd;
+            border-color: #ffc107;
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0%, 100% { background: white; }
+            50% { background: #fff3cd; }
+        }
+
+        .form-group .hint {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            padding: 40px;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .result-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .summary-card .label {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .summary-card .unit {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .equipment-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .equipment-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .equipment-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .equipment-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .equipment-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .cost-breakdown {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cost-item.total {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            border-top: 2px solid #667eea;
+            border-bottom: none;
+            margin-top: 10px;
+            padding-top: 15px;
+        }
+
+        .architecture-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .recommendations {
+            display: grid;
+            gap: 15px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .recommendation-card.high {
+            border-left-color: #f44336;
+        }
+
+        .recommendation-card.medium {
+            border-left-color: #ff9800;
+        }
+
+        .recommendation-card .title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .recommendation-card .category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .network-topology {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .topology-layer {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .topology-layer .layer-name {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .topology-layer .devices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .device-tag {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        .back-nav-btn {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-nav-btn">← 返回导航</a>
+        <div class="header">
+            <h1>🚀 TDSQL 部署资源预测系统</h1>
+            <p>智能分析业务需求，精准预测部署资源</p>
+        </div>
+
+        <div class="main-card">
+            <!-- 输入区域 -->
+            <div class="input-section">
+                <h2 class="section-title">📋 业务参数配置</h2>
+
+                <!-- 文件上传区域 -->
+                <div class="file-upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">拖拽文件到此处或点击上传</div>
+                    <div class="upload-hint">支持 Excel、JSON、图片、PDF 等格式，系统将自动提取参数</div>
+                    <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.json,.png,.jpg,.jpeg,.gif,.bmp,.pdf,.txt">
+                </div>
+                
+                <!-- 已上传文件信息 -->
+                <div id="uploadedFileInfo" style="display: none; background: #e8f5e9; border: 1px solid #4caf50; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: bold; color: #2e7d32; margin-bottom: 5px;">✅ 文件已上传</div>
+                            <div id="uploadedFileName" style="color: #666; font-size: 0.9em;"></div>
+                        </div>
+                        <button type="button" id="clearFileBtn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9em;">
+                            <span>🗑️</span>
+                            <span>清除文件</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <strong>✅ 文件已上传：</strong>
+                    <span id="fileName"></span>
+                    <div id="extractedParams" style="margin-top: 10px;"></div>
+                </div>
+
+                <!-- 参数表单 -->
+                <form id="paramForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="qps">QPS (每秒查询数) *</label>
+                            <input type="number" id="qps" name="qps" required min="1" placeholder="例如: 5000">
+                            <span class="hint">系统每秒处理的查询请求数</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tps">TPS (每秒事务数)</label>
+                            <input type="number" id="tps" name="tps" min="1" placeholder="例如: 1500">
+                            <span class="hint">系统每秒处理的事务数，默认为QPS的30%</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data_volume">数据量 (GB) *</label>
+                            <input type="number" id="data_volume" name="data_volume" required min="1" placeholder="例如: 500">
+                            <span class="hint">当前数据总量</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="concurrent_users">并发用户数</label>
+                            <input type="number" id="concurrent_users" name="concurrent_users" min="1" placeholder="例如: 1000">
+                            <span class="hint">同时在线的用户数量</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data_growth_rate">数据增长率 (年)</label>
+                            <input type="number" id="data_growth_rate" name="data_growth_rate" step="0.1" min="0" max="5" placeholder="例如: 0.3">
+                            <span class="hint">预计年数据增长率，默认30%</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ha_level">高可用级别 *</label>
+                            <select id="ha_level" name="ha_level" required>
+                                <option value="high">高 - 多副本+异地容灾</option>
+                                <option value="medium">中 - 主从复制</option>
+                                <option value="low">低 - 单节点</option>
+                            </select>
+                            <span class="hint">系统高可用性要求</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="industry">行业类型</label>
+                            <select id="industry" name="industry">
+                                <option value="general">通用</option>
+                                <option value="finance">金融</option>
+                                <option value="ecommerce">电商</option>
+                                <option value="gaming">游戏</option>
+                                <option value="social">社交</option>
+                                <option value="iot">物联网</option>
+                                <option value="government">政务</option>
+                                <option value="healthcare">医疗</option>
+                                <option value="education">教育</option>
+                            </select>
+                            <span class="hint">业务所属行业</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="peak_qps">峰值QPS</label>
+                            <input type="number" id="peak_qps" name="peak_qps" min="1" placeholder="自动计算">
+                            <span class="hint">业务高峰期QPS，默认为平均QPS的1.5倍</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary" id="predictBtn">
+                            <span>🔮</span>
+                            <span>开始预测</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <span>🔄</span>
+                            <span>重置表单</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 结果区域 -->
+            <div class="results-section" id="resultsSection">
+                <h2 class="section-title">📊 预测结果</h2>
+
+                <div class="result-tabs">
+                    <button class="tab active" data-tab="summary">概览</button>
+                    <button class="tab" data-tab="architecture">架构设计</button>
+                    <button class="tab" data-tab="equipment">设备清单</button>
+                    <button class="tab" data-tab="network">网络拓扑</button>
+                    <button class="tab" data-tab="cost">成本分析</button>
+                    <button class="tab" data-tab="diagram">架构图</button>
+                    <button class="tab" data-tab="recommendations">部署建议</button>
+                </div>
+
+                <!-- 概览标签页 -->
+                <div class="tab-content active" id="summary">
+                    <div class="summary-cards" id="summaryCards"></div>
+                </div>
+
+                <!-- 架构设计标签页 -->
+                <div class="tab-content" id="architecture">
+                    <div id="architectureContent"></div>
+                </div>
+
+                <!-- 设备清单标签页 -->
+                <div class="tab-content" id="equipment">
+                    <div id="equipmentContent"></div>
+                </div>
+
+                <!-- 网络拓扑标签页 -->
+                <div class="tab-content" id="network">
+                    <div class="network-topology" id="networkContent"></div>
+                </div>
+
+                <!-- 成本分析标签页 -->
+                <div class="tab-content" id="cost">
+                    <div class="cost-breakdown" id="costContent"></div>
+                </div>
+
+                <!-- 架构图标签页 -->
+                <div class="tab-content" id="diagram">
+                    <div class="architecture-diagram" id="diagramContent">
+                        <canvas id="architectureCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- 部署建议标签页 -->
+                <div class="tab-content" id="recommendations">
+                    <div class="recommendations" id="recommendationsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentResult = null;
+        let uploadedFile = null;
+
+        // 文件上传处理
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFileInfo = document.getElementById('uploadedFileInfo');
+        const uploadedFileName = document.getElementById('uploadedFileName');
+        const clearFileBtn = document.getElementById('clearFileBtn');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        // 清除文件按钮
+        clearFileBtn.addEventListener('click', () => {
+            clearUploadedFile();
+        });
+
+        function clearUploadedFile() {
+            // 清除文件输入
+            fileInput.value = '';
+            uploadedFile = null;
+            
+            // 隐藏文件信息
+            uploadedFileInfo.style.display = 'none';
+            
+            // 清空表单（可选）
+            if (confirm('是否同时清空表单中的参数？')) {
+                document.getElementById('paramForm').reset();
+            }
+        }
+
+        async function handleFileUpload(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // 显示上传中状态
+            uploadArea.style.opacity = '0.5';
+            uploadArea.style.pointerEvents = 'none';
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    uploadedFile = file;
+                    
+                    // 显示文件信息
+                    uploadedFileName.textContent = `文件名: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                    uploadedFileInfo.style.display = 'block';
+                    
+                    // 自动填充表单
+                    if (result.params) {
+                        fillFormWithData(result.params);
+                        
+                        // 显示成功消息
+                        const paramCount = Object.keys(result.params).filter(k => !k.startsWith('error') && !k.startsWith('info')).length;
+                        if (paramCount > 0) {
+                            alert(`✅ 文件上传成功！已自动提取 ${paramCount} 个参数`);
+                        } else if (result.params.error) {
+                            alert(`⚠️ 文件上传成功，但解析失败：${result.params.error}`);
+                        } else if (result.params.info) {
+                            alert(`ℹ️ ${result.params.info}\n${result.params.message || ''}\n${result.params.suggestion || ''}`);
+                        }
+                    }
+                } else {
+                    alert('文件处理失败：' + result.error);
+                }
+            } catch (error) {
+                alert('文件上传失败：' + error.message);
+            } finally {
+                // 恢复上传区域状态
+                uploadArea.style.opacity = '1';
+                uploadArea.style.pointerEvents = 'auto';
+            }
+        }
+
+        function fillFormWithData(data) {
+            // 参数映射
+            const mapping = {
+                'qps': 'qps',
+                'tps': 'tps',
+                'data_volume': 'data_volume',
+                'concurrent_users': 'concurrent_users',
+                'data_growth_rate': 'data_growth_rate',
+                'ha_level': 'ha_level',
+                'industry': 'industry',
+                'peak_qps': 'peak_qps'
+            };
+
+            Object.entries(mapping).forEach(([key, formField]) => {
+                if (data[key] !== undefined && data[key] !== null) {
+                    const input = document.getElementById(formField);
+                    if (input) {
+                        input.value = data[key];
+                        input.classList.add('auto-filled');
+                        setTimeout(() => input.classList.remove('auto-filled'), 2000);
+                    }
+                }
+            });
+        }
+
+        // 表单提交
+        document.getElementById('paramForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {};
+            
+            formData.forEach((value, key) => {
+                if (value) {
+                    // 数字类型转换
+                    if (['qps', 'tps', 'data_volume', 'concurrent_users', 'peak_qps'].includes(key)) {
+                        data[key] = parseInt(value);
+                    } else if (key === 'data_growth_rate') {
+                        data[key] = parseFloat(value);
+                    } else {
+                        data[key] = value;
+                    }
+                }
+            });
+
+            // 显示加载状态
+            const predictBtn = document.getElementById('predictBtn');
+            const originalText = predictBtn.innerHTML;
+            predictBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div><span>预测中...</span>';
+            predictBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // API返回的数据在result.data中
+                    currentResult = result.data;
+                    displayResults(result.data);
+                } else {
+                    alert('预测失败：' + result.error);
+                }
+            } catch (error) {
+                alert('请求失败：' + error.message);
+            } finally {
+                predictBtn.innerHTML = originalText;
+                predictBtn.disabled = false;
+            }
+        });
+
+        // 显示结果
+        function displayResults(result) {
+            document.getElementById('resultsSection').classList.add('show');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+            // 显示概览
+            displaySummary(result);
+            
+            // 显示架构设计
+            displayArchitecture(result.architecture);
+            
+            // 显示设备清单
+            displayEquipment(result.equipment_list);
+            
+            // 显示网络拓扑
+            displayNetworkTopology(result.network_topology);
+            
+            // 显示成本分析
+            displayCost(result.cost_breakdown);
+            
+            // 显示架构图
+            displayDiagram(result.architecture_diagram);
+            
+            // 显示建议
+            displayRecommendations(result.recommendations);
+        }
+
+        function displaySummary(result) {
+            const summaryCards = document.getElementById('summaryCards');
+            const summary = result.input_summary;
+            const cost = result.cost_breakdown.summary;
+
+            summaryCards.innerHTML = `
+                <div class="summary-card">
+                    <div class="label">系统规模</div>
+                    <div class="value">${summary.scale.toUpperCase()}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">QPS</div>
+                    <div class="value">${summary.qps.toLocaleString()}<span class="unit">次/秒</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">数据量</div>
+                    <div class="value">${summary.current_data_gb.toLocaleString()}<span class="unit">GB</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">服务器数量</div>
+                    <div class="value">${result.equipment_list.servers.length}<span class="unit">台</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">初始投资</div>
+                    <div class="value">¥${(cost.initial_investment / 10000).toFixed(1)}<span class="unit">万</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">3年TCO</div>
+                    <div class="value">¥${(cost.three_year_tco / 10000).toFixed(1)}<span class="unit">万</span></div>
+                </div>
+            `;
+        }
+
+        function displayArchitecture(architecture) {
+            const content = document.getElementById('architectureContent');
+            const topology = architecture.topology;
+
+            content.innerHTML = `
+                <div class="equipment-table">
+                    <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">架构类型</h3>
+                    <div style="padding: 20px;">
+                        <p style="font-size: 1.2em; margin-bottom: 10px;"><strong>${architecture.description}</strong></p>
+                        <p style="color: #666;">类型：${architecture.type}</p>
+                    </div>
+                </div>
+
+                <div class="equipment-table" style="margin-top: 20px;">
+                    <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">拓扑配置</h3>
+                    <table>
+                        <tr>
+                            <td><strong>分片数量</strong></td>
+                            <td>${topology.shard_count}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>副本数量</strong></td>
+                            <td>${topology.replica_count}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>数据库节点</strong></td>
+                            <td>${topology.db_nodes} 台</td>
+                        </tr>
+                        <tr>
+                            <td><strong>代理节点</strong></td>
+                            <td>${topology.proxy_nodes} 台</td>
+                        </tr>
+                        <tr>
+                            <td><strong>应用节点</strong></td>
+                            <td>${topology.app_nodes} 台</td>
+                        </tr>
+                        <tr>
+                            <td><strong>监控节点</strong></td>
+                            <td>${topology.monitor_nodes} 台</td>
+                        </tr>
+                        <tr>
+                            <td><strong>备份节点</strong></td>
+                            <td>${topology.backup_nodes} 台</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="equipment-table" style="margin-top: 20px;">
+                    <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">高可用配置</h3>
+                    <table>
+                        <tr>
+                            <td><strong>高可用级别</strong></td>
+                            <td>${architecture.ha_config.level}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>自动故障转移</strong></td>
+                            <td>${architecture.ha_config.auto_failover ? '✅ 启用' : '❌ 禁用'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>备份策略</strong></td>
+                            <td>${architecture.ha_config.backup_strategy}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>异地容灾</strong></td>
+                            <td>${architecture.ha_config.disaster_recovery ? '✅ 启用' : '❌ 禁用'}</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+
+        function displayEquipment(equipment) {
+            const content = document.getElementById('equipmentContent');
+            
+            let html = '';
+
+            // 服务器清单
+            if (equipment.servers && equipment.servers.length > 0) {
+                html += `
+                    <div class="equipment-table">
+                        <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">服务器清单</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>角色</th>
+                                    <th>型号</th>
+                                    <th>CPU</th>
+                                    <th>内存</th>
+                                    <th>存储</th>
+                                    <th>网络</th>
+                                    <th>单价(元)</th>
+                                    <th>功耗(W)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                equipment.servers.forEach(server => {
+                    html += `
+                        <tr>
+                            <td>${server.id}</td>
+                            <td>${server.role}</td>
+                            <td>${server.model}</td>
+                            <td>${server.cpu}</td>
+                            <td>${server.memory}</td>
+                            <td>${server.disk}</td>
+                            <td>${server.network}</td>
+                            <td>¥${server.unit_price.toLocaleString()}</td>
+                            <td>${server.power_w}W</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // 网络设备清单
+            if (equipment.network_devices && equipment.network_devices.length > 0) {
+                html += `
+                    <div class="equipment-table" style="margin-top: 20px;">
+                        <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">网络设备清单</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>类型</th>
+                                    <th>型号</th>
+                                    <th>规格</th>
+                                    <th>单价(元)</th>
+                                    <th>功耗(W)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                equipment.network_devices.forEach(device => {
+                    html += `
+                        <tr>
+                            <td>${device.id}</td>
+                            <td>${device.type}</td>
+                            <td>${device.model}</td>
+                            <td>${device.ports || device.throughput || '-'}</td>
+                            <td>¥${device.unit_price.toLocaleString()}</td>
+                            <td>${device.power_w}W</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // 存储设备
+            if (equipment.storage && equipment.storage.length > 0) {
+                html += `
+                    <div class="equipment-table" style="margin-top: 20px;">
+                        <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">存储设备清单</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>类型</th>
+                                    <th>型号</th>
+                                    <th>容量(TB)</th>
+                                    <th>IOPS</th>
+                                    <th>吞吐量</th>
+                                    <th>总价(元)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                equipment.storage.forEach(storage => {
+                    html += `
+                        <tr>
+                            <td>${storage.type}</td>
+                            <td>${storage.model}</td>
+                            <td>${storage.capacity_tb}TB</td>
+                            <td>${storage.iops.toLocaleString()}</td>
+                            <td>${storage.throughput}</td>
+                            <td>¥${storage.total_price.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // 基础设施
+            if (equipment.infrastructure && equipment.infrastructure.length > 0) {
+                html += `
+                    <div class="equipment-table" style="margin-top: 20px;">
+                        <h3 style="padding: 20px; margin: 0; background: #f8f9fa;">基础设施清单</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>类型</th>
+                                    <th>数量</th>
+                                    <th>单价(元)</th>
+                                    <th>总价(元)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                equipment.infrastructure.forEach(item => {
+                    html += `
+                        <tr>
+                            <td>${item.type}</td>
+                            <td>${item.quantity || item.capacity_kw + 'kW' || '-'}</td>
+                            <td>¥${item.unit_price.toLocaleString()}</td>
+                            <td>¥${item.total_price.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+        }
+
+        function displayNetworkTopology(topology) {
+            const content = document.getElementById('networkContent');
+            
+            let html = '<h3 style="margin-bottom: 20px;">网络分层架构</h3>';
+
+            topology.layers.forEach(layer => {
+                html += `
+                    <div class="topology-layer">
+                        <div class="layer-name">${layer.name}</div>
+                        <div style="color: #666; margin-bottom: 10px; font-size: 0.9em;">${layer.description}</div>
+                        <div class="devices">
+                            ${layer.devices.map(device => `<span class="device-tag">${device}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '<h3 style="margin: 30px 0 20px;">VLAN划分</h3>';
+            html += '<div class="equipment-table"><table><thead><tr><th>VLAN ID</th><th>名称</th><th>子网</th></tr></thead><tbody>';
+            
+            topology.vlans.forEach(vlan => {
+                html += `
+                    <tr>
+                        <td>${vlan.id}</td>
+                        <td>${vlan.name}</td>
+                        <td>${vlan.subnet}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table></div>';
+
+            content.innerHTML = html;
+        }
+
+        function displayCost(costBreakdown) {
+            const content = document.getElementById('costContent');
+            const summary = costBreakdown.summary;
+            const breakdown = costBreakdown.breakdown;
+
+            let html = `
+                <h3 style="margin-bottom: 20px;">成本汇总</h3>
+                <div class="cost-item total">
+                    <span>初始投资总额</span>
+                    <span>¥${summary.initial_investment.toLocaleString()}</span>
+                </div>
+                <div class="cost-item total">
+                    <span>3年总拥有成本(TCO)</span>
+                    <span>¥${summary.three_year_tco.toLocaleString()}</span>
+                </div>
+
+                <h3 style="margin: 30px 0 20px;">硬件成本</h3>
+                <div class="cost-item">
+                    <span>服务器</span>
+                    <span>¥${breakdown.hardware.servers.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>网络设备</span>
+                    <span>¥${breakdown.hardware.network_devices.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>存储设备</span>
+                    <span>¥${breakdown.hardware.storage.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>基础设施</span>
+                    <span>¥${breakdown.hardware.infrastructure.toLocaleString()}</span>
+                </div>
+                <div class="cost-item" style="font-weight: 600; background: #f8f9fa;">
+                    <span>硬件小计</span>
+                    <span>¥${summary.total_hardware.toLocaleString()}</span>
+                </div>
+
+                <h3 style="margin: 30px 0 20px;">软件许可证</h3>
+                <div class="cost-item">
+                    <span>TDSQL许可证</span>
+                    <span>¥${breakdown.software.tdsql_license.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>操作系统许可证</span>
+                    <span>¥${breakdown.software.os_license.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>监控软件</span>
+                    <span>¥${breakdown.software.monitoring.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>备份软件</span>
+                    <span>¥${breakdown.software.backup.toLocaleString()}</span>
+                </div>
+                <div class="cost-item" style="font-weight: 600; background: #f8f9fa;">
+                    <span>软件小计</span>
+                    <span>¥${summary.total_software.toLocaleString()}</span>
+                </div>
+
+                <h3 style="margin: 30px 0 20px;">服务费用</h3>
+                <div class="cost-item">
+                    <span>部署实施</span>
+                    <span>¥${breakdown.services.deployment.toLocaleString()}</span>
+                </div>
+                <div class="cost-item">
+                    <span>技术培训</span>
+                    <span>¥${breakdown.services.training.toLocaleString()}</span>
+                </div>
+                <div class="cost-item" style="font-weight: 600; background: #f8f9fa;">
+                    <span>服务小计</span>
+                    <span>¥${summary.total_services.toLocaleString()}</span>
+                </div>
+
+                <h3 style="margin: 30px 0 20px;">年度运营成本</h3>
+                <div class="cost-item">
+                    <span>电费</span>
+                    <span>¥${breakdown.annual_operating.power.toLocaleString()}/年</span>
+                </div>
+                <div class="cost-item">
+                    <span>制冷费用</span>
+                    <span>¥${breakdown.annual_operating.cooling.toLocaleString()}/年</span>
+                </div>
+                <div class="cost-item">
+                    <span>软件维护</span>
+                    <span>¥${breakdown.annual_operating.maintenance.toLocaleString()}/年</span>
+                </div>
+                <div class="cost-item" style="font-weight: 600; background: #f8f9fa;">
+                    <span>年度运营小计</span>
+                    <span>¥${summary.annual_operating.toLocaleString()}/年</span>
+                </div>
+                <div class="cost-item" style="color: #666;">
+                    <span>月度运营成本</span>
+                    <span>¥${summary.monthly_operating.toLocaleString()}/月</span>
+                </div>
+            `;
+
+            content.innerHTML = html;
+        }
+
+        function displayDiagram(diagram) {
+            const content = document.getElementById('diagramContent');
+            
+            // 简化版架构图显示
+            content.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="margin-bottom: 30px;">系统架构拓扑图</h3>
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 30px; max-width: 800px; margin: 0 auto;">
+                        <p style="color: #666; margin-bottom: 20px;">架构图包含 ${diagram.nodes.length} 个节点，${diagram.links.length} 条连接</p>
+                        <div style="text-align: left; line-height: 2;">
+                            <p><strong>节点类型：</strong></p>
+                            <ul style="list-style: none; padding-left: 20px;">
+                                <li>🌐 Internet接入</li>
+                                <li>🔒 防火墙 (双机热备)</li>
+                                <li>⚖️ 负载均衡器 (双机热备)</li>
+                                <li>🔀 核心交换机 (双机热备)</li>
+                                <li>💻 应用服务器集群</li>
+                                <li>🔄 TDSQL代理节点</li>
+                                <li>🗄️ TDSQL数据库集群</li>
+                                <li>📊 监控和备份服务</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayRecommendations(recommendations) {
+            const content = document.getElementById('recommendationsContent');
+            
+            let html = '';
+            recommendations.forEach(rec => {
+                html += `
+                    <div class="recommendation-card ${rec.priority}">
+                        <span class="category">${rec.category}</span>
+                        <div class="title">${rec.title}</div>
+                        <div style="color: #666;">${rec.description}</div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+        }
+
+        // 标签页切换
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // 添加active类
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

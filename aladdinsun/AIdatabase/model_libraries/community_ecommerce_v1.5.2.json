@@ -1,0 +1,157 @@
+[
+  {
+    "id": "ecommerce_case_1",
+    "source": "community_ecommerce",
+    "timestamp": "2025-10-26T10:00:00.000000",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 500,
+      "qps": 50000,
+      "tps": 8000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 25
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 12,
+      "shard_count": 8,
+      "replica_count": 2,
+      "proxy_count": 4,
+      "estimated_cost": 2800000
+    },
+    "metadata": {
+      "industry": "电商平台",
+      "scenario": "大促高峰",
+      "verified": true,
+      "accuracy_rating": 4.7,
+      "notes": "双11场景，支持10万+QPS峰值"
+    }
+  },
+  {
+    "id": "ecommerce_case_2",
+    "source": "community_ecommerce",
+    "timestamp": "2025-10-26T10:05:00.000000",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 300,
+      "qps": 20000,
+      "tps": 3000,
+      "concurrent_connections": 800,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 15
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 1200000
+    },
+    "metadata": {
+      "industry": "社交电商",
+      "scenario": "日常运营",
+      "verified": true,
+      "accuracy_rating": 4.5,
+      "notes": "读写分离优化，缓存命中率85%+"
+    }
+  },
+  {
+    "id": "ecommerce_case_3",
+    "source": "community_ecommerce",
+    "timestamp": "2025-10-26T10:10:00.000000",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 800,
+      "qps": 80000,
+      "tps": 12000,
+      "concurrent_connections": 3000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 30
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 16,
+      "shard_count": 12,
+      "replica_count": 2,
+      "proxy_count": 6,
+      "estimated_cost": 4500000
+    },
+    "metadata": {
+      "industry": "跨境电商",
+      "scenario": "全球化部署",
+      "verified": true,
+      "accuracy_rating": 4.8,
+      "notes": "多地域部署，跨境数据同步"
+    }
+  },
+  {
+    "id": "ecommerce_case_4",
+    "source": "community_ecommerce",
+    "timestamp": "2025-10-26T10:15:00.000000",
+    "input": {
+      "total_data_size_gb": 300,
+      "table_count": 200,
+      "qps": 15000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 800000
+    },
+    "metadata": {
+      "industry": "O2O平台",
+      "scenario": "本地生活服务",
+      "verified": true,
+      "accuracy_rating": 4.4,
+      "notes": "地理位置优化，LBS查询优化"
+    }
+  },
+  {
+    "id": "ecommerce_case_5",
+    "source": "community_ecommerce",
+    "timestamp": "2025-10-26T10:20:00.000000",
+    "input": {
+      "total_data_size_gb": 150,
+      "table_count": 150,
+      "qps": 8000,
+      "tps": 1200,
+      "concurrent_connections": 300,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 18
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 3,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 450000
+    },
+    "metadata": {
+      "industry": "电商平台",
+      "scenario": "中小型电商",
+      "verified": true,
+      "accuracy_rating": 4.3,
+      "notes": "成本优化方案，适合初创企业"
+    }
+  }
+]

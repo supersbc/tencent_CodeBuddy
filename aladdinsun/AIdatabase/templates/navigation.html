@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 系统导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .card-description {
+            font-size: 1em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .card-badge.new {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card-badge.legacy {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 TDSQL 系统导航</h1>
+            <p>选择您需要的功能模块</p>
+        </div>
+
+        <div class="cards-grid">
+            <!-- 部署资源预测 -->
+            <a href="/predict" class="card">
+                <div class="card-icon">🔮</div>
+                <div class="card-title">部署资源预测</div>
+                <div class="card-description">
+                    智能分析业务需求，生成详细的部署方案<br>
+                    包含架构设计、设备清单、成本分析、网络拓扑等
+                </div>
+                <span class="card-badge new">最新版 v4.3</span>
+            </a>
+
+            <!-- 模型库管理 -->
+            <a href="/model_library" class="card">
+                <div class="card-icon">📚</div>
+                <div class="card-title">模型库管理</div>
+                <div class="card-description">
+                    管理自定义模型库<br>
+                    创建、编辑、删除行业专用模型配置
+                </div>
+                <span class="card-badge">专业版</span>
+            </a>
+
+            <!-- 学习系统 -->
+            <a href="/learning" class="card">
+                <div class="card-icon">🎓</div>
+                <div class="card-title">学习系统</div>
+                <div class="card-description">
+                    提交实际案例，训练模型<br>
+                    提升预测准确度和智能化水平
+                </div>
+                <span class="card-badge">智能版</span>
+            </a>
+
+            <!-- 融合版页面 -->
+            <a href="/unified" class="card">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">融合版页面</div>
+                <div class="card-description">
+                    手动输入与文件上传融合<br>
+                    v3.2版本的融合界面
+                </div>
+                <span class="card-badge legacy">v3.2</span>
+            </a>
+
+            <!-- 优化版页面 -->
+            <a href="/optimized" class="card">
+                <div class="card-icon">⚡</div>
+                <div class="card-title">优化版页面</div>
+                <div class="card-description">
+                    性能优化版本<br>
+                    更快的响应速度和更好的用户体验
+                </div>
+                <span class="card-badge legacy">v3.0</span>
+            </a>
+
+            <!-- 旧版页面 -->
+            <a href="/old" class="card">
+                <div class="card-icon">📜</div>
+                <div class="card-title">经典版页面</div>
+                <div class="card-description">
+                    原始版本界面<br>
+                    保留所有经典功能
+                </div>
+                <span class="card-badge legacy">经典版</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>TDSQL 部署资源预测系统 v4.3 | © 2025 TDSQL Team</p>
+        </div>
+    </div>
+</body>
+</html>
