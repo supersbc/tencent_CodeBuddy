@@ -1150,37 +1150,37 @@
             let serversHTML = '';
             if (equipment.servers && equipment.servers.length > 0) {
                 serversHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <thead>
-                            <tr style="background: #f5f7fa; border-bottom: 2px solid #667eea;">
-                                <th style="padding: 12px; text-align: left;">编号</th>
-                                <th style="padding: 12px; text-align: left;">角色</th>
-                                <th style="padding: 12px; text-align: left;">型号</th>
-                                <th style="padding: 12px; text-align: left;">CPU</th>
-                                <th style="padding: 12px; text-align: left;">内存</th>
-                                <th style="padding: 12px; text-align: left;">存储</th>
-                                <th style="padding: 12px; text-align: left;">网络</th>
-                                <th style="padding: 12px; text-align: right;">单价(¥)</th>
+                            <tr style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); border-bottom: 3px solid #1a252f;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">编号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">角色</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">CPU</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">内存</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">存储</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">网络</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${equipment.servers.map(s => `
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px;">${s.id}</td>
-                                    <td style="padding: 10px;">${s.role}</td>
-                                    <td style="padding: 10px;">${s.model}</td>
-                                    <td style="padding: 10px;">${s.cpu}</td>
-                                    <td style="padding: 10px;">${s.memory}</td>
-                                    <td style="padding: 10px;">${s.disk}</td>
-                                    <td style="padding: 10px;">${s.network}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(s.unit_price).toLocaleString()}</td>
+                            ${equipment.servers.map((s, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'}; transition: background 0.2s;">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${s.id}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.role}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.cpu}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.memory}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.disk}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.network}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(s.unit_price).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #f5f7fa; font-weight: bold;">
-                                <td colspan="7" style="padding: 12px; text-align: right;">服务器小计：</td>
-                                <td style="padding: 12px; text-align: right;">¥${Number(equipment.servers.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%); border-top: 2px solid #bdc3c7;">
+                                <td colspan="7" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">服务器小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.servers.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1191,35 +1191,35 @@
             let networkHTML = '';
             if (equipment.network_devices && equipment.network_devices.length > 0) {
                 networkHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <thead>
-                            <tr style="background: #f5f7fa; border-bottom: 2px solid #667eea;">
-                                <th style="padding: 12px; text-align: left;">编号</th>
-                                <th style="padding: 12px; text-align: left;">类型</th>
-                                <th style="padding: 12px; text-align: left;">型号</th>
-                                <th style="padding: 12px; text-align: left;">规格</th>
-                                <th style="padding: 12px; text-align: center;">数量</th>
-                                <th style="padding: 12px; text-align: right;">单价(¥)</th>
-                                <th style="padding: 12px; text-align: right;">小计(¥)</th>
+                            <tr style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); border-bottom: 3px solid #138d75;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">编号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">规格</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">数量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${equipment.network_devices.map(n => `
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px;">${n.id}</td>
-                                    <td style="padding: 10px;">${n.type}</td>
-                                    <td style="padding: 10px;">${n.model}</td>
-                                    <td style="padding: 10px;">${n.ports || n.throughput || '-'}</td>
-                                    <td style="padding: 10px; text-align: center;">${n.quantity}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(n.unit_price).toLocaleString()}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(n.total_price).toLocaleString()}</td>
+                            ${equipment.network_devices.map((n, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${n.id}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${n.type}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${n.model}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${n.ports || n.throughput || '-'}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${n.quantity}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(n.unit_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(n.total_price).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #f5f7fa; font-weight: bold;">
-                                <td colspan="6" style="padding: 12px; text-align: right;">网络设备小计：</td>
-                                <td style="padding: 12px; text-align: right;">¥${Number(equipment.network_devices.reduce((sum, n) => sum + n.total_price, 0)).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%); border-top: 2px solid #a5d6a7;">
+                                <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">网络设备小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.network_devices.reduce((sum, n) => sum + n.total_price, 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1230,35 +1230,35 @@
             let storageHTML = '';
             if (equipment.storage && equipment.storage.length > 0) {
                 storageHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <thead>
-                            <tr style="background: #f5f7fa; border-bottom: 2px solid #667eea;">
-                                <th style="padding: 12px; text-align: left;">类型</th>
-                                <th style="padding: 12px; text-align: left;">型号</th>
-                                <th style="padding: 12px; text-align: center;">容量(TB)</th>
-                                <th style="padding: 12px; text-align: center;">IOPS</th>
-                                <th style="padding: 12px; text-align: center;">吞吐量</th>
-                                <th style="padding: 12px; text-align: right;">单价/TB(¥)</th>
-                                <th style="padding: 12px; text-align: right;">小计(¥)</th>
+                            <tr style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); border-bottom: 3px solid #7d3c98;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">容量(TB)</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">IOPS</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">吞吐量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价/TB(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${equipment.storage.map(s => `
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px;">${s.type}</td>
-                                    <td style="padding: 10px;">${s.model}</td>
-                                    <td style="padding: 10px; text-align: center;">${s.capacity_tb}</td>
-                                    <td style="padding: 10px; text-align: center;">${Number(s.iops).toLocaleString()}</td>
-                                    <td style="padding: 10px; text-align: center;">${s.throughput}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(s.unit_price_per_tb).toLocaleString()}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(s.total_price).toLocaleString()}</td>
+                            ${equipment.storage.map((s, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.type}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${s.capacity_tb}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px;">${Number(s.iops).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px;">${s.throughput}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(s.unit_price_per_tb).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(s.total_price).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #f5f7fa; font-weight: bold;">
-                                <td colspan="6" style="padding: 12px; text-align: right;">存储设备小计：</td>
-                                <td style="padding: 12px; text-align: right;">¥${Number(equipment.storage.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #e8daef 0%, #d7bde2 100%); border-top: 2px solid #c39bd3;">
+                                <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">存储设备小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.storage.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1269,29 +1269,29 @@
             let infraHTML = '';
             if (equipment.infrastructure && equipment.infrastructure.length > 0) {
                 infraHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <thead>
-                            <tr style="background: #f5f7fa; border-bottom: 2px solid #667eea;">
-                                <th style="padding: 12px; text-align: left;">类型</th>
-                                <th style="padding: 12px; text-align: center;">数量/容量</th>
-                                <th style="padding: 12px; text-align: right;">单价(¥)</th>
-                                <th style="padding: 12px; text-align: right;">小计(¥)</th>
+                            <tr style="background: linear-gradient(135deg, #d35400 0%, #e67e22 100%); border-bottom: 3px solid #ba4a00;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">数量/容量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${equipment.infrastructure.map(i => `
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px;">${i.type}</td>
-                                    <td style="padding: 10px; text-align: center;">${i.quantity || i.capacity_kw || '-'}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(i.unit_price).toLocaleString()}</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(i.total_price).toLocaleString()}</td>
+                            ${equipment.infrastructure.map((i, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${i.type}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${i.quantity || i.capacity_kw || '-'}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(i.unit_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(i.total_price).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #f5f7fa; font-weight: bold;">
-                                <td colspan="3" style="padding: 12px; text-align: right;">基础设施小计：</td>
-                                <td style="padding: 12px; text-align: right;">¥${Number(equipment.infrastructure.reduce((sum, i) => sum + i.total_price, 0)).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #fdebd0 0%, #f8c471 100%); border-top: 2px solid #f5b041;">
+                                <td colspan="3" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">基础设施小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.infrastructure.reduce((sum, i) => sum + i.total_price, 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1302,109 +1302,109 @@
             let quotationHTML = '';
             if (costBreakdown.hardware || costBreakdown.software || costBreakdown.services) {
                 quotationHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <thead>
-                            <tr style="background: #667eea; color: white; border-bottom: 2px solid #667eea;">
-                                <th style="padding: 12px; text-align: left;">类别</th>
-                                <th style="padding: 12px; text-align: left;">项目</th>
-                                <th style="padding: 12px; text-align: right;">金额(¥)</th>
+                            <tr style="background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); color: white; border-bottom: 3px solid #1f618d;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类别</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">项目</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">金额(¥)</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${costBreakdown.hardware ? `
-                                <tr style="background: #f9f9f9; font-weight: bold;">
-                                    <td colspan="3" style="padding: 10px;">硬件成本</td>
+                                <tr style="background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%); font-weight: bold; border-bottom: 2px solid #bdc3c7;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">💻 硬件成本</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">服务器</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.hardware.servers || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">服务器</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.servers || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">网络设备</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.hardware.network_devices || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">网络设备</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.network_devices || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">存储设备</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.hardware.storage || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">存储设备</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.storage || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">基础设施</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.hardware.infrastructure || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 2px solid #bdc3c7; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">基础设施</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.infrastructure || 0).toLocaleString()}</td>
                                 </tr>
                             ` : ''}
                             ${costBreakdown.software ? `
-                                <tr style="background: #f9f9f9; font-weight: bold;">
-                                    <td colspan="3" style="padding: 10px;">软件许可证</td>
+                                <tr style="background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%); font-weight: bold; border-bottom: 2px solid #a5d6a7;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">📦 软件许可证</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">TDSQL企业版许可证</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.software.tdsql_license || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">TDSQL企业版许可证</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.tdsql_license || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">操作系统许可证</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.software.os_license || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">操作系统许可证</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.os_license || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">监控软件</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.software.monitoring || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">监控软件</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.monitoring || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">备份软件</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.software.backup || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 2px solid #a5d6a7; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">备份软件</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.backup || 0).toLocaleString()}</td>
                                 </tr>
                             ` : ''}
                             ${costBreakdown.services ? `
-                                <tr style="background: #f9f9f9; font-weight: bold;">
-                                    <td colspan="3" style="padding: 10px;">实施服务</td>
+                                <tr style="background: linear-gradient(135deg, #e8daef 0%, #d7bde2 100%); font-weight: bold; border-bottom: 2px solid #c39bd3;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">🛠️ 实施服务</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">部署实施费用</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.services.deployment || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">部署实施费用</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.services.deployment || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">技术培训</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.services.training || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 2px solid #c39bd3; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">技术培训</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.services.training || 0).toLocaleString()}</td>
                                 </tr>
                             ` : ''}
                             ${costBreakdown.annual_operating ? `
-                                <tr style="background: #f9f9f9; font-weight: bold;">
-                                    <td colspan="3" style="padding: 10px;">年度运营成本</td>
+                                <tr style="background: linear-gradient(135deg, #fdebd0 0%, #f8c471 100%); font-weight: bold; border-bottom: 2px solid #f5b041;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">📊 年度运营成本</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">电力成本</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.annual_operating.power || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">电力成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.power || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">制冷成本</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.annual_operating.cooling || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">制冷成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.cooling || 0).toLocaleString()}</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #e0e0e0;">
-                                    <td style="padding: 10px; padding-left: 30px;"></td>
-                                    <td style="padding: 10px;">维护成本</td>
-                                    <td style="padding: 10px; text-align: right;">${Number(costBreakdown.annual_operating.maintenance || 0).toLocaleString()}</td>
+                                <tr style="border-bottom: 2px solid #f5b041; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">维护成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.maintenance || 0).toLocaleString()}</td>
                                 </tr>
                             ` : ''}
                         </tbody>
                         <tfoot>
-                            <tr style="background: #667eea; color: white; font-weight: bold; font-size: 16px;">
-                                <td colspan="2" style="padding: 15px; text-align: right;">初始投资总额：</td>
-                                <td style="padding: 15px; text-align: right;">¥${Number(cost.initial_investment || 0).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); color: white; font-weight: bold; font-size: 16px; border-top: 3px solid #1f618d;">
+                                <td colspan="2" style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">💰 初始投资总额：</td>
+                                <td style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; font-size: 17px;">¥${Number(cost.initial_investment || 0).toLocaleString()}</td>
                             </tr>
-                            <tr style="background: #764ba2; color: white; font-weight: bold; font-size: 16px;">
-                                <td colspan="2" style="padding: 15px; text-align: right;">三年TCO总成本：</td>
-                                <td style="padding: 15px; text-align: right;">¥${Number(cost.three_year_tco || 0).toLocaleString()}</td>
+                            <tr style="background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%); color: white; font-weight: bold; font-size: 16px;">
+                                <td colspan="2" style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">📈 三年TCO总成本：</td>
+                                <td style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; font-size: 17px;">¥${Number(cost.three_year_tco || 0).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
