@@ -489,11 +489,11 @@ if __name__ == '__main__':
     print("\\n" + "=" * 60)
     print("🚀 TDSQL 部署资源预测系统 v4.3")
     print("=" * 60)
-    print(f"📍 主页面: http://127.0.0.1:5173")
-    print(f"📍 导航页面: http://127.0.0.1:5173/nav")
-    print(f"📍 部署预测: http://127.0.0.1:5173/predict (新版)")
-    print(f"📍 模型库管理: http://127.0.0.1:5173/model_library")
-    print(f"📍 学习系统: http://127.0.0.1:5173/learning")
+    print(f"📍 主页面: http://127.0.0.1:18080")
+    print(f"📍 导航页面: http://127.0.0.1:18080/nav")
+    print(f"📍 部署预测: http://127.0.0.1:18080/predict (新版)")
+    print(f"📍 模型库管理: http://127.0.0.1:18080/model_library")
+    print(f"📍 学习系统: http://127.0.0.1:18080/learning")
     print("=" * 60)
     print("✨ 功能模块:")
     print("  ✅ 部署资源预测 - 普通版/专业版双模式")
@@ -506,7 +506,7 @@ if __name__ == '__main__':
     
     app.run(
         host='0.0.0.0',
-        port=5173,
+        port=18080,
         debug=False,
         threaded=True,
         use_reloader=False
