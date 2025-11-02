@@ -1,0 +1,58 @@
+# Prometheus配置文件
+# 用于监控IoTDB集群性能指标
+
+global:
+  scrape_interval: 5s  # 每5秒采集一次指标
+  evaluation_interval: 5s
+  external_labels:
+    cluster: 'elog-iotdb'
+    experiment: 'e-log'
+
+# 告警规则文件
+rule_files:
+  # - "alerts.yml"
+
+# 采集目标配置
+scrape_configs:
+  # IoTDB数据节点1
+  - job_name: 'iotdb-datanode-1'
+    static_configs:
+      - targets: ['iotdb-datanode-1:9091']
+        labels:
+          node: 'datanode-1'
+          role: 'datanode'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # IoTDB数据节点2
+  - job_name: 'iotdb-datanode-2'
+    static_configs:
+      - targets: ['iotdb-datanode-2:9091']
+        labels:
+          node: 'datanode-2'
+          role: 'datanode'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # IoTDB数据节点3
+  - job_name: 'iotdb-datanode-3'
+    static_configs:
+      - targets: ['iotdb-datanode-3:9091']
+        labels:
+          node: 'datanode-3'
+          role: 'datanode'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+# 远程写入配置（可选）
+# remote_write:
+#   - url: "http://remote-storage:9009/api/v1/push"
+
+# 远程读取配置（可选）
+# remote_read:
+#   - url: "http://remote-storage:9009/api/v1/read"
