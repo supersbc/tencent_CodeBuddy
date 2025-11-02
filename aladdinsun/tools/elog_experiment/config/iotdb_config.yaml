@@ -1,0 +1,315 @@
+# Apache IoTDB 配置文件
+# 用于E-Log实验的IoTDB集群配置
+
+# 集群基本配置
+cluster:
+  name: "elog-iotdb-cluster"
+  mode: "cluster"  # standalone 或 cluster
+  
+  # 节点配置
+  config_node:
+    host: "localhost"
+    port: 10710
+    internal_port: 10720
+    consensus_port: 10730
+  
+  data_nodes:
+    - id: 1
+      host: "localhost"
+      rpc_port: 6667
+      internal_port: 10730
+      mpp_data_exchange_port: 10740
+      schema_region_consensus_port: 10750
+      data_region_consensus_port: 10760
+    
+    - id: 2
+      host: "localhost"
+      rpc_port: 6668
+      internal_port: 10731
+      mpp_data_exchange_port: 10741
+      schema_region_consensus_port: 10751
+      data_region_consensus_port: 10761
+    
+    - id: 3
+      host: "localhost"
+      rpc_port: 6669
+      internal_port: 10732
+      mpp_data_exchange_port: 10742
+      schema_region_consensus_port: 10752
+      data_region_consensus_port: 10762
+
+# 连接配置
+connection:
+  username: "root"
+  password: "root"
+  fetch_size: 10000
+  timeout_ms: 60000
+  enable_compression: true
+  zone_id: "Asia/Shanghai"
+
+# 存储配置
+storage:
+  # 数据目录
+  data_dirs:
+    - "/data/iotdb/data1"
+    - "/data/iotdb/data2"
+    - "/data/iotdb/data3"
+  
+  # WAL目录
+  wal_dir: "/data/iotdb/wal"
+  
+  # 系统目录
+  system_dir: "/data/iotdb/system"
+  
+  # 索引目录
+  index_root_dir: "/data/iotdb/index"
+  
+  # 时序文件大小
+  tsfile_size_threshold: 536870912  # 512MB
+  
+  # 内存配置
+  schema_memory_allocate: "512M"
+  storage_memory_allocate: "8G"
+  write_memory_proportion: 0.5
+
+# 日志配置（E-Log实验的关键配置）
+logging:
+  # 日志级别
+  log_level: "INFO"  # TRACE, DEBUG, INFO, WARN, ERROR
+  
+  # 日志文件配置
+  log_file:
+    max_file_size: "100MB"
+    max_backup_index: 10
+    total_size_cap: "1GB"
+  
+  # E-Log特定配置
+  elog:
+    # 是否启用弹性日志
+    enable_elastic_logging: true
+    
+    # 默认日志级别（正常运行时）
+    default_level: "WARN"
+    
+    # 异常检测时的日志级别
+    anomaly_detection_level: "INFO"
+    
+    # 异常诊断时的日志级别
+    anomaly_diagnosis_level: "DEBUG"
+    
+    # 日志缓冲区大小
+    buffer_size: 8192
+    
+    # 是否启用异步日志
+    async_logging: true
+    
+    # 日志采样率（正常运行时）
+    sampling_rate: 0.1  # 10%
+    
+    # 关键包的日志配置
+    package_log_levels:
+      "org.apache.iotdb.db.engine": "INFO"
+      "org.apache.iotdb.db.query": "WARN"
+      "org.apache.iotdb.tsfile": "WARN"
+      "org.apache.iotdb.db.metadata": "INFO"
+      "org.apache.iotdb.db.wal": "WARN"
+
+# 性能配置
+performance:
+  # 写入配置
+  write:
+    # 批量写入大小
+    batch_size: 1000
+    
+    # 写入线程数
+    write_threads: 8
+    
+    # 是否启用WAL
+    enable_wal: true
+    
+    # WAL缓冲区大小
+    wal_buffer_size: 16777216  # 16MB
+    
+    # 刷盘策略
+    flush_policy: "async"  # sync, async
+    
+    # 刷盘间隔（毫秒）
+    flush_interval_ms: 1000
+  
+  # 查询配置
+  query:
+    # 查询线程数
+    query_threads: 16
+    
+    # 查询超时时间（毫秒）
+    query_timeout_ms: 60000
+    
+    # 结果集缓存大小
+    result_cache_size: 1000
+  
+  # 压缩配置
+  compaction:
+    # 是否启用压缩
+    enable_compaction: true
+    
+    # 压缩线程数
+    compaction_threads: 4
+    
+    # 压缩策略
+    compaction_strategy: "LEVEL"  # LEVEL, SIZE_TIERED
+    
+    # 压缩间隔（秒）
+    compaction_interval_sec: 60
+
+# 监控配置
+monitoring:
+  # 是否启用监控
+  enable_monitoring: true
+  
+  # 监控端口
+  monitor_port: 8181
+  
+  # Prometheus配置
+  prometheus:
+    enable: true
+    port: 9091
+  
+  # 指标收集间隔（秒）
+  metrics_collection_interval: 5
+  
+  # 收集的指标
+  metrics:
+    - "write_throughput"
+    - "query_latency"
+    - "cpu_usage"
+    - "memory_usage"
+    - "disk_io"
+    - "network_io"
+    - "compaction_count"
+    - "flush_count"
+    - "log_size"
+
+# E-Log实验特定配置
+elog_experiment:
+  # 实验模式
+  mode: "experiment"  # normal, experiment
+  
+  # 是否启用Class LPS Adjuster
+  enable_class_lps_adjuster: true
+  
+  # LPS Adjuster端口
+  lps_adjuster_port: 8888
+  
+  # 是否记录详细的性能指标
+  detailed_metrics: true
+  
+  # 指标输出目录
+  metrics_output_dir: "./data/metrics"
+  
+  # 日志输出目录
+  log_output_dir: "./data/logs"
+  
+  # 是否启用实时监控
+  enable_realtime_monitoring: true
+  
+  # 监控仪表板端口
+  dashboard_port: 8080
+
+# Docker配置（用于容器化部署）
+docker:
+  # 镜像
+  image: "apache/iotdb:1.2.2"
+  
+  # 容器配置
+  containers:
+    config_node:
+      name: "iotdb-confignode"
+      ports:
+        - "10710:10710"
+        - "10720:10720"
+      volumes:
+        - "./data/confignode:/iotdb/data"
+      environment:
+        - "cn_internal_address=iotdb-confignode"
+        - "cn_internal_port=10710"
+        - "cn_consensus_port=10720"
+    
+    data_node_1:
+      name: "iotdb-datanode-1"
+      ports:
+        - "6667:6667"
+      volumes:
+        - "./data/datanode1:/iotdb/data"
+      environment:
+        - "dn_rpc_address=iotdb-datanode-1"
+        - "dn_rpc_port=6667"
+        - "dn_seed_config_node=iotdb-confignode:10710"
+    
+    data_node_2:
+      name: "iotdb-datanode-2"
+      ports:
+        - "6668:6667"
+      volumes:
+        - "./data/datanode2:/iotdb/data"
+      environment:
+        - "dn_rpc_address=iotdb-datanode-2"
+        - "dn_rpc_port=6667"
+        - "dn_seed_config_node=iotdb-confignode:10710"
+    
+    data_node_3:
+      name: "iotdb-datanode-3"
+      ports:
+        - "6669:6667"
+      volumes:
+        - "./data/datanode3:/iotdb/data"
+      environment:
+        - "dn_rpc_address=iotdb-datanode-3"
+        - "dn_rpc_port=6667"
+        - "dn_seed_config_node=iotdb-confignode:10710"
+
+# 资源限制（用于实验）
+resource_limits:
+  # CPU限制
+  cpu:
+    max_cores: 8
+    quota: 0.8  # 80%
+  
+  # 内存限制
+  memory:
+    max_heap_size: "8G"
+    max_direct_memory: "4G"
+  
+  # 磁盘限制
+  disk:
+    max_disk_usage: "100G"
+    io_priority: "high"
+
+# 备份与恢复
+backup:
+  # 是否启用自动备份
+  enable_auto_backup: false
+  
+  # 备份目录
+  backup_dir: "/data/iotdb/backup"
+  
+  # 备份间隔（小时）
+  backup_interval_hours: 24
+  
+  # 保留备份数量
+  max_backup_count: 7
+
+# 安全配置
+security:
+  # 是否启用认证
+  enable_authentication: true
+  
+  # 是否启用授权
+  enable_authorization: false
+  
+  # SSL/TLS配置
+  ssl:
+    enable: false
+    keystore_path: ""
+    keystore_password: ""
+    truststore_path: ""
+    truststore_password: ""

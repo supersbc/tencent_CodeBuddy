@@ -1,0 +1,214 @@
+# E-Log 实验配置文件
+
+# 实验基本信息
+experiment:
+  name: "elog_iotdb_tsbs"
+  description: "E-Log实验：IoTDB + TSBS，测试不同触发阈值"
+  output_dir: "./data/results"
+  seed: 42
+
+# IoTDB配置
+iotdb:
+  version: "1.2.2"
+  data_nodes: 3
+  config_node: 1
+  host: "localhost"
+  port: 6667
+  username: "root"
+  password: "root"
+
+# TSBS基准测试配置
+tsbs:
+  use_case: "iot"
+  scale: 100  # 设备数量
+  timestamp_start: "2024-01-01T00:00:00Z"
+  timestamp_end: "2024-01-02T00:00:00Z"
+  seed: 123
+  log_interval: 10  # 秒
+
+# 异常注入配置
+anomaly_injection:
+  enabled: true
+  types:
+    - name: "cpu_saturation"
+      duration: 300  # 秒
+      intensity: 0.8
+    - name: "memory_shortage"
+      duration: 300
+      intensity: 0.9
+    - name: "network_delay"
+      duration: 300
+      delay_ms: 100
+    - name: "excessive_export"
+      duration: 300
+      rate_multiplier: 5
+    - name: "excessive_import"
+      duration: 300
+      rate_multiplier: 5
+    - name: "too_many_compactions"
+      duration: 300
+      compaction_threads: 20
+    - name: "frequent_flush"
+      duration: 300
+      flush_interval_ms: 100
+  
+  # 注入间隔
+  normal_duration: 600  # 正常运行时间（秒）
+  anomaly_duration: 300  # 异常持续时间（秒）
+
+# 日志解析配置
+log_parsing:
+  parser: "drain"
+  depth: 4
+  similarity_threshold: 0.4
+  max_children: 100
+
+# 特征提取配置
+feature_extraction:
+  window_size: 5  # 秒
+  step_size: 1    # 秒
+  
+  # Word2Vec配置
+  word2vec:
+    vector_size: 100
+    window: 5
+    min_count: 1
+    workers: 4
+    epochs: 10
+
+# 模型配置
+model:
+  # LSTM配置
+  lstm:
+    hidden_size: 64
+    num_layers: 2
+    dropout: 0.2
+    bidirectional: false
+  
+  # Self-Attention配置
+  attention:
+    num_heads: 4
+    dropout: 0.1
+  
+  # 训练配置
+  training:
+    batch_size: 32
+    learning_rate: 0.001
+    epochs: 50
+    early_stopping_patience: 10
+    optimizer: "adam"
+    loss_function: "cross_entropy"
+
+# LPS Reducer配置（强化学习）
+lps_reducer:
+  enabled: true
+  
+  # 奖励函数参数
+  alpha: 100  # 准确率权重
+  beta: 1     # 日志减少权重
+  
+  # 强化学习配置
+  rl:
+    algorithm: "ppo"
+    learning_rate: 0.0003
+    n_steps: 2048
+    batch_size: 64
+    n_epochs: 10
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_range: 0.2
+    ent_coef: 0.01
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+  
+  # 互信息计算
+  mutual_information:
+    enabled: true
+    update_interval: 100  # 每100步更新一次
+
+# Cascade LPS Discriminator配置
+cascade_discriminator:
+  enabled: true
+  trace_up_levels: 3    # 向上追踪层数
+  trace_down_levels: 2  # 向下追踪层数
+
+# 触发阈值实验配置
+threshold_experiment:
+  enabled: true
+  theta_values: [0.00, 0.01, 0.02, 0.03, 0.05, 0.10]
+  # θ = β / (α + β)
+  # 对于每个θ，固定α=100，计算β
+
+# 不确定性触发实验配置
+uncertainty_trigger:
+  enabled: true
+  methods:
+    - name: "confidence_based"
+      threshold: 0.8
+    - name: "entropy_based"
+      threshold: 0.5
+    - name: "variance_based"
+      threshold: 0.3
+
+# 评估指标配置
+metrics:
+  # 日志体积指标
+  log_volume:
+    - "log_generation_rate"  # MB/s
+    - "total_log_size"        # GB
+    - "compression_ratio"
+  
+  # 吞吐量指标
+  throughput:
+    - "write_throughput"      # records/s
+    - "cpu_usage"             # %
+    - "memory_usage"          # %
+    - "disk_io"               # MB/s
+  
+  # 准确率指标
+  accuracy:
+    detection:
+      - "precision"
+      - "recall"
+      - "f1_score"
+      - "auc_roc"
+    diagnosis:
+      - "macro_precision"
+      - "macro_recall"
+      - "macro_f1"
+      - "confusion_matrix"
+
+# 可视化配置
+visualization:
+  enabled: true
+  plot_types:
+    - "3d_curves"           # 三维曲线图
+    - "threshold_comparison" # 阈值对比图
+    - "confusion_matrix"    # 混淆矩阵
+    - "time_series"         # 时间序列图
+  
+  save_format: ["png", "pdf"]
+  dpi: 300
+
+# 对比实验配置
+baseline_comparison:
+  enabled: true
+  methods:
+    - name: "LogRobust"
+      log_level: "info"
+    - name: "PLELog"
+      log_level: "info"
+    - name: "LogAnomaly"
+      log_level: "info"
+    - name: "LogKG"
+      log_level: "info"
+    - name: "Cloud19"
+      log_level: "info"
+    - name: "E-Log"
+      log_level: "dynamic"
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/experiment.log"

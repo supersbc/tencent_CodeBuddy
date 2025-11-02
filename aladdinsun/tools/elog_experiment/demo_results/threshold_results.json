@@ -1,0 +1,134 @@
+[
+  {
+    "theta": 0.0,
+    "alpha": 100,
+    "beta": 0,
+    "log_volume": {
+      "log_generation_rate": 0.16,
+      "total_log_size": 5.0,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 30004,
+      "cpu_usage": 50.1,
+      "memory_usage": 55.1
+    },
+    "accuracy": {
+      "detection_f1": 0.8669,
+      "diagnosis_f1": 0.7402,
+      "detection_precision": 0.8505,
+      "detection_recall": 0.8145
+    },
+    "timestamp": "2025-11-02T19:20:37.761660"
+  },
+  {
+    "theta": 0.01,
+    "alpha": 100,
+    "beta": 1.0101010101010102,
+    "log_volume": {
+      "log_generation_rate": 0.18,
+      "total_log_size": 5.1,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 29906,
+      "cpu_usage": 50.2,
+      "memory_usage": 55.2
+    },
+    "accuracy": {
+      "detection_f1": 0.8627,
+      "diagnosis_f1": 0.75,
+      "detection_precision": 0.8736,
+      "detection_recall": 0.8143
+    },
+    "timestamp": "2025-11-02T19:20:37.761707"
+  },
+  {
+    "theta": 0.02,
+    "alpha": 100,
+    "beta": 2.0408163265306123,
+    "log_volume": {
+      "log_generation_rate": 0.19,
+      "total_log_size": 5.21,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 29833,
+      "cpu_usage": 50.6,
+      "memory_usage": 55.4
+    },
+    "accuracy": {
+      "detection_f1": 0.8709,
+      "diagnosis_f1": 0.7647,
+      "detection_precision": 0.8585,
+      "detection_recall": 0.8513
+    },
+    "timestamp": "2025-11-02T19:20:37.761781"
+  },
+  {
+    "theta": 0.03,
+    "alpha": 100,
+    "beta": 3.0927835051546393,
+    "log_volume": {
+      "log_generation_rate": 0.18,
+      "total_log_size": 5.28,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 29733,
+      "cpu_usage": 50.8,
+      "memory_usage": 55.6
+    },
+    "accuracy": {
+      "detection_f1": 0.8485,
+      "diagnosis_f1": 0.7817,
+      "detection_precision": 0.8667,
+      "detection_recall": 0.8194
+    },
+    "timestamp": "2025-11-02T19:20:37.761822"
+  },
+  {
+    "theta": 0.05,
+    "alpha": 100,
+    "beta": 5.2631578947368425,
+    "log_volume": {
+      "log_generation_rate": 0.19,
+      "total_log_size": 5.52,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 29555,
+      "cpu_usage": 51.5,
+      "memory_usage": 56.1
+    },
+    "accuracy": {
+      "detection_f1": 0.8617,
+      "diagnosis_f1": 0.7558,
+      "detection_precision": 0.8689,
+      "detection_recall": 0.8473
+    },
+    "timestamp": "2025-11-02T19:20:37.761856"
+  },
+  {
+    "theta": 0.1,
+    "alpha": 100,
+    "beta": 11.11111111111111,
+    "log_volume": {
+      "log_generation_rate": 0.2,
+      "total_log_size": 6.02,
+      "compression_ratio": 0.5
+    },
+    "throughput": {
+      "write_throughput": 29081,
+      "cpu_usage": 53.1,
+      "memory_usage": 57.0
+    },
+    "accuracy": {
+      "detection_f1": 0.8736,
+      "diagnosis_f1": 0.7946,
+      "detection_precision": 0.8896,
+      "detection_recall": 0.8485
+    },
+    "timestamp": "2025-11-02T19:20:37.761894"
+  }
+]
