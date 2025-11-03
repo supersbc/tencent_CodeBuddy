@@ -1,0 +1,250 @@
+
+========================================
+IoTDB 生产级集群后台部署开始
+========================================
+
+[2025-11-02 19:53:25] 部署日志: /data/workspace/tencent_CodeBuddy/aladdinsun/tools/iotdb/deployment_20251102_195325.log
+[2025-11-02 19:53:25] 部署报告: /data/workspace/tencent_CodeBuddy/aladdinsun/tools/iotdb/deployment_report_20251102_195325.md
+
+========================================
+阶段 1/7: 环境检查
+========================================
+
+[2025-11-02 19:53:25] ERROR: Java 未安装，开始安装...
+TencentOS Server 3 - TencentOS                   32 kB/s | 3.0 kB     00:00    
+TencentOS Server 3 - Updates                    110 kB/s | 4.1 kB     00:00    
+TencentOS Server 3 - Updates                     14 MB/s |  47 MB     00:03    
+TencentOS Server 3 - TencentOS-AppStream        185 kB/s | 4.7 kB     00:00    
+TencentOS Server 3 - Base                       109 kB/s | 3.9 kB     00:00    
+TencentOS Server 3 - AppStream                   74 kB/s | 4.2 kB     00:00    
+TencentOS Server 3 - Extras                      48 kB/s | 3.0 kB     00:00    
+TencentOS Server 3 - Extras                     5.6 MB/s | 1.5 MB     00:00    
+TencentOS Server 3 - PowerTools                 131 kB/s | 4.3 kB     00:00    
+Extra Packages for TencentOS Server 3 - x86_64   58 kB/s | 4.0 kB     00:00    
+Extra Packages for TencentOS Server 3 - x86_64   31 MB/s |  14 MB     00:00    
+Extra Packages for TencentOS Server 3 Modular -  37 kB/s | 3.0 kB     00:00    
+Dependencies resolved.
+===================================================================================================
+ Package                     Arch    Version                             Repository            Size
+===================================================================================================
+Installing:
+ java-11-openjdk             x86_64  1:11.0.25.0.9-2.tl3                 Updates              476 k
+ java-11-openjdk-devel       x86_64  1:11.0.25.0.9-2.tl3                 Updates              3.4 M
+Installing dependencies:
+ adwaita-cursor-theme        noarch  3.28.0-3.tl3                        Updates              646 k
+ adwaita-icon-theme          noarch  3.28.0-3.tl3                        Updates               11 M
+ alsa-lib                    x86_64  1.2.10-2.tl3                        Updates              500 k
+ at-spi2-atk                 x86_64  2.26.2-1.tl3                        Updates               88 k
+ at-spi2-core                x86_64  2.28.0-1.tl3                        Updates              168 k
+ cairo-gobject               x86_64  1.15.12-6.tl3                       Updates               32 k
+ colord-libs                 x86_64  1.4.2-1.tl3                         Updates              234 k
+ copy-jdk-configs            noarch  4.0-2.tl3                           Updates               29 k
+ glib-networking             x86_64  2.56.1-1.1.tl3                      TencentOS            153 k
+ gsettings-desktop-schemas   x86_64  3.32.0-6.tl3                        Updates              632 k
+ java-11-openjdk-headless    x86_64  1:11.0.25.0.9-2.tl3                 Updates               42 M
+ javapackages-filesystem     noarch  5.3.0-2.module+el8.6.0+249+2ba25844 TencentOS-AppStream   29 k
+ json-glib                   x86_64  1.4.4-1.tl3                         TencentOS            143 k
+ lcms2                       x86_64  2.9-2.tl3                           Updates              164 k
+ libepoxy                    x86_64  1.5.8-1.tl3                         Updates              224 k
+ libgusb                     x86_64  0.3.0-1.tl3                         TencentOS             48 k
+ libmodman                   x86_64  2.0.1-17.tl3                        TencentOS             35 k
+ libproxy                    x86_64  0.4.15-5.5.tl3                      Updates               72 k
+ libsoup                     x86_64  2.62.3-9.tl3                        Updates              425 k
+ libwayland-client           x86_64  1.21.0-1.tl3                        Updates               40 k
+ libwayland-cursor           x86_64  1.21.0-1.tl3                        Updates               25 k
+ libwayland-egl              x86_64  1.21.0-1.tl3                        Updates               18 k
+ lksctp-tools                x86_64  1.0.18-3.tl3                        TencentOS             98 k
+ rest                        x86_64  0.8.1-2.tl3                         Updates               69 k
+ tzdata-java                 noarch  2025b-1.tl3.ap.2                    Updates              186 k
+ xorg-x11-fonts-Type1        noarch  7.5-19.tl3                          Updates              521 k
+Installing weak dependencies:
+ abattis-cantarell-fonts     noarch  0.0.25-6.tl3                        Updates              154 k
+ dconf                       x86_64  0.28.0-4.tl3                        Updates              107 k
+ dejavu-sans-mono-fonts      noarch  2.35-7.tl3                          Updates              446 k
+ gtk3                        x86_64  3.22.30-12.tl3                      Updates              4.5 M
+Enabling module streams:
+ javapackages-runtime                201801                                                        
+
+Transaction Summary
+===================================================================================================
+Install  32 Packages
+
+Total download size: 67 M
+Installed size: 241 M
+Downloading Packages:
+(1/32): libgusb-0.3.0-1.tl3.x86_64.rpm          373 kB/s |  48 kB     00:00    
+(2/32): json-glib-1.4.4-1.tl3.x86_64.rpm        985 kB/s | 143 kB     00:00    
+(3/32): glib-networking-2.56.1-1.1.tl3.x86_64.r 1.0 MB/s | 153 kB     00:00    
+(4/32): libmodman-2.0.1-17.tl3.x86_64.rpm       856 kB/s |  35 kB     00:00    
+(5/32): lksctp-tools-1.0.18-3.tl3.x86_64.rpm    1.5 MB/s |  98 kB     00:00    
+(6/32): abattis-cantarell-fonts-0.0.25-6.tl3.no 2.4 MB/s | 154 kB     00:00    
+(7/32): alsa-lib-1.2.10-2.tl3.x86_64.rpm        6.9 MB/s | 500 kB     00:00    
+(8/32): adwaita-cursor-theme-3.28.0-3.tl3.noarc 4.9 MB/s | 646 kB     00:00    
+(9/32): at-spi2-atk-2.26.2-1.tl3.x86_64.rpm     2.4 MB/s |  88 kB     00:00    
+(10/32): at-spi2-core-2.28.0-1.tl3.x86_64.rpm   3.2 MB/s | 168 kB     00:00    
+(11/32): cairo-gobject-1.15.12-6.tl3.x86_64.rpm 828 kB/s |  32 kB     00:00    
+(12/32): adwaita-icon-theme-3.28.0-3.tl3.noarch  55 MB/s |  11 MB     00:00    
+(13/32): copy-jdk-configs-4.0-2.tl3.noarch.rpm  491 kB/s |  29 kB     00:00    
+(14/32): colord-libs-1.4.2-1.tl3.x86_64.rpm     3.3 MB/s | 234 kB     00:00    
+(15/32): dconf-0.28.0-4.tl3.x86_64.rpm          2.9 MB/s | 107 kB     00:00    
+(16/32): dejavu-sans-mono-fonts-2.35-7.tl3.noar 8.7 MB/s | 446 kB     00:00    
+(17/32): gsettings-desktop-schemas-3.32.0-6.tl3 8.7 MB/s | 632 kB     00:00    
+(18/32): gtk3-3.22.30-12.tl3.x86_64.rpm          68 MB/s | 4.5 MB     00:00    
+(19/32): java-11-openjdk-11.0.25.0.9-2.tl3.x86_ 7.2 MB/s | 476 kB     00:00    
+(20/32): lcms2-2.9-2.tl3.x86_64.rpm             4.0 MB/s | 164 kB     00:00    
+(21/32): libepoxy-1.5.8-1.tl3.x86_64.rpm        5.2 MB/s | 224 kB     00:00    
+(22/32): java-11-openjdk-devel-11.0.25.0.9-2.tl  22 MB/s | 3.4 MB     00:00    
+(23/32): libproxy-0.4.15-5.5.tl3.x86_64.rpm     1.7 MB/s |  72 kB     00:00    
+(24/32): libwayland-client-1.21.0-1.tl3.x86_64. 1.0 MB/s |  40 kB     00:00    
+(25/32): libsoup-2.62.3-9.tl3.x86_64.rpm        7.7 MB/s | 425 kB     00:00    
+(26/32): libwayland-cursor-1.21.0-1.tl3.x86_64. 714 kB/s |  25 kB     00:00    
+(27/32): libwayland-egl-1.21.0-1.tl3.x86_64.rpm 511 kB/s |  18 kB     00:00    
+(28/32): java-11-openjdk-headless-11.0.25.0.9-2 139 MB/s |  42 MB     00:00    
+(29/32): rest-0.8.1-2.tl3.x86_64.rpm            778 kB/s |  69 kB     00:00    
+(30/32): tzdata-java-2025b-1.tl3.ap.2.noarch.rp 2.1 MB/s | 186 kB     00:00    
+(31/32): xorg-x11-fonts-Type1-7.5-19.tl3.noarch  13 MB/s | 521 kB     00:00    
+(32/32): javapackages-filesystem-5.3.0-2.module 771 kB/s |  29 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            77 MB/s |  67 MB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Running scriptlet: copy-jdk-configs-4.0-2.tl3.noarch                      1/1 
+  Running scriptlet: java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_64    1/1 
+  Preparing        :                                                        1/1 
+  Installing       : libwayland-client-1.21.0-1.tl3.x86_64                 1/32 
+  Installing       : libwayland-cursor-1.21.0-1.tl3.x86_64                 2/32 
+  Installing       : javapackages-filesystem-5.3.0-2.module+el8.6.0+249    3/32 
+  Installing       : xorg-x11-fonts-Type1-7.5-19.tl3.noarch                4/32 
+  Running scriptlet: xorg-x11-fonts-Type1-7.5-19.tl3.noarch                4/32 
+  Installing       : tzdata-java-2025b-1.tl3.ap.2.noarch                   5/32 
+  Installing       : libwayland-egl-1.21.0-1.tl3.x86_64                    6/32 
+  Installing       : libepoxy-1.5.8-1.tl3.x86_64                           7/32 
+  Installing       : lcms2-2.9-2.tl3.x86_64                                8/32 
+  Running scriptlet: lcms2-2.9-2.tl3.x86_64                                8/32 
+  Installing       : dejavu-sans-mono-fonts-2.35-7.tl3.noarch              9/32 
+  Installing       : dconf-0.28.0-4.tl3.x86_64                            10/32 
+  Installing       : copy-jdk-configs-4.0-2.tl3.noarch                    11/32 
+  Installing       : cairo-gobject-1.15.12-6.tl3.x86_64                   12/32 
+  Installing       : at-spi2-core-2.28.0-1.tl3.x86_64                     13/32 
+  Running scriptlet: at-spi2-core-2.28.0-1.tl3.x86_64                     13/32 
+  Installing       : at-spi2-atk-2.26.2-1.tl3.x86_64                      14/32 
+  Running scriptlet: at-spi2-atk-2.26.2-1.tl3.x86_64                      14/32 
+  Installing       : alsa-lib-1.2.10-2.tl3.x86_64                         15/32 
+  Running scriptlet: alsa-lib-1.2.10-2.tl3.x86_64                         15/32 
+  Installing       : adwaita-cursor-theme-3.28.0-3.tl3.noarch             16/32 
+  Installing       : adwaita-icon-theme-3.28.0-3.tl3.noarch               17/32 
+  Installing       : abattis-cantarell-fonts-0.0.25-6.tl3.noarch          18/32 
+  Installing       : gsettings-desktop-schemas-3.32.0-6.tl3.x86_64        19/32 
+  Installing       : lksctp-tools-1.0.18-3.tl3.x86_64                     20/32 
+  Running scriptlet: lksctp-tools-1.0.18-3.tl3.x86_64                     20/32 
+  Installing       : java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_6   21/32 
+  Running scriptlet: java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_6   21/32 
+  Installing       : libmodman-2.0.1-17.tl3.x86_64                        22/32 
+  Running scriptlet: libmodman-2.0.1-17.tl3.x86_64                        22/32 
+  Installing       : libproxy-0.4.15-5.5.tl3.x86_64                       23/32 
+  Running scriptlet: libproxy-0.4.15-5.5.tl3.x86_64                       23/32 
+  Installing       : glib-networking-2.56.1-1.1.tl3.x86_64                24/32 
+  Installing       : libsoup-2.62.3-9.tl3.x86_64                          25/32 
+  Installing       : rest-0.8.1-2.tl3.x86_64                              26/32 
+  Running scriptlet: rest-0.8.1-2.tl3.x86_64                              26/32 
+  Installing       : libgusb-0.3.0-1.tl3.x86_64                           27/32 
+  Installing       : colord-libs-1.4.2-1.tl3.x86_64                       28/32 
+  Installing       : json-glib-1.4.4-1.tl3.x86_64                         29/32 
+  Installing       : gtk3-3.22.30-12.tl3.x86_64                           30/32 
+  Installing       : java-11-openjdk-1:11.0.25.0.9-2.tl3.x86_64           31/32 
+  Running scriptlet: java-11-openjdk-1:11.0.25.0.9-2.tl3.x86_64           31/32 
+  Installing       : java-11-openjdk-devel-1:11.0.25.0.9-2.tl3.x86_64     32/32 
+  Running scriptlet: java-11-openjdk-devel-1:11.0.25.0.9-2.tl3.x86_64     32/32 
+  Running scriptlet: dconf-0.28.0-4.tl3.x86_64                            32/32 
+  Running scriptlet: copy-jdk-configs-4.0-2.tl3.noarch                    32/32 
+  Running scriptlet: java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_6   32/32 
+  Running scriptlet: java-11-openjdk-1:11.0.25.0.9-2.tl3.x86_64           32/32 
+  Running scriptlet: java-11-openjdk-devel-1:11.0.25.0.9-2.tl3.x86_64     32/32 
+  Running scriptlet: adwaita-icon-theme-3.28.0-3.tl3.noarch               32/32 
+  Verifying        : glib-networking-2.56.1-1.1.tl3.x86_64                 1/32 
+  Verifying        : json-glib-1.4.4-1.tl3.x86_64                          2/32 
+  Verifying        : libgusb-0.3.0-1.tl3.x86_64                            3/32 
+  Verifying        : libmodman-2.0.1-17.tl3.x86_64                         4/32 
+  Verifying        : lksctp-tools-1.0.18-3.tl3.x86_64                      5/32 
+  Verifying        : abattis-cantarell-fonts-0.0.25-6.tl3.noarch           6/32 
+  Verifying        : adwaita-cursor-theme-3.28.0-3.tl3.noarch              7/32 
+  Verifying        : adwaita-icon-theme-3.28.0-3.tl3.noarch                8/32 
+  Verifying        : alsa-lib-1.2.10-2.tl3.x86_64                          9/32 
+  Verifying        : at-spi2-atk-2.26.2-1.tl3.x86_64                      10/32 
+  Verifying        : at-spi2-core-2.28.0-1.tl3.x86_64                     11/32 
+  Verifying        : cairo-gobject-1.15.12-6.tl3.x86_64                   12/32 
+  Verifying        : colord-libs-1.4.2-1.tl3.x86_64                       13/32 
+  Verifying        : copy-jdk-configs-4.0-2.tl3.noarch                    14/32 
+  Verifying        : dconf-0.28.0-4.tl3.x86_64                            15/32 
+  Verifying        : dejavu-sans-mono-fonts-2.35-7.tl3.noarch             16/32 
+  Verifying        : gsettings-desktop-schemas-3.32.0-6.tl3.x86_64        17/32 
+  Verifying        : gtk3-3.22.30-12.tl3.x86_64                           18/32 
+  Verifying        : java-11-openjdk-1:11.0.25.0.9-2.tl3.x86_64           19/32 
+  Verifying        : java-11-openjdk-devel-1:11.0.25.0.9-2.tl3.x86_64     20/32 
+  Verifying        : java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_6   21/32 
+  Verifying        : lcms2-2.9-2.tl3.x86_64                               22/32 
+  Verifying        : libepoxy-1.5.8-1.tl3.x86_64                          23/32 
+  Verifying        : libproxy-0.4.15-5.5.tl3.x86_64                       24/32 
+  Verifying        : libsoup-2.62.3-9.tl3.x86_64                          25/32 
+  Verifying        : libwayland-client-1.21.0-1.tl3.x86_64                26/32 
+  Verifying        : libwayland-cursor-1.21.0-1.tl3.x86_64                27/32 
+  Verifying        : libwayland-egl-1.21.0-1.tl3.x86_64                   28/32 
+  Verifying        : rest-0.8.1-2.tl3.x86_64                              29/32 
+  Verifying        : tzdata-java-2025b-1.tl3.ap.2.noarch                  30/32 
+  Verifying        : xorg-x11-fonts-Type1-7.5-19.tl3.noarch               31/32 
+  Verifying        : javapackages-filesystem-5.3.0-2.module+el8.6.0+249   32/32 
+
+Installed:
+  abattis-cantarell-fonts-0.0.25-6.tl3.noarch                                   
+  adwaita-cursor-theme-3.28.0-3.tl3.noarch                                      
+  adwaita-icon-theme-3.28.0-3.tl3.noarch                                        
+  alsa-lib-1.2.10-2.tl3.x86_64                                                  
+  at-spi2-atk-2.26.2-1.tl3.x86_64                                               
+  at-spi2-core-2.28.0-1.tl3.x86_64                                              
+  cairo-gobject-1.15.12-6.tl3.x86_64                                            
+  colord-libs-1.4.2-1.tl3.x86_64                                                
+  copy-jdk-configs-4.0-2.tl3.noarch                                             
+  dconf-0.28.0-4.tl3.x86_64                                                     
+  dejavu-sans-mono-fonts-2.35-7.tl3.noarch                                      
+  glib-networking-2.56.1-1.1.tl3.x86_64                                         
+  gsettings-desktop-schemas-3.32.0-6.tl3.x86_64                                 
+  gtk3-3.22.30-12.tl3.x86_64                                                    
+  java-11-openjdk-1:11.0.25.0.9-2.tl3.x86_64                                    
+  java-11-openjdk-devel-1:11.0.25.0.9-2.tl3.x86_64                              
+  java-11-openjdk-headless-1:11.0.25.0.9-2.tl3.x86_64                           
+  javapackages-filesystem-5.3.0-2.module+el8.6.0+249+2ba25844.noarch            
+  json-glib-1.4.4-1.tl3.x86_64                                                  
+  lcms2-2.9-2.tl3.x86_64                                                        
+  libepoxy-1.5.8-1.tl3.x86_64                                                   
+  libgusb-0.3.0-1.tl3.x86_64                                                    
+  libmodman-2.0.1-17.tl3.x86_64                                                 
+  libproxy-0.4.15-5.5.tl3.x86_64                                                
+  libsoup-2.62.3-9.tl3.x86_64                                                   
+  libwayland-client-1.21.0-1.tl3.x86_64                                         
+  libwayland-cursor-1.21.0-1.tl3.x86_64                                         
+  libwayland-egl-1.21.0-1.tl3.x86_64                                            
+  lksctp-tools-1.0.18-3.tl3.x86_64                                              
+  rest-0.8.1-2.tl3.x86_64                                                       
+  tzdata-java-2025b-1.tl3.ap.2.noarch                                           
+  xorg-x11-fonts-Type1-7.5-19.tl3.noarch                                        
+
+Complete!
+[2025-11-02 19:53:55] Java 安装完成
+[2025-11-02 19:53:55] Java 版本: openjdk version "11.0.25" 2024-10-15 LTS
+[2025-11-02 19:53:55] CPU 核心数: 64
+[2025-11-02 19:53:55] 总内存: 247G
+[2025-11-02 19:53:55] 可用磁盘空间: 1444G
+
+========================================
+阶段 2/7: 系统参数优化
+========================================
+
+[2025-11-02 19:53:55] 文件描述符限制: 65535
+
+========================================
+阶段 3/7: 创建目录结构
+========================================
+
