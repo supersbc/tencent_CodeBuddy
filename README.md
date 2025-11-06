@@ -81,7 +81,7 @@ python app.py
 
 ### 4. 访问系统
 
-浏览器访问: **http://localhost:5000**
+浏览器访问: **https://aladdinsun.devcloud.woa.com/**
 
 ## 📊 核心功能详解
 
