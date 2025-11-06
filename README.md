@@ -208,7 +208,7 @@ python app.py
 
 如有问题,请联系:
 - **项目负责人**: aladdinsun
-- **企业微信**: [联系方式]
+- **电话**: 15271909262
 - **邮箱**: aladdinsun@tencent.com
 
 ## 📄 许可证
