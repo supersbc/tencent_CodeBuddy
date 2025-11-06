@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# 临时文件
+*.log
+*.tmp
+*.out
+.DS_Store
+Thumbs.db
+
+# 上传文件(保留目录结构,忽略具体文件)
+uploads/*.png
+uploads/*.jpg
+uploads/*.jpeg
+uploads/*.gif
+uploads/*.pdf
+uploads/*.xlsx
+uploads/*.xls
+uploads/*.json
+uploads/*.xml
+
+# 测试文件
+test_*.html
+test_architecture.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+
+# 环境配置
+.env
+config_local.py
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini

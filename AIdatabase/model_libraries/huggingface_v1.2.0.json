@@ -1,0 +1,157 @@
+[
+  {
+    "id": "huggingface_case_1",
+    "source": "huggingface_models",
+    "timestamp": "2025-10-26T11:00:00.000000",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 300,
+      "qps": 25000,
+      "tps": 4000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 6,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1800000
+    },
+    "metadata": {
+      "industry": "AI/ML平台",
+      "scenario": "模型训练数据存储",
+      "verified": true,
+      "accuracy_rating": 4.8,
+      "notes": "深度学习优化，支持大规模数据集"
+    }
+  },
+  {
+    "id": "huggingface_case_2",
+    "source": "huggingface_models",
+    "timestamp": "2025-10-26T11:05:00.000000",
+    "input": {
+      "total_data_size_gb": 1200,
+      "table_count": 600,
+      "qps": 40000,
+      "tps": 6000,
+      "concurrent_connections": 1500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 25
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 12,
+      "shard_count": 10,
+      "replica_count": 2,
+      "proxy_count": 5,
+      "estimated_cost": 3200000
+    },
+    "metadata": {
+      "industry": "数据分析",
+      "scenario": "大数据平台",
+      "verified": true,
+      "accuracy_rating": 4.7,
+      "notes": "支持复杂查询，OLAP优化"
+    }
+  },
+  {
+    "id": "huggingface_case_3",
+    "source": "huggingface_models",
+    "timestamp": "2025-10-26T11:10:00.000000",
+    "input": {
+      "total_data_size_gb": 300,
+      "table_count": 200,
+      "qps": 18000,
+      "tps": 3000,
+      "concurrent_connections": 600,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 15
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 5,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 950000
+    },
+    "metadata": {
+      "industry": "SaaS平台",
+      "scenario": "多租户系统",
+      "verified": true,
+      "accuracy_rating": 4.6,
+      "notes": "租户隔离，数据安全，弹性扩展"
+    }
+  },
+  {
+    "id": "huggingface_case_4",
+    "source": "huggingface_models",
+    "timestamp": "2025-10-26T11:15:00.000000",
+    "input": {
+      "total_data_size_gb": 800,
+      "table_count": 450,
+      "qps": 35000,
+      "tps": 5500,
+      "concurrent_connections": 1200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 22
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 10,
+      "shard_count": 8,
+      "replica_count": 2,
+      "proxy_count": 4,
+      "estimated_cost": 2600000
+    },
+    "metadata": {
+      "industry": "物联网",
+      "scenario": "IoT数据采集",
+      "verified": true,
+      "accuracy_rating": 4.7,
+      "notes": "时序数据优化，高吞吐写入"
+    }
+  },
+  {
+    "id": "huggingface_case_5",
+    "source": "huggingface_models",
+    "timestamp": "2025-10-26T11:20:00.000000",
+    "input": {
+      "total_data_size_gb": 150,
+      "table_count": 120,
+      "qps": 10000,
+      "tps": 1800,
+      "concurrent_connections": 400,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 12
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 3,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 480000
+    },
+    "metadata": {
+      "industry": "教育科技",
+      "scenario": "在线学习平台",
+      "verified": true,
+      "accuracy_rating": 4.5,
+      "notes": "用户行为分析，学习数据追踪"
+    }
+  }
+]

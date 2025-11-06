@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 架构智能预测系统 v3.2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #64748b;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: bold;
+        }
+        .tab:hover { color: #667eea; }
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        .tab-content.active { display: block; }
+        
+        /* 主输入区域 */
+        .main-input-area {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        /* 文件上传辅助区 */
+        .file-helper {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px dashed #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .file-helper h3 {
+            color: #1e40af;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .file-helper p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .upload-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .upload-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        .file-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+            display: none;
+        }
+        .file-info.show {
+            display: block;
+        }
+        .file-info p {
+            color: #1e293b;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        .extract-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .extract-btn:hover {
+            background: #059669;
+        }
+        
+        /* 表单区域 */
+        .form-area {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+        }
+        .form-area h2 {
+            color: #1e293b;
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .mode-selector {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .mode-selector label {
+            margin-right: 25px;
+            cursor: pointer;
+            color: #475569;
+            font-size: 15px;
+        }
+        .mode-selector input[type="radio"] {
+            margin-right: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #1e293b;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group small {
+            color: #64748b;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .form-section h3 {
+            color: #1e293b;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        /* 结果区域 */
+        .result-section {
+            margin-top: 30px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            display: none;
+            border: 2px solid #e5e7eb;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .result-section h2 {
+            color: #1e293b;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .result-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        .result-card h3 {
+            color: #1e293b;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .result-card p {
+            color: #475569;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-badge {
+            display: inline-block;
+            background: #d1fae5;
+            color: #059669;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .info-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        details {
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        summary {
+            color: #3b82f6;
+            font-weight: 500;
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 6px;
+        }
+        summary:hover {
+            background: #e0f2fe;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        
+        /* 其他标签页样式 */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .library-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        .library-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+        .back-nav-btn {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-nav-btn">← 返回导航</a>
+        <h1>🚀 TDSQL 架构智能预测系统</h1>
+        <p class="subtitle">v3.2 融合版 - 智能填充 · 手动补充 · 精准推荐</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('input')">✍️ 参数输入</button>
+            <button class="tab" onclick="switchTab('library')">📚 案例库</button>
+            <button class="tab" onclick="switchTab('learning')">🧠 自我学习</button>
+        </div>
+
+        <!-- 参数输入（融合版） -->
+        <div id="input-tab" class="tab-content active">
+            <div class="main-input-area">
+                <!-- 左侧：表单区域 -->
+                <div class="form-area">
+                    <h2>
+                        <span>📝</span>
+                        <span>业务参数配置</span>
+                    </h2>
+                    
+                    <div class="mode-selector">
+                        <label>
+                            <input type="radio" name="inputMode" value="simplified" checked onchange="loadParameterForm()">
+                            <strong>简化模式</strong> - 快速评估（6个核心参数）
+                        </label>
+                        <label>
+                            <input type="radio" name="inputMode" value="advanced" onchange="loadParameterForm()">
+                            <strong>专业模式</strong> - 详细规划（20+ 参数）
+                        </label>
+                    </div>
+                    
+                    <div id="formContainer">
+                        <!-- 表单将动态加载 -->
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button onclick="clearForm()" class="btn btn-secondary">
+                            🔄 清空表单
+                        </button>
+                        <button onclick="submitAnalysis()" class="btn btn-primary">
+                            🔍 开始分析
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 右侧：文件上传辅助 -->
+                <div>
+                    <div class="file-helper">
+                        <h3>📁 智能文件识别</h3>
+                        <p>上传文件自动提取参数，快速填充表单，节省手动输入时间</p>
+                        
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            📤 选择文件上传
+                        </button>
+                        
+                        <p style="font-size: 12px; color: #94a3b8;">
+                            支持格式：Excel (.xlsx, .xls)<br>
+                            JSON (.json) | 图片 (.png, .jpg)<br>
+                            PDF (.pdf)
+                        </p>
+                        
+                        <input type="file" id="fileInput" style="display: none;" 
+                               accept=".xlsx,.xls,.json,.png,.jpg,.jpeg,.gif,.bmp,.pdf"
+                               onchange="handleFileUpload(this.files[0])">
+                        
+                        <div class="file-info" id="fileInfo">
+                            <p><strong>📄 文件：</strong><span id="fileName"></span></p>
+                            <p><strong>📊 大小：</strong><span id="fileSize"></span></p>
+                            <p><strong>🔍 识别方式：</strong><span id="fileMethod"></span></p>
+                            <button class="extract-btn" onclick="extractAndFill()">
+                                ✨ 提取并填充表单
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 快捷操作 -->
+                    <div style="margin-top: 20px; padding: 20px; background: #fef3c7; border-radius: 12px; border: 2px solid #fbbf24;">
+                        <h3 style="color: #92400e; font-size: 16px; margin-bottom: 10px;">💡 使用提示</h3>
+                        <ul style="color: #78350f; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+                            <li>上传文件后点击"提取并填充"</li>
+                            <li>系统自动识别并填入参数</li>
+                            <li>可手动修改或补充参数</li>
+                            <li>点击"开始分析"获取推荐</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 下载模板 -->
+                    <div style="margin-top: 20px; padding: 20px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <h3 style="color: #1e293b; font-size: 16px; margin-bottom: 10px;">📥 Excel 模板</h3>
+                        <p style="color: #64748b; font-size: 13px; margin-bottom: 15px;">
+                            下载标准模板，填写后上传可快速导入参数
+                        </p>
+                        <a href="/download/template" class="btn btn-secondary" style="display: block; text-align: center; text-decoration: none;">
+                            下载模板文件
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 结果展示区 -->
+            <div class="result-section" id="resultSection">
+                <!-- 结果将动态显示 -->
+            </div>
+        </div>
+
+        <!-- 案例库 -->
+        <div id="library-tab" class="tab-content">
+            <h2>📚 模型库案例</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">浏览和使用预训练模型库</p>
+            <div id="libraryList" class="library-grid"></div>
+        </div>
+
+        <!-- 自我学习 -->
+        <div id="learning-tab" class="tab-content">
+            <h2>🧠 自我学习系统</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">提交实际案例，帮助系统持续优化</p>
+            
+            <div id="learningStats" style="margin-bottom: 30px;"></div>
+            
+            <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                <h3 style="margin-bottom: 20px;">提交新案例</h3>
+                <form id="caseForm" onsubmit="submitCase(event)">
+                    <div class="form-group">
+                        <label>案例名称 <span class="required">*</span></label>
+                        <input type="text" id="caseName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>输入参数 (JSON格式) <span class="required">*</span></label>
+                        <textarea id="caseInput" rows="6" required placeholder='{"industry": "金融", "qps": 5000, ...}'></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>实际架构结果 (JSON格式) <span class="required">*</span></label>
+                        <textarea id="caseOutput" rows="6" required placeholder='{"type": "分布式", "nodes": 3, ...}'></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">提交案例</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let extractedData = null;
+        let currentFile = null;
+        
+        // 标签页切换
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'library') {
+                loadLibraries();
+            } else if (tabName === 'learning') {
+                loadLearningStats();
+            }
+        }
+        
+        // 加载参数表单
+        function loadParameterForm() {
+            const mode = document.querySelector('input[name="inputMode"]:checked').value;
+            const container = document.getElementById('formContainer');
+            container.innerHTML = '<p style="color: #64748b;">加载中...</p>';
+            
+            fetch('/api/parameter_config?mode=' + mode)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        container.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                        return;
+                    }
+                    
+                    let html = '<form id="paramForm">';
+                    
+                    (data.groups || []).forEach(group => {
+                        html += `<div class="form-section">
+                            <h3>${group.name}</h3>
+                            <div class="form-grid">`;
+                        
+                        (group.fields || []).forEach(field => {
+                            html += '<div class="form-group">';
+                            html += generateFieldHTML(field);
+                            html += '</div>';
+                        });
+                        
+                        html += '</div></div>';
+                    });
+                    
+                    html += '</form>';
+                    container.innerHTML = html;
+                    
+                    // 如果有提取的数据，自动填充
+                    if (extractedData) {
+                        fillFormWithData(extractedData);
+                    }
+                })
+                .catch(err => {
+                    container.innerHTML = `<p style="color: red;">加载失败: ${err.message}</p>`;
+                });
+        }
+        
+        // 生成表单字段HTML
+        function generateFieldHTML(field) {
+            let html = `<label>${field.label}`;
+            if (field.required) html += ' <span class="required">*</span>';
+            html += '</label>';
+            
+            if (field.type === 'select') {
+                html += `<select name="${field.name}" ${field.required ? 'required' : ''}>`;
+                (field.options || []).forEach(opt => {
+                    const selected = opt.value === field.default ? 'selected' : '';
+                    html += `<option value="${opt.value}" ${selected}>${opt.label}</option>`;
+                });
+                html += '</select>';
+            } else if (field.type === 'number') {
+                html += `<input type="number" name="${field.name}" 
+                    value="${field.default || ''}" 
+                    ${field.min !== undefined ? 'min="' + field.min + '"' : ''}
+                    ${field.max !== undefined ? 'max="' + field.max + '"' : ''}
+                    ${field.step !== undefined ? 'step="' + field.step + '"' : ''}
+                    ${field.required ? 'required' : ''}>`;
+            } else if (field.type === 'checkbox') {
+                html += `<label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" name="${field.name}" ${field.default ? 'checked' : ''}>
+                    <span>${field.description || ''}</span>
+                </label>`;
+            } else if (field.type === 'textarea') {
+                html += `<textarea name="${field.name}" rows="3" ${field.required ? 'required' : ''}>${field.default || ''}</textarea>`;
+            } else {
+                html += `<input type="text" name="${field.name}" value="${field.default || ''}" ${field.required ? 'required' : ''}>`;
+            }
+            
+            if (field.description && field.type !== 'checkbox') {
+                html += `<small>${field.description}</small>`;
+            }
+            
+            return html;
+        }
+        
+        // 文件上传处理
+        function handleFileUpload(file) {
+            if (!file) return;
+            
+            currentFile = file;
+            
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            document.getElementById('fileMethod').textContent = '识别中...';
+            document.getElementById('fileInfo').classList.add('show');
+            
+            // 显示上传状态
+            const fileHelper = document.querySelector('.file-helper');
+            fileHelper.style.borderColor = '#10b981';
+            fileHelper.style.background = 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)';
+        }
+        
+        // 提取并填充表单
+        function extractAndFill() {
+            if (!currentFile) return;
+            
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            
+            showLoading('正在识别文件内容...');
+            
+            fetch('/api/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.error) {
+                    alert('文件识别失败: ' + data.error);
+                    return;
+                }
+                
+                // 保存提取的数据
+                if (data.extracted_data && data.extracted_data.data) {
+                    extractedData = data.extracted_data.data;
+                    
+                    // 更新识别方式
+                    document.getElementById('fileMethod').textContent = data.extracted_data.method || '文件解析';
+                    
+                    // 填充表单
+                    fillFormWithData(extractedData);
+                    
+                    // 显示成功提示
+                    showNotification('✅ 参数已自动填充，请检查并补充', 'success');
+                } else {
+                    alert('未能从文件中提取到参数');
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                alert('处理失败: ' + err.message);
+            });
+        }
+        
+        // 填充表单数据
+        function fillFormWithData(data) {
+            const form = document.getElementById('paramForm');
+            if (!form) return;
+            
+            Object.keys(data).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = !!data[key];
+                    } else {
+                        input.value = data[key];
+                    }
+                    // 高亮显示已填充的字段
+                    input.style.background = '#d1fae5';
+                    setTimeout(() => {
+                        input.style.background = '';
+                    }, 2000);
+                }
+            });
+        }
+        
+        // 清空表单
+        function clearForm() {
+            const form = document.getElementById('paramForm');
+            if (form) {
+                form.reset();
+                extractedData = null;
+                currentFile = null;
+                document.getElementById('fileInfo').classList.remove('show');
+                
+                const fileHelper = document.querySelector('.file-helper');
+                fileHelper.style.borderColor = '#3b82f6';
+                fileHelper.style.background = 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)';
+                
+                showNotification('表单已清空', 'info');
+            }
+        }
+        
+        // 提交分析
+        function submitAnalysis() {
+            const form = document.getElementById('paramForm');
+            if (!form) return;
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            showLoading('正在分析参数...');
+            
+            fetch('/api/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                hideLoading();
+                displayResult(result);
+            })
+            .catch(err => {
+                hideLoading();
+                alert('分析失败: ' + err.message);
+            });
+        }
+        
+        // 显示结果
+        function displayResult(data) {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('show');
+            
+            let html = '<h2>📊 分析结果</h2>';
+            
+            html += '<div class="success-badge">✅ 分析完成</div>';
+            
+            // 架构推荐
+            if (data.architecture) {
+                html += '<div class="result-card">';
+                html += '<h3>🏗️ 推荐架构</h3>';
+                html += `<p><strong>架构类型:</strong> ${data.architecture.type || data.architecture.architecture_type || 'N/A'}</p>`;
+                html += `<p><strong>节点数量:</strong> ${data.architecture.nodes || data.architecture.node_count || 'N/A'}</p>`;
+                html += `<p><strong>分片数量:</strong> ${data.architecture.shard_count || 'N/A'}</p>`;
+                html += `<p><strong>副本数量:</strong> ${data.architecture.replica_count || 'N/A'}</p>`;
+                if (data.architecture.confidence) {
+                    html += `<p><strong>置信度:</strong> ${(data.architecture.confidence * 100).toFixed(2)}%</p>`;
+                }
+                html += '</div>';
+            }
+            
+            // 资源配置
+            if (data.resources) {
+                html += '<div class="result-card">';
+                html += '<h3>💻 资源配置</h3>';
+                html += `<p><strong>CPU:</strong> ${data.resources.cpu_cores || 'N/A'} 核</p>`;
+                html += `<p><strong>内存:</strong> ${data.resources.memory_gb || 'N/A'} GB</p>`;
+                html += `<p><strong>存储:</strong> ${data.resources.storage_gb || 'N/A'} GB</p>`;
+                html += `<p><strong>网络:</strong> ${data.resources.network_bandwidth || 'N/A'}</p>`;
+                html += '</div>';
+            }
+            
+            // 优化建议
+            if (data.recommendations && data.recommendations.length > 0) {
+                html += '<div class="result-card">';
+                html += '<h3>💡 优化建议</h3>';
+                data.recommendations.forEach(rec => {
+                    html += `<p>• <strong>${rec.title}:</strong> ${rec.content}</p>`;
+                });
+                html += '</div>';
+            }
+            
+            // 完整数据
+            html += '<details>';
+            html += '<summary>🔍 查看完整分析数据</summary>';
+            html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            html += '</details>';
+            
+            resultSection.innerHTML = html;
+            
+            // 滚动到结果区域
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // 加载案例库
+        function loadLibraries() {
+            fetch('/api/model_libraries')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('libraryList');
+                    if (data.libraries && data.libraries.length > 0) {
+                        let html = '';
+                        data.libraries.forEach(lib => {
+                            html += `<div class="library-card">
+                                <h3>${lib.name}</h3>
+                                <p style="color: #64748b; margin: 10px 0;">${lib.description}</p>
+                                <p><strong>案例数:</strong> ${lib.case_count}</p>
+                                <p><strong>准确率:</strong> ${lib.accuracy}</p>
+                                <button onclick="useLibrary('${lib.id}')" class="btn btn-primary" style="margin-top: 15px; width: 100%;">
+                                    使用此模型
+                                </button>
+                            </div>`;
+                        });
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<p style="color: #64748b;">暂无可用模型库</p>';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('libraryList').innerHTML = `<p style="color: red;">加载失败: ${err.message}</p>`;
+                });
+        }
+        
+        // 使用模型库
+        function useLibrary(id) {
+            alert('模型库 ' + id + ' 已应用');
+        }
+        
+        // 加载学习统计
+        function loadLearningStats() {
+            fetch('/api/training_stats')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('learningStats');
+                    container.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; color: #667eea; font-weight: bold;">${data.total_cases || 0}</div>
+                                <div style="color: #64748b; margin-top: 5px;">训练案例</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; color: #10b981; font-weight: bold;">${data.accuracy || 'N/A'}</div>
+                                <div style="color: #64748b; margin-top: 5px;">准确率</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 32px; color: #f59e0b; font-weight: bold;">${data.model_version || 'N/A'}</div>
+                                <div style="color: #64748b; margin-top: 5px;">模型版本</div>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 提交案例
+        function submitCase(event) {
+            event.preventDefault();
+            
+            const data = {
+                name: document.getElementById('caseName').value,
+                input: JSON.parse(document.getElementById('caseInput').value),
+                output: JSON.parse(document.getElementById('caseOutput').value)
+            };
+            
+            fetch('/api/submit_case', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert('案例提交成功！');
+                    document.getElementById('caseForm').reset();
+                    loadLearningStats();
+                } else {
+                    alert('提交失败: ' + result.error);
+                }
+            })
+            .catch(err => {
+                alert('提交失败: ' + err.message);
+            });
+        }
+        
+        // 工具函数
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+        
+        function showLoading(message = '处理中...') {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('show');
+            resultSection.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        function hideLoading() {
+            // 由displayResult处理
+        }
+        
+        function showNotification(message, type = 'info') {
+            const badge = type === 'success' ? 'success-badge' : 'info-badge';
+            const notification = document.createElement('div');
+            notification.className = badge;
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('load', () => {
+            loadParameterForm();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 部署资源预测系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* 返回导航按钮 */
+        .back-nav-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-nav-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateX(-5px);
+        }
+
+        /* 版本切换 */
+        .version-switch {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .version-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .version-tab {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .version-tab:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .version-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .version-tab h3 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .version-tab p {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* 模板下载区域 */
+        .template-download {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .template-download-btn {
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .template-download-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .template-info {
+            flex: 1;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* 主卡片 */
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .input-section {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.5em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            margin-top: 5px;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* 文件上传区域 */
+        .file-upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .file-upload-area.dragover {
+            background: #e7f3ff;
+            border-color: #007bff;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        /* 按钮 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 结果区域 */
+        .results-section {
+            display: none;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .result-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item label {
+            font-size: 0.9em;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .result-item value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .back-to-top:hover {
+            background: #764ba2;
+            transform: translateY(-5px);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+
+        /* 表格样式优化 */
+        table {
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th {
+            font-weight: 600;
+            color: white;
+        }
+
+        table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .header, .back-nav-btn, .version-switch, .back-to-top {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .input-section {
+                display: none !important;
+            }
+
+            .results-section {
+                display: block !important;
+                box-shadow: none;
+            }
+
+            .result-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin-bottom: 20px;
+            }
+
+            table {
+                page-break-inside: avoid;
+                font-size: 11px;
+            }
+
+            .btn {
+                display: none !important;
+            }
+
+            h2, h3 {
+                color: #333 !important;
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .version-tabs {
+                flex-direction: column;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="back-nav-btn">
+                <span>←</span>
+                <span>返回导航</span>
+            </a>
+            <h1>🚀 TDSQL 部署资源预测系统</h1>
+            <p>智能分析 · 精准预测 · 专业建议</p>
+        </div>
+
+        <!-- 版本切换 -->
+        <div class="version-switch">
+            <div class="version-tabs">
+                <div class="version-tab active" data-version="basic">
+                    <h3>📝 普通版</h3>
+                    <p>快速预测，适合一般场景</p>
+                </div>
+                <div class="version-tab" data-version="professional">
+                    <h3>⚙️ 专业版</h3>
+                    <p>详细配置，适合复杂场景</p>
+                </div>
+            </div>
+
+            <div class="template-download">
+                <button class="template-download-btn" id="downloadTemplateBtn">
+                    <span>📥</span>
+                    <span>下载Excel模板</span>
+                </button>
+                <div class="template-info">
+                    <strong>提示：</strong>下载模板后填写参数，然后上传Excel文件自动填充表单
+                </div>
+            </div>
+        </div>
+
+        <!-- 主卡片 -->
+        <div class="main-card">
+            <div class="input-section">
+                <!-- 文件上传区域 -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-icon">📤</span>
+                        <span>Excel文件上传（可选）</span>
+                    </div>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div style="font-size: 3em; margin-bottom: 10px;">📄</div>
+                        <p style="font-size: 1.1em; margin-bottom: 5px;">点击或拖拽Excel文件到此处</p>
+                        <p style="font-size: 0.9em; color: #999;">支持 .xlsx 和 .xls 格式</p>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                    </div>
+                    <div class="file-info" id="fileInfo">
+                        <strong>✅ 文件已上传：</strong><span id="fileName"></span>
+                        <button onclick="clearFile()" style="margin-left: 15px; padding: 5px 15px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">清除</button>
+                    </div>
+                </div>
+
+                <!-- 普通版表单 -->
+                <form id="basicForm" style="display: block;">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">📊</span>
+                            <span>数据规模</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>数据规模 (GB) *</label>
+                                <input type="number" name="total_data_size_gb" required min="1">
+                                <small>预计存储的总数据量</small>
+                            </div>
+                            <div class="form-group">
+                                <label>表数量 *</label>
+                                <input type="number" name="table_count" required min="1">
+                                <small>数据库中的表总数</small>
+                            </div>
+                            <div class="form-group">
+                                <label>数据增长率 (%/年) *</label>
+                                <input type="number" name="data_growth_rate" required min="0" max="100">
+                                <small>预计每年数据增长的百分比</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">⚡</span>
+                            <span>性能需求</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>QPS (每秒查询数) *</label>
+                                <input type="number" name="qps" required min="1">
+                                <small>系统每秒处理的查询请求数</small>
+                            </div>
+                            <div class="form-group">
+                                <label>TPS (每秒事务数) *</label>
+                                <input type="number" name="tps" required min="1">
+                                <small>系统每秒处理的事务数</small>
+                            </div>
+                            <div class="form-group">
+                                <label>并发连接数 *</label>
+                                <input type="number" name="concurrent_connections" required min="1">
+                                <small>同时连接到数据库的最大连接数</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🛡️</span>
+                            <span>高可用配置</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_high_availability" id="ha">
+                                <label for="ha">需要高可用架构</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_disaster_recovery" id="dr">
+                                <label for="dr">需要异地灾备</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_read_write_split" id="rw">
+                                <label for="rw">需要读写分离</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">🚀 开始预测</button>
+                        <button type="reset" class="btn btn-secondary">🔄 重置表单</button>
+                    </div>
+                </form>
+
+                <!-- 专业版表单 -->
+                <form id="professionalForm" style="display: none;">
+                    <!-- 基础信息 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">📋</span>
+                            <span>基础信息</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>项目名称</label>
+                                <input type="text" name="project_name">
+                            </div>
+                            <div class="form-group">
+                                <label>行业类型</label>
+                                <select name="industry_type">
+                                    <option value="">请选择</option>
+                                    <option value="finance">金融</option>
+                                    <option value="ecommerce">电商</option>
+                                    <option value="gaming">游戏</option>
+                                    <option value="internet">互联网</option>
+                                    <option value="government">政务</option>
+                                    <option value="healthcare">医疗</option>
+                                    <option value="education">教育</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>业务场景</label>
+                                <input type="text" name="business_scenario" placeholder="如：核心交易、数据分析等">
+                            </div>
+                            <div class="form-group">
+                                <label>预计上线时间</label>
+                                <input type="date" name="launch_date">
+                            </div>
+                            <div class="form-group">
+                                <label>预算范围 (万元)</label>
+                                <input type="number" name="budget_range" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据规模 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">📊</span>
+                            <span>数据规模</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>当前数据规模 (GB) *</label>
+                                <input type="number" name="current_data_size_gb" required min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>预计3年后数据规模 (GB)</label>
+                                <input type="number" name="future_data_size_gb" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>数据库数量</label>
+                                <input type="number" name="database_count" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>表数量 *</label>
+                                <input type="number" name="table_count" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>单表最大记录数</label>
+                                <input type="number" name="max_table_rows" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>平均行大小 (字节)</label>
+                                <input type="number" name="avg_row_size" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>数据增长率 (%/年) *</label>
+                                <input type="number" name="data_growth_rate" required min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>数据保留期限 (年)</label>
+                                <input type="number" name="data_retention_years" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 性能需求 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">⚡</span>
+                            <span>性能需求</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>日常QPS *</label>
+                                <input type="number" name="normal_qps" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>峰值QPS</label>
+                                <input type="number" name="peak_qps" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>日常TPS *</label>
+                                <input type="number" name="normal_tps" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>峰值TPS</label>
+                                <input type="number" name="peak_tps" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>平均并发连接数 *</label>
+                                <input type="number" name="avg_concurrent_connections" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>峰值并发连接数</label>
+                                <input type="number" name="peak_concurrent_connections" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>平均响应时间要求 (ms)</label>
+                                <input type="number" name="avg_response_time" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>99分位响应时间要求 (ms)</label>
+                                <input type="number" name="p99_response_time" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>读写比例</label>
+                                <input type="text" name="read_write_ratio" placeholder="如：7:3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高可用与灾备 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🛡️</span>
+                            <span>高可用与灾备</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_high_availability" id="ha_pro">
+                                <label for="ha_pro">需要高可用架构</label>
+                            </div>
+                            <div class="form-group">
+                                <label>可用性要求</label>
+                                <select name="availability_requirement">
+                                    <option value="">请选择</option>
+                                    <option value="99.9">99.9%</option>
+                                    <option value="99.99">99.99%</option>
+                                    <option value="99.999">99.999%</option>
+                                </select>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_disaster_recovery" id="dr_pro">
+                                <label for="dr_pro">需要异地灾备</label>
+                            </div>
+                            <div class="form-group">
+                                <label>RPO (恢复点目标)</label>
+                                <input type="text" name="rpo" placeholder="如：0、5分钟、1小时">
+                            </div>
+                            <div class="form-group">
+                                <label>RTO (恢复时间目标)</label>
+                                <input type="text" name="rto" placeholder="如：5分钟、30分钟">
+                            </div>
+                            <div class="form-group">
+                                <label>灾备中心数量</label>
+                                <input type="number" name="dr_center_count" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>主备切换方式</label>
+                                <select name="failover_mode">
+                                    <option value="">请选择</option>
+                                    <option value="auto">自动</option>
+                                    <option value="manual">手动</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 架构偏好 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🏗️</span>
+                            <span>架构偏好</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_read_write_split" id="rw_pro">
+                                <label for="rw_pro">需要读写分离</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_sharding" id="sharding">
+                                <label for="sharding">需要分库分表</label>
+                            </div>
+                            <div class="form-group">
+                                <label>分片策略</label>
+                                <input type="text" name="sharding_strategy" placeholder="如：按用户ID、按时间等">
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_cache" id="cache">
+                                <label for="cache">需要缓存层</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_mq" id="mq">
+                                <label for="mq">需要消息队列</label>
+                            </div>
+                            <div class="form-group">
+                                <label>部署方式</label>
+                                <select name="deployment_mode">
+                                    <option value="">请选择</option>
+                                    <option value="physical">物理机</option>
+                                    <option value="vm">虚拟机</option>
+                                    <option value="container">容器</option>
+                                    <option value="cloud_native">云原生</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>网络隔离要求</label>
+                                <input type="text" name="network_isolation" placeholder="如：VPC、专线等">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 安全与合规 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🔒</span>
+                            <span>安全与合规</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_encryption" id="encryption">
+                                <label for="encryption">需要数据加密</label>
+                            </div>
+                            <div class="form-group">
+                                <label>加密方式</label>
+                                <select name="encryption_type">
+                                    <option value="">请选择</option>
+                                    <option value="transport">传输加密</option>
+                                    <option value="storage">存储加密</option>
+                                    <option value="full">全加密</option>
+                                </select>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_audit" id="audit">
+                                <label for="audit">需要审计日志</label>
+                            </div>
+                            <div class="form-group">
+                                <label>合规要求</label>
+                                <input type="text" name="compliance" placeholder="如：等保三级、PCI-DSS等">
+                            </div>
+                            <div class="form-group">
+                                <label>敏感数据类型</label>
+                                <input type="text" name="sensitive_data" placeholder="如：身份证、银行卡等">
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_masking" id="masking">
+                                <label for="masking">需要数据脱敏</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 运维需求 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🔧</span>
+                            <span>运维需求</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_monitoring" id="monitoring">
+                                <label for="monitoring">需要监控告警</label>
+                            </div>
+                            <div class="form-group">
+                                <label>备份频率</label>
+                                <select name="backup_frequency">
+                                    <option value="">请选择</option>
+                                    <option value="realtime">实时</option>
+                                    <option value="hourly">每小时</option>
+                                    <option value="daily">每天</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>备份保留期限 (天)</label>
+                                <input type="number" name="backup_retention_days" min="1">
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_auto_scaling" id="auto_scaling">
+                                <label for="auto_scaling">需要自动扩容</label>
+                            </div>
+                            <div class="form-group">
+                                <label>运维团队规模</label>
+                                <input type="number" name="ops_team_size" min="0">
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="need_24x7_support" id="support">
+                                <label for="support">需要7x24小时支持</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">🚀 开始预测</button>
+                        <button type="reset" class="btn btn-secondary">🔄 重置表单</button>
+                    </div>
+                </form>
+
+                <!-- 加载动画 -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在分析预测中，请稍候...</p>
+                </div>
+            </div>
+
+            <!-- 结果区域 -->
+            <div class="results-section" id="resultsSection">
+                <h2 style="text-align: center; color: #667eea; margin-bottom: 30px;">📊 预测结果</h2>
+                <div id="resultsContent"></div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="location.reload()">🔄 重新预测</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 返回顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        ↑
+    </div>
+
+    <script>
+        // 版本切换
+        const versionTabs = document.querySelectorAll('.version-tab');
+        const basicForm = document.getElementById('basicForm');
+        const professionalForm = document.getElementById('professionalForm');
+        let currentVersion = 'basic';
+
+        versionTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                versionTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                currentVersion = tab.dataset.version;
+                if (currentVersion === 'basic') {
+                    basicForm.style.display = 'block';
+                    professionalForm.style.display = 'none';
+                } else {
+                    basicForm.style.display = 'none';
+                    professionalForm.style.display = 'block';
+                }
+            });
+        });
+
+        // 下载模板
+        document.getElementById('downloadTemplateBtn').addEventListener('click', () => {
+            const templateName = currentVersion === 'basic' ? 
+                '部署资源预测模板-普通版.xlsx' : 
+                '部署资源预测模板-专业版.xlsx';
+            
+            window.location.href = `/download_template/${currentVersion}`;
+        });
+
+        // 文件上传
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                alert('请上传Excel文件（.xlsx或.xls格式）');
+                return;
+            }
+
+            fileName.textContent = file.name;
+            fileInfo.classList.add('show');
+
+            // 上传文件并解析
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/parse_excel', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fillFormWithData(data.data);
+                    alert('✅ Excel数据已成功填充到表单！');
+                } else {
+                    alert('❌ 解析失败：' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ 上传失败，请重试');
+            });
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            fileName.textContent = '';
+        }
+
+        function fillFormWithData(data) {
+            const form = currentVersion === 'basic' ? basicForm : professionalForm;
+            
+            for (const [key, value] of Object.entries(data)) {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = value === true || value === 'TRUE' || value === 'true';
+                    } else {
+                        input.value = value;
+                    }
+                }
+            }
+        }
+
+        // 表单提交
+        [basicForm, professionalForm].forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = {};
+                
+                for (const [key, value] of formData.entries()) {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input.type === 'checkbox') {
+                        data[key] = input.checked;
+                    } else if (input.type === 'number') {
+                        data[key] = parseFloat(value) || 0;
+                    } else {
+                        data[key] = value;
+                    }
+                }
+
+                // 显示加载动画
+                document.getElementById('loading').classList.add('show');
+                document.querySelector('.input-section').style.display = 'none';
+
+                try {
+                    const response = await fetch('/api/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        displayResults(result.data);
+                    } else {
+                        alert('预测失败：' + result.error);
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('预测失败，请重试');
+                    location.reload();
+                }
+            });
+        });
+
+        function displayResults(r) {
+            document.getElementById('loading').classList.remove('show');
+            document.getElementById('resultsSection').classList.add('show');
+            
+            // 统一结果映射（兼容后端返回的字段结构）
+            const arch = r.architecture || {};
+            const topo = arch.topology || {};
+            const cost = (r.cost_breakdown && r.cost_breakdown.summary) ? r.cost_breakdown.summary : {};
+            const equipment = r.equipment_list || {};
+            const costBreakdown = (r.cost_breakdown && r.cost_breakdown.breakdown) ? r.cost_breakdown.breakdown : {};
+            
+            const mapped = {
+                architecture_type: arch.type || 'unknown',
+                node_count: (topo.db_nodes || 0) + (topo.app_nodes || 0) + (topo.proxy_nodes || 0) + (topo.monitor_nodes || 0),
+                shard_count: topo.shard_count || 0,
+                replica_count: topo.replica_count || 0,
+                total_cost: cost.three_year_tco || cost.initial_investment || 0,
+                hardware_cost: cost.total_hardware || 0,
+                software_cost: cost.total_software || 0,
+                ops_cost: cost.annual_operating || 0,
+            };
+            
+            const resultsContent = document.getElementById('resultsContent');
+            
+            // 生成服务器清单HTML
+            let serversHTML = '';
+            if (equipment.servers && equipment.servers.length > 0) {
+                serversHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); border-bottom: 3px solid #1a252f;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">编号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">角色</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">CPU</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">内存</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">存储</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">网络</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.servers.map((s, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'}; transition: background 0.2s;">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${s.id}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.role}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.cpu}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.memory}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.disk}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.network}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(s.unit_price).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%); border-top: 2px solid #bdc3c7;">
+                                <td colspan="7" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">服务器小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.servers.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+            }
+            
+            // 生成网络设备清单HTML
+            let networkHTML = '';
+            if (equipment.network_devices && equipment.network_devices.length > 0) {
+                networkHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); border-bottom: 3px solid #138d75;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">编号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">规格</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">数量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.network_devices.map((n, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${n.id}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${n.type}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${n.model}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${n.ports || n.throughput || '-'}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${n.quantity}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(n.unit_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(n.total_price).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%); border-top: 2px solid #a5d6a7;">
+                                <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">网络设备小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.network_devices.reduce((sum, n) => sum + n.total_price, 0)).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+            }
+            
+            // 生成存储设备清单HTML
+            let storageHTML = '';
+            if (equipment.storage && equipment.storage.length > 0) {
+                storageHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); border-bottom: 3px solid #7d3c98;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">型号</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">容量(TB)</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">IOPS</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">吞吐量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价/TB(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.storage.map((s, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.type}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${s.capacity_tb}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px;">${Number(s.iops).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px;">${s.throughput}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(s.unit_price_per_tb).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(s.total_price).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #e8daef 0%, #d7bde2 100%); border-top: 2px solid #c39bd3;">
+                                <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">存储设备小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.storage.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+            }
+            
+            // 生成基础设施清单HTML
+            let infraHTML = '';
+            if (equipment.infrastructure && equipment.infrastructure.length > 0) {
+                infraHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #d35400 0%, #e67e22 100%); border-bottom: 3px solid #ba4a00;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类型</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">数量/容量</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">单价(¥)</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">小计(¥)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.infrastructure.map((i, index) => `
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${i.type}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${i.quantity || i.capacity_kw || '-'}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(i.unit_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(i.total_price).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #fdebd0 0%, #f8c471 100%); border-top: 2px solid #f5b041;">
+                                <td colspan="3" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">基础设施小计：</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.infrastructure.reduce((sum, i) => sum + i.total_price, 0)).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+            }
+            
+            // 生成详细报价单HTML
+            let quotationHTML = '';
+            if (costBreakdown.hardware || costBreakdown.software || costBreakdown.services) {
+                quotationHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #d0d0d0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); color: white; border-bottom: 3px solid #1f618d;">
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">类别</th>
+                                <th style="padding: 14px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">项目</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">金额(¥)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${costBreakdown.hardware ? `
+                                <tr style="background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%); font-weight: bold; border-bottom: 2px solid #bdc3c7;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">💻 硬件成本</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">服务器</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.servers || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">网络设备</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.network_devices || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">存储设备</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.storage || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #bdc3c7; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">基础设施</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.hardware.infrastructure || 0).toLocaleString()}</td>
+                                </tr>
+                            ` : ''}
+                            ${costBreakdown.software ? `
+                                <tr style="background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%); font-weight: bold; border-bottom: 2px solid #a5d6a7;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">📦 软件许可证</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">TDSQL企业版许可证</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.tdsql_license || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">操作系统许可证</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.os_license || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">监控软件</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.monitoring || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #a5d6a7; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">备份软件</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.software.backup || 0).toLocaleString()}</td>
+                                </tr>
+                            ` : ''}
+                            ${costBreakdown.services ? `
+                                <tr style="background: linear-gradient(135deg, #e8daef 0%, #d7bde2 100%); font-weight: bold; border-bottom: 2px solid #c39bd3;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">🛠️ 实施服务</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">部署实施费用</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.services.deployment || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #c39bd3; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">技术培训</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(costBreakdown.services.training || 0).toLocaleString()}</td>
+                                </tr>
+                            ` : ''}
+                            ${costBreakdown.annual_operating ? `
+                                <tr style="background: linear-gradient(135deg, #fdebd0 0%, #f8c471 100%); font-weight: bold; border-bottom: 2px solid #f5b041;">
+                                    <td colspan="3" style="padding: 12px; color: #2c3e50; font-size: 14px; font-weight: 700;">📊 年度运营成本</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">电力成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.power || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e8e8e8; background: #f9fafb;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">制冷成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.cooling || 0).toLocaleString()}</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #f5b041; background: #ffffff;">
+                                    <td style="padding: 10px 12px; padding-left: 35px;"></td>
+                                    <td style="padding: 10px 12px; color: #34495e; font-size: 13px;">维护成本</td>
+                                    <td style="padding: 10px 12px; text-align: right; color: #e67e22; font-weight: 600; font-size: 13px;">${Number(costBreakdown.annual_operating.maintenance || 0).toLocaleString()}</td>
+                                </tr>
+                            ` : ''}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); color: white; font-weight: bold; font-size: 16px; border-top: 3px solid #1f618d;">
+                                <td colspan="2" style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">💰 初始投资总额：</td>
+                                <td style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; font-size: 17px;">¥${Number(cost.initial_investment || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%); color: white; font-weight: bold; font-size: 16px;">
+                                <td colspan="2" style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">📈 三年TCO总成本：</td>
+                                <td style="padding: 16px 12px; text-align: right; color: #ffffff; font-weight: 700; font-size: 17px;">¥${Number(cost.three_year_tco || 0).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+            }
+            
+            resultsContent.innerHTML = `
+                <div class="result-card">
+                    <h3>🏗️ 架构方案</h3>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <label>架构类型</label>
+                            <value>${arch.description || mapped.architecture_type}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>总节点数</label>
+                            <value>${mapped.node_count}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>分片数量</label>
+                            <value>${mapped.shard_count}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>副本数量</label>
+                            <value>${mapped.replica_count}</value>
+                        </div>
+                    </div>
+                    <div class="result-grid" style="margin-top: 15px;">
+                        <div class="result-item">
+                            <label>数据库节点</label>
+                            <value>${topo.db_nodes || 0}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>代理节点</label>
+                            <value>${topo.proxy_nodes || 0}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>应用节点</label>
+                            <value>${topo.app_nodes || 0}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>监控/备份节点</label>
+                            <value>${(topo.monitor_nodes || 0) + (topo.backup_nodes || 0)}</value>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>💰 成本总览</h3>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <label>初始投资</label>
+                            <value style="color: #667eea; font-size: 20px; font-weight: bold;">¥${Number(cost.initial_investment || 0).toLocaleString()}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>三年TCO</label>
+                            <value style="color: #764ba2; font-size: 20px; font-weight: bold;">¥${Number(mapped.total_cost).toLocaleString()}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>年度运营成本</label>
+                            <value>¥${Number(mapped.ops_cost).toLocaleString()}</value>
+                        </div>
+                        <div class="result-item">
+                            <label>月度运营成本</label>
+                            <value>¥${Number(cost.monthly_operating || 0).toLocaleString()}</value>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>🖥️ 服务器配置清单</h3>
+                    <p style="color: #666; margin-bottom: 10px;">共 ${equipment.servers ? equipment.servers.length : 0} 台服务器</p>
+                    ${serversHTML}
+                </div>
+
+                <div class="result-card">
+                    <h3>🌐 网络设备清单</h3>
+                    <p style="color: #666; margin-bottom: 10px;">共 ${equipment.network_devices ? equipment.network_devices.length : 0} 台网络设备</p>
+                    ${networkHTML}
+                </div>
+
+                <div class="result-card">
+                    <h3>💾 存储设备清单</h3>
+                    ${storageHTML}
+                </div>
+
+                <div class="result-card">
+                    <h3>🏢 基础设施清单</h3>
+                    ${infraHTML}
+                </div>
+
+                <div class="result-card">
+                    <h3>📊 详细报价单</h3>
+                    ${quotationHTML}
+                </div>
+
+                <div class="result-card">
+                    <h3>📥 导出选项</h3>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="exportToExcel()">📄 导出Excel报价单</button>
+                        <button class="btn btn-secondary" onclick="exportToPDF()">📑 导出PDF方案书</button>
+                        <button class="btn btn-secondary" onclick="window.print()">🖨️ 打印报告</button>
+                    </div>
+                </div>
+            `;
+
+            // 滚动到结果区域
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 导出Excel功能
+        function exportToExcel() {
+            alert('Excel导出功能开发中，敬请期待！');
+            // TODO: 实现Excel导出
+        }
+        
+        // 导出PDF功能
+        function exportToPDF() {
+            alert('PDF导出功能开发中，敬请期待！');
+            // TODO: 实现PDF导出
+        }
+
+        // 返回顶部
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
