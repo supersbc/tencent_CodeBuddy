@@ -1,0 +1,90 @@
+nohup: ignoring input
+
+============================================================
+🚀 TDSQL 部署资源预测系统 v4.2 (完整版)
+============================================================
+\n============================================================
+🚀 TDSQL 部署资源预测系统 v4.3
+============================================================
+📍 主页面: http://127.0.0.1:18080
+📍 导航页面: http://127.0.0.1:18080/nav
+📍 部署预测: http://127.0.0.1:18080/predict (新版)
+📍 模型库管理: http://127.0.0.1:18080/model_library
+📍 学习系统: http://127.0.0.1:18080/learning
+============================================================
+✨ 功能模块:
+  ✅ 部署资源预测 - 普通版/专业版双模式
+  ✅ Excel模板 - 下载模板，上传自动填充
+  ✅ 模型库管理 - 8个预置模型库
+  ✅ 自主训练 - 从实际案例中学习优化
+  ✅ 文件上传 - 支持JSON/Excel/图片/PDF
+============================================================
+
+ * Serving Flask app 'app_simple' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://21.91.205.22:18080/ (Press CTRL+C to quit)
+127.0.0.1 - - [12/Nov/2025 00:11:26] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:11:47] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:11:47] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:50:12] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:50:16] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:50:18] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:52:20] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:53:55] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:53:58] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:53:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:00] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:06] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:09] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:22] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:31] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:38] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:40] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:54:59] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:55:23] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:55:26] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:55:50] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:55:55] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:55:57] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:56:08] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:57:43] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:09] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:13] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:14] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:17] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:21] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:38] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 00:58:40] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:42:25] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:42:39] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:55:53] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:56:44] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:57:37] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 08:57:39] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:47] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:51] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:53] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:56] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:58] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:14:59] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:15:02] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:15:06] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:15:08] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:15:52] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:16:01] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:16:04] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:16:07] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:17:03] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:18:07] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:18:23] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:24:52] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:25:22] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:26:06] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:26:55] "POST /api/predict HTTP/1.1" 200 -

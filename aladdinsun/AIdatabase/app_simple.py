@@ -3,9 +3,14 @@ TDSQL 部署资源预测系统 - 完整版
 整合：部署预测、模型库管理、自主训练
 """
 
+# 修复OpenBLAS线程资源问题 - 必须在导入任何科学计算库之前设置
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '4'
+os.environ['OMP_NUM_THREADS'] = '4'
+os.environ['MKL_NUM_THREADS'] = '4'
+
 from flask import Flask, render_template, request, jsonify
 import json
-import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -99,6 +104,16 @@ def learning():
     """学习系统页面"""
     return render_template('index_learning.html')
 
+@app.route('/test_predict')
+def test_predict():
+    """测试预测接口页面"""
+    return render_template('test_simple.html')
+
+@app.route('/test_debug')
+def test_debug():
+    """调试测试页面"""
+    return render_template('test_simple.html')
+
 # ==================== API路由 ====================
 
 @app.route('/api/health', methods=['GET'])
@@ -115,6 +130,14 @@ def predict():
     """部署资源预测API"""
     try:
         raw = request.get_json() or {}
+        
+        # 调试：打印收到的原始数据
+        print("\n" + "=" * 60)
+        print("📥 收到的请求参数:")
+        print(f"  enable_xinchuan: {raw.get('enable_xinchuan')}")
+        print(f"  xinchuan_mode: {raw.get('xinchuan_mode')}")
+        print(f"  全部参数: {raw}")
+        print("=" * 60 + "\n")
         
         # 统一字段映射（兼容普通版/专业版表单字段）
         data = {}
@@ -156,11 +179,248 @@ def predict():
         data['need_disaster_recovery'] = bool(raw.get('need_disaster_recovery'))
         data['need_read_write_split'] = bool(raw.get('need_read_write_split'))
         
-        # 获取预测器
-        pred = get_predictor()
+        # 信创模式参数
+        enable_xinchuan = raw.get('enable_xinchuan', False)  # 默认关闭，需要用户主动勾选
+        xinchuan_mode = raw.get('xinchuan_mode', 'standard')  # 默认标准信创
         
-        # 执行预测
-        result = pred.predict(data)
+        # 无论是否启用信创模式，都使用新版预测器（确保生成完整的设备清单）
+        from deployment_predictor_xinchuan import DeploymentResourcePredictorXinChuan
+        
+        # 转换数据格式（统一定义）
+        common_data = {
+            'data_size_gb': data['data_volume'] * 1024,  # 转换为GB
+            'transactions_per_day': data['tps'] * 86400,
+            'max_connections': data['concurrent_users'],
+            'business_type': 'OLTP',
+            'high_availability': need_ha,
+            'disaster_recovery': data['need_disaster_recovery']
+        }
+        
+        # 如果启用信创模式，生成传统方案和信创方案的完整对比
+        if enable_xinchuan:
+            
+            # 生成传统方案(使用国外品牌设备) - 独立架构设计
+            traditional_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode='off')
+            traditional_result = traditional_predictor.predict(common_data)
+            
+            # 生成信创方案(使用国产设备) - 独立架构设计
+            xc_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode=xinchuan_mode)
+            xc_result = xc_predictor.predict(common_data)
+            
+            # 计算真实的成本差异
+            traditional_cost = traditional_result.get('cost_breakdown', {}).get('total_initial_cost', 0)
+            xinchuan_cost = xc_result.get('cost_breakdown', {}).get('total_initial_cost', 0)
+            cost_savings = traditional_cost - xinchuan_cost
+            savings_percent = (cost_savings / traditional_cost * 100) if traditional_cost > 0 else 0
+            
+            # 使用传统方案作为基础结果（确保前端显示一致）
+            result = traditional_result.copy()
+            
+            # 先获取成本明细（避免变量未定义错误）
+            traditional_cost_breakdown = traditional_result.get('cost_breakdown', {})
+            traditional_equipment = traditional_result.get('equipment_list', [])
+            traditional_architecture = traditional_result.get('architecture', {})
+            
+            # 适配前端字段名（兼容旧版显示）
+            result['cost'] = {
+                'initial_investment': traditional_cost,  # 映射到旧字段
+                'three_year_tco': traditional_cost * 1.5,  # 估算3年TCO
+                'total_hardware': traditional_cost_breakdown.get('hardware_cost', 0),
+                'total_software': traditional_cost_breakdown.get('software_cost', 0),
+                'annual_operating': traditional_cost * 0.15  # 估算年运营成本
+            }
+            
+            # 调试：打印设备清单数据（非信创模式）
+            print(f"\n🔍 调试(非信创模式) - traditional_equipment 总数: {len(traditional_equipment)}")
+            if traditional_equipment:
+                print(f"🔍 调试(非信创模式) - 第一个设备示例: {traditional_equipment[0]}")
+            else:
+                print("⚠️  调试(非信创模式) - traditional_equipment 为空列表！")
+            
+            # 适配设备清单字段（按类别分组）
+            servers = [item for item in traditional_equipment if item.get('category') in ['数据库服务器', '代理服务器', '监控服务器']]
+            network_devices = [item for item in traditional_equipment if item.get('category') in ['核心交换机', '接入交换机', '安全防火墙']]
+            storage_devices = [item for item in traditional_equipment if item.get('category') == '存储设备']
+            infrastructure_items = traditional_cost_breakdown.get('infrastructure_items', [])
+            
+            print(f"🔍 调试(非信创模式) - 分类后: servers={len(servers)}, network={len(network_devices)}, storage={len(storage_devices)}, infrastructure={len(infrastructure_items)}")
+            
+            result['equipment'] = {
+                'servers': servers,
+                'network_devices': network_devices,
+                'storage': storage_devices,  # ✅ 改为 storage（前端期待）
+                'infrastructure': infrastructure_items  # ✅ 添加基础设施清单
+            }
+            result['equipment_list'] = traditional_equipment  # 新版字段
+
+            
+            # 适配架构字段
+            result['architecture'] = {
+                'type': 'cluster',
+                'topology': {
+                    'db_nodes': traditional_architecture.get('database_nodes', 0),
+                    'proxy_nodes': traditional_architecture.get('proxy_nodes', 0),
+                    'monitor_nodes': traditional_architecture.get('monitoring_nodes', 0),
+                    'shard_count': 0,
+                    'replica_count': 3
+                }
+            }
+            result['cost_breakdown'] = {
+                'summary': result['cost'],
+                'breakdown': {  # ✅ 添加 breakdown 包裹层
+                    'hardware': {
+                        'servers': sum(item.get('total_price', 0) for item in servers),
+                        'network_devices': sum(item.get('total_price', 0) for item in network_devices),
+                        'storage': sum(item.get('total_price', 0) for item in storage_devices),
+                        'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
+                    },
+                    'software': {
+                        'tdsql_license': 0,  # 信创模式免费
+                        'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
+                        'monitoring': 0,
+                        'backup': 0
+                    },
+                    'services': {
+                        'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
+                        'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
+                    }
+                },
+                # 同时保留顶层字段（向后兼容）
+                'hardware': {
+                    'servers': sum(item.get('total_price', 0) for item in servers),
+                    'network_devices': sum(item.get('total_price', 0) for item in network_devices),
+                    'storage': sum(item.get('total_price', 0) for item in storage_devices),
+                    'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
+                },
+                'software': {
+                    'tdsql_license': 0,
+                    'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
+                    'monitoring': 0,
+                    'backup': 0
+                },
+                'services': {
+                    'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
+                    'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
+                },
+                'software_items': traditional_cost_breakdown.get('software_items', []),
+                'annual_operating': {}
+            }
+            
+            # 添加完整的对比信息
+            result['xinchuan_enabled'] = True
+            result['xinchuan_mode'] = xinchuan_mode
+            result['traditional_solution'] = traditional_result  # 传统方案(独立架构)
+            result['xinchuan_solution'] = xc_result  # 信创方案(独立架构)
+            result['xinchuan_info'] = xc_result.get('xinchuan_info', {})
+            result['cost_comparison'] = {
+                'traditional_cost': traditional_cost,
+                'xinchuan_cost': xinchuan_cost,
+                'cost_savings': cost_savings,
+                'savings_percent': round(savings_percent, 1),
+                'note': f'使用信创方案相比传统方案节约 ¥{cost_savings:,.0f} ({savings_percent:.1f}%)'
+            }
+        else:
+            # 不启用信创模式，只生成传统方案（国外品牌）
+            traditional_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode='off')
+            traditional_result = traditional_predictor.predict(common_data)
+            
+            # 获取成本和设备信息
+            traditional_cost_breakdown = traditional_result.get('cost_breakdown', {})
+            traditional_equipment = traditional_result.get('equipment_list', [])
+            traditional_architecture = traditional_result.get('architecture', {})
+            traditional_cost = traditional_cost_breakdown.get('total_initial_cost', 0)
+            
+            # 使用传统方案作为结果
+            result = traditional_result.copy()
+            
+            # 适配前端字段名（兼容旧版显示）
+            result['cost'] = {
+                'initial_investment': traditional_cost,
+                'three_year_tco': traditional_cost * 1.5,
+                'total_hardware': traditional_cost_breakdown.get('hardware_cost', 0),
+                'total_software': traditional_cost_breakdown.get('software_cost', 0),
+                'annual_operating': traditional_cost * 0.15
+            }
+            
+            # 调试：打印设备清单数据（非信创模式）
+            print(f"\n🔍 调试(非信创模式) - traditional_equipment 总数: {len(traditional_equipment)}")
+            if traditional_equipment:
+                print(f"🔍 调试(非信创模式) - 第一个设备示例: {traditional_equipment[0]}")
+            else:
+                print("⚠️  调试(非信创模式) - traditional_equipment 为空列表！")
+            
+            # 适配设备清单字段（按类别分组）
+            servers = [item for item in traditional_equipment if item.get('category') in ['数据库服务器', '代理服务器', '监控服务器']]
+            network_devices = [item for item in traditional_equipment if item.get('category') in ['核心交换机', '接入交换机', '安全防火墙']]
+            storage_devices = [item for item in traditional_equipment if item.get('category') == '存储设备']
+            infrastructure_items = traditional_cost_breakdown.get('infrastructure_items', [])
+            
+            print(f"🔍 调试(非信创模式) - 分类后: servers={len(servers)}, network={len(network_devices)}, storage={len(storage_devices)}, infrastructure={len(infrastructure_items)}")
+            
+            result['equipment'] = {
+                'servers': servers,
+                'network_devices': network_devices,
+                'storage': storage_devices,  # ✅ 改为 storage（前端期待）
+                'infrastructure': infrastructure_items  # ✅ 添加基础设施清单
+            }
+            result['equipment_list'] = traditional_equipment
+
+            
+            # 适配架构字段
+            result['architecture'] = {
+                'type': 'cluster',
+                'topology': {
+                    'db_nodes': traditional_architecture.get('database_nodes', 0),
+                    'proxy_nodes': traditional_architecture.get('proxy_nodes', 0),
+                    'monitor_nodes': traditional_architecture.get('monitoring_nodes', 0),
+                    'shard_count': 0,
+                    'replica_count': 3
+                }
+            }
+            
+            result['cost_breakdown'] = {
+                'summary': result['cost'],
+                'breakdown': {  # ✅ 添加 breakdown 包裹层
+                    'hardware': {
+                        'servers': sum(item.get('total_price', 0) for item in servers),
+                        'network_devices': sum(item.get('total_price', 0) for item in network_devices),
+                        'storage': sum(item.get('total_price', 0) for item in storage_devices),
+                        'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
+                    },
+                    'software': {
+                        'tdsql_license': 0,
+                        'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
+                        'monitoring': 0,
+                        'backup': 0
+                    },
+                    'services': {
+                        'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
+                        'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
+                    }
+                },
+                # 同时保留顶层字段（向后兼容）
+                'hardware': {
+                    'servers': sum(item.get('total_price', 0) for item in servers),
+                    'network_devices': sum(item.get('total_price', 0) for item in network_devices),
+                    'storage': sum(item.get('total_price', 0) for item in storage_devices),
+                    'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
+                },
+                'software': {
+                    'tdsql_license': 0,
+                    'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
+                    'monitoring': 0,
+                    'backup': 0
+                },
+                'services': {
+                    'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
+                    'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
+                },
+                'software_items': traditional_cost_breakdown.get('software_items', []),
+                'annual_operating': {}
+            }
+            
+            # 标记未启用信创模式
+            result['xinchuan_enabled'] = False
         
         return jsonify({
             'success': True,
@@ -168,6 +428,8 @@ def predict():
         })
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
@@ -486,7 +748,7 @@ def parse_excel():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("\\n" + "=" * 60)
+    print("\n" + "=" * 60)
     print("🚀 TDSQL 部署资源预测系统 v4.3")
     print("=" * 60)
     print(f"📍 主页面: http://127.0.0.1:18080")

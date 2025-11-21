@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>简单预测测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 预测功能调试测试</h1>
+    <p>这个页面用于测试API调用和数据解析</p>
+    
+    <button class="btn" onclick="testPredict()">🚀 测试预测</button>
+    <button class="btn" onclick="testPredictWithXinChuan()">🇨🇳 测试信创预测</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function testPredict() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = '正在调用API...';
+            resultDiv.className = '';
+            
+            const data = {
+                total_data_size_gb: 1000,
+                qps: 5000,
+                concurrent_users: 200,
+                enable_xinchuan: false
+            };
+            
+            try {
+                console.log('发送请求:', data);
+                
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('响应状态:', response.status);
+                console.log('响应头:', response.headers);
+                
+                const text = await response.text();
+                console.log('响应文本长度:', text.length);
+                console.log('响应文本前500字符:', text.substring(0, 500));
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `JSON解析失败:\n${e.message}\n\n响应内容:\n${text.substring(0, 1000)}`;
+                    return;
+                }
+                
+                console.log('解析结果:', result);
+                
+                if (result.success) {
+                    resultDiv.className = 'success';
+                    const data = result.data;
+                    resultDiv.textContent = `✅ 预测成功!\n\n` +
+                        `包含字段:\n` +
+                        `- architecture: ${!!data.architecture}\n` +
+                        `- equipment_list: ${!!data.equipment_list} (类型: ${Array.isArray(data.equipment_list) ? 'Array' : typeof data.equipment_list})\n` +
+                        `- cost_breakdown: ${!!data.cost_breakdown}\n` +
+                        `- xinchuan_enabled: ${data.xinchuan_enabled}\n` +
+                        `- traditional_solution: ${!!data.traditional_solution}\n` +
+                        `- xinchuan_solution: ${!!data.xinchuan_solution}\n\n` +
+                        `equipment_list 长度: ${data.equipment_list ? data.equipment_list.length : 0}\n\n` +
+                        `完整数据键: ${Object.keys(data).join(', ')}`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `❌ 预测失败:\n${result.error}`;
+                }
+            } catch (error) {
+                console.error('错误:', error);
+                resultDiv.className = 'error';
+                resultDiv.textContent = `❌ 请求失败:\n${error.message}\n\n堆栈:\n${error.stack}`;
+            }
+        }
+        
+        async function testPredictWithXinChuan() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = '正在调用API（信创模式）...';
+            resultDiv.className = '';
+            
+            const data = {
+                total_data_size_gb: 1000,
+                qps: 5000,
+                concurrent_users: 200,
+                enable_xinchuan: true,
+                xinchuan_mode: 'standard'
+            };
+            
+            try {
+                console.log('发送请求（信创）:', data);
+                
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('响应状态:', response.status);
+                
+                const text = await response.text();
+                console.log('响应文本长度:', text.length);
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `JSON解析失败:\n${e.message}\n\n可能的问题字符位置: ${e.message.match(/\d+/)?.[0]}`;
+                    console.error('JSON解析错误:', e);
+                    console.error('问题位置附近的文本:', text.substring(Math.max(0, parseInt(e.message.match(/\d+/)?.[0] || 0) - 100), parseInt(e.message.match(/\d+/)?.[0] || 0) + 100));
+                    return;
+                }
+                
+                console.log('解析成功');
+                
+                if (result.success) {
+                    resultDiv.className = 'success';
+                    const data = result.data;
+                    resultDiv.textContent = `✅ 预测成功（信创模式）!\n\n` +
+                        `包含字段:\n` +
+                        `- xinchuan_enabled: ${data.xinchuan_enabled}\n` +
+                        `- xinchuan_mode: ${data.xinchuan_mode}\n` +
+                        `- traditional_solution: ${!!data.traditional_solution}\n` +
+                        `- xinchuan_solution: ${!!data.xinchuan_solution}\n` +
+                        `- cost_comparison: ${!!data.cost_comparison}\n\n` +
+                        `traditional_solution 设备数: ${data.traditional_solution?.equipment_list?.length || 0}\n` +
+                        `xinchuan_solution 设备数: ${data.xinchuan_solution?.equipment_list?.length || 0}\n\n` +
+                        `成本对比:\n` +
+                        `- 传统成本: ¥${data.cost_comparison?.traditional_cost || 0}\n` +
+                        `- 信创成本: ¥${data.cost_comparison?.xinchuan_cost || 0}\n` +
+                        `- 节约: ¥${data.cost_comparison?.cost_savings || 0} (${data.cost_comparison?.savings_percent || 0}%)`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `❌ 预测失败:\n${result.error}`;
+                }
+            } catch (error) {
+                console.error('错误:', error);
+                resultDiv.className = 'error';
+                resultDiv.textContent = `❌ 请求失败:\n${error.message}\n\n堆栈:\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>
