@@ -1,0 +1,2346 @@
+[
+  {
+    "case_id": "CASE-2024-001",
+    "timestamp": "2024-03-15",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 80,
+      "database_count": 5,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 1000,
+      "peak_qps": 8000,
+      "avg_response_time_ms": 50,
+      "data_growth_rate": 25,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 50,
+      "avg_table_size_gb": 6.25,
+      "hot_data_ratio": 0.3,
+      "read_write_ratio": "7:3"
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 0,
+      "servers": {
+        "database": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 1,
+          "spec": "small",
+          "cpu": 8,
+          "memory_gb": 32,
+          "disk_gb": 500
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 1,
+          "type": "48port_1g"
+        },
+        "bandwidth_gbps": 1
+      }
+    },
+    "feedback": {
+      "project_name": "小型电商平台",
+      "industry": "电商",
+      "actual_performance": {
+        "avg_qps": 4500,
+        "peak_qps": 7500,
+        "avg_response_time_ms": 45,
+        "p99_response_time_ms": 120,
+        "cpu_usage": 0.45,
+        "memory_usage": 0.6
+      },
+      "cost": {
+        "hardware": 25000,
+        "software": 50000,
+        "deployment": 10000,
+        "annual_maintenance": 15000
+      },
+      "notes": "运行稳定，读写分离效果良好"
+    }
+  },
+  {
+    "case_id": "CASE-2024-002",
+    "timestamp": "2024-05-20",
+    "input": {
+      "total_data_size_gb": 3000,
+      "table_count": 200,
+      "database_count": 10,
+      "qps": 30000,
+      "tps": 12000,
+      "concurrent_connections": 5000,
+      "peak_qps": 50000,
+      "avg_response_time_ms": 30,
+      "data_growth_rate": 35,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 200,
+      "avg_table_size_gb": 15,
+      "hot_data_ratio": 0.2,
+      "read_write_ratio": "6:4"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "servers": {
+        "database": {
+          "count": 8,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "proxy": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        },
+        "management": {
+          "count": 3,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 2,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {
+      "project_name": "中型金融交易系统",
+      "industry": "金融",
+      "actual_performance": {
+        "avg_qps": 28000,
+        "peak_qps": 48000,
+        "avg_response_time_ms": 28,
+        "p99_response_time_ms": 80,
+        "cpu_usage": 0.55,
+        "memory_usage": 0.65
+      },
+      "cost": {
+        "hardware": 280000,
+        "software": 200000,
+        "deployment": 50000,
+        "annual_maintenance": 80000
+      },
+      "notes": "高可用架构，容灾切换时间<30秒"
+    }
+  },
+  {
+    "case_id": "CASE-2024-003",
+    "timestamp": "2024-06-10",
+    "input": {
+      "total_data_size_gb": 15000,
+      "table_count": 500,
+      "database_count": 20,
+      "qps": 100000,
+      "tps": 40000,
+      "concurrent_connections": 20000,
+      "peak_qps": 150000,
+      "avg_response_time_ms": 20,
+      "data_growth_rate": 50,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 500,
+      "avg_table_size_gb": 30,
+      "hot_data_ratio": 0.15,
+      "read_write_ratio": "8:2"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 16,
+      "shard_count": 16,
+      "replica_count": 2,
+      "proxy_count": 4,
+      "servers": {
+        "database": {
+          "count": 32,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 4,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 5,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 4,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {
+      "project_name": "大型社交平台",
+      "industry": "互联网",
+      "actual_performance": {
+        "avg_qps": 95000,
+        "peak_qps": 145000,
+        "avg_response_time_ms": 18,
+        "p99_response_time_ms": 50,
+        "cpu_usage": 0.6,
+        "memory_usage": 0.7
+      },
+      "cost": {
+        "hardware": 1500000,
+        "software": 800000,
+        "deployment": 200000,
+        "annual_maintenance": 400000
+      },
+      "notes": "采用分片+读写分离，性能优异"
+    }
+  },
+  {
+    "case_id": "CASE-2024-004",
+    "timestamp": "2024-04-25",
+    "input": {
+      "total_data_size_gb": 800,
+      "table_count": 120,
+      "database_count": 6,
+      "qps": 8000,
+      "tps": 3000,
+      "concurrent_connections": 2000,
+      "peak_qps": 12000,
+      "avg_response_time_ms": 40,
+      "data_growth_rate": 20,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "business_type": "OLTP",
+      "max_table_size_gb": 80,
+      "avg_table_size_gb": 6.67,
+      "hot_data_ratio": 0.25,
+      "read_write_ratio": "5:5"
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 0,
+      "servers": {
+        "database": {
+          "count": 2,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "management": {
+          "count": 2,
+          "spec": "small",
+          "cpu": 8,
+          "memory_gb": 32,
+          "disk_gb": 500
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 1,
+          "type": "48port_1g"
+        },
+        "bandwidth_gbps": 1
+      }
+    },
+    "feedback": {
+      "project_name": "企业ERP系统",
+      "industry": "制造业",
+      "actual_performance": {
+        "avg_qps": 7500,
+        "peak_qps": 11500,
+        "avg_response_time_ms": 38,
+        "p99_response_time_ms": 100,
+        "cpu_usage": 0.5,
+        "memory_usage": 0.55
+      },
+      "cost": {
+        "hardware": 50000,
+        "software": 80000,
+        "deployment": 20000,
+        "annual_maintenance": 25000
+      },
+      "notes": "容灾部署，数据同步延迟<1秒"
+    }
+  },
+  {
+    "case_id": "CASE-2024-005",
+    "timestamp": "2024-07-01",
+    "input": {
+      "total_data_size_gb": 50000,
+      "table_count": 1000,
+      "database_count": 50,
+      "qps": 200000,
+      "tps": 80000,
+      "concurrent_connections": 50000,
+      "peak_qps": 300000,
+      "avg_response_time_ms": 15,
+      "data_growth_rate": 60,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 1000,
+      "avg_table_size_gb": 50,
+      "hot_data_ratio": 0.1,
+      "read_write_ratio": "9:1"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 32,
+      "shard_count": 32,
+      "replica_count": 3,
+      "proxy_count": 8,
+      "servers": {
+        "database": {
+          "count": 96,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 8,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 4000
+        },
+        "management": {
+          "count": 7,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 4000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 8,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {
+      "project_name": "超大型电商平台",
+      "industry": "电商",
+      "actual_performance": {
+        "avg_qps": 190000,
+        "peak_qps": 280000,
+        "avg_response_time_ms": 12,
+        "p99_response_time_ms": 35,
+        "cpu_usage": 0.65,
+        "memory_usage": 0.75
+      },
+      "cost": {
+        "hardware": 4500000,
+        "software": 2000000,
+        "deployment": 500000,
+        "annual_maintenance": 1000000
+      },
+      "notes": "三副本高可用，支持双活容灾"
+    }
+  },
+  {
+    "case_id": "CASE-2024-006",
+    "timestamp": "2024-08-15",
+    "input": {
+      "total_data_size_gb": 5000,
+      "table_count": 300,
+      "database_count": 15,
+      "qps": 40000,
+      "tps": 15000,
+      "concurrent_connections": 8000,
+      "peak_qps": 60000,
+      "avg_response_time_ms": 25,
+      "data_growth_rate": 40,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 300,
+      "avg_table_size_gb": 16.67,
+      "hot_data_ratio": 0.2,
+      "read_write_ratio": "7:3"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 8,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "servers": {
+        "database": {
+          "count": 16,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 3,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 3,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 3,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {
+      "project_name": "全国物流管理系统",
+      "industry": "物流",
+      "actual_performance": {
+        "avg_qps": 38000,
+        "peak_qps": 58000,
+        "avg_response_time_ms": 23,
+        "p99_response_time_ms": 65,
+        "cpu_usage": 0.58,
+        "memory_usage": 0.68
+      },
+      "cost": {
+        "hardware": 750000,
+        "software": 400000,
+        "deployment": 100000,
+        "annual_maintenance": 180000
+      },
+      "notes": "分布式架构，支持地域级容灾"
+    }
+  },
+  {
+    "case_id": "CASE-2024-007",
+    "timestamp": "2024-09-01",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 150,
+      "database_count": 8,
+      "qps": 20000,
+      "tps": 8000,
+      "concurrent_connections": 10000,
+      "peak_qps": 35000,
+      "avg_response_time_ms": 30,
+      "data_growth_rate": 45,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 150,
+      "avg_table_size_gb": 13.33,
+      "hot_data_ratio": 0.3,
+      "read_write_ratio": "8:2"
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "servers": {
+        "database": {
+          "count": 8,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "proxy": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        },
+        "management": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 2,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {
+      "project_name": "在线教育平台",
+      "industry": "教育",
+      "actual_performance": {
+        "avg_qps": 19000,
+        "peak_qps": 33000,
+        "avg_response_time_ms": 28,
+        "p99_response_time_ms": 75,
+        "cpu_usage": 0.52,
+        "memory_usage": 0.62
+      },
+      "cost": {
+        "hardware": 200000,
+        "software": 150000,
+        "deployment": 40000,
+        "annual_maintenance": 60000
+      },
+      "notes": "混合架构，部分表分片部分单表"
+    }
+  },
+  {
+    "case_id": "CASE-2024-008",
+    "timestamp": "2024-09-20",
+    "input": {
+      "total_data_size_gb": 10000,
+      "table_count": 400,
+      "database_count": 25,
+      "qps": 60000,
+      "tps": 25000,
+      "concurrent_connections": 15000,
+      "peak_qps": 90000,
+      "avg_response_time_ms": 20,
+      "data_growth_rate": 55,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 400,
+      "avg_table_size_gb": 25,
+      "hot_data_ratio": 0.15,
+      "read_write_ratio": "6:4"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 12,
+      "shard_count": 12,
+      "replica_count": 3,
+      "proxy_count": 4,
+      "servers": {
+        "database": {
+          "count": 36,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 4,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 5,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 5,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {
+      "project_name": "区域医疗信息平台",
+      "industry": "医疗",
+      "actual_performance": {
+        "avg_qps": 58000,
+        "peak_qps": 87000,
+        "avg_response_time_ms": 18,
+        "p99_response_time_ms": 45,
+        "cpu_usage": 0.62,
+        "memory_usage": 0.72
+      },
+      "cost": {
+        "hardware": 1800000,
+        "software": 1000000,
+        "deployment": 250000,
+        "annual_maintenance": 450000
+      },
+      "notes": "三副本容灾，符合医疗数据安全规范"
+    }
+  },
+  {
+    "id": "case_20251025164339693682",
+    "timestamp": "2025-10-25T16:43:39.693707",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 80,
+      "database_count": 5,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 1000,
+      "peak_qps": 8000,
+      "avg_response_time_ms": 50,
+      "data_growth_rate": 25,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 50,
+      "avg_table_size_gb": 6.25,
+      "hot_data_ratio": 0.3,
+      "read_write_ratio": "7:3"
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 0,
+      "servers": {
+        "database": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 1,
+          "spec": "small",
+          "cpu": 8,
+          "memory_gb": 32,
+          "disk_gb": 500
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 1,
+          "type": "48port_1g"
+        },
+        "bandwidth_gbps": 1
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339694640",
+    "timestamp": "2025-10-25T16:43:39.694651",
+    "input": {
+      "total_data_size_gb": 3000,
+      "table_count": 200,
+      "database_count": 10,
+      "qps": 30000,
+      "tps": 12000,
+      "concurrent_connections": 5000,
+      "peak_qps": 50000,
+      "avg_response_time_ms": 30,
+      "data_growth_rate": 35,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 200,
+      "avg_table_size_gb": 15,
+      "hot_data_ratio": 0.2,
+      "read_write_ratio": "6:4"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "servers": {
+        "database": {
+          "count": 8,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "proxy": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        },
+        "management": {
+          "count": 3,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 2,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339698536",
+    "timestamp": "2025-10-25T16:43:39.698563",
+    "input": {
+      "total_data_size_gb": 15000,
+      "table_count": 500,
+      "database_count": 20,
+      "qps": 100000,
+      "tps": 40000,
+      "concurrent_connections": 20000,
+      "peak_qps": 150000,
+      "avg_response_time_ms": 20,
+      "data_growth_rate": 50,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 500,
+      "avg_table_size_gb": 30,
+      "hot_data_ratio": 0.15,
+      "read_write_ratio": "8:2"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 16,
+      "shard_count": 16,
+      "replica_count": 2,
+      "proxy_count": 4,
+      "servers": {
+        "database": {
+          "count": 32,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 4,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 5,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 4,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339699942",
+    "timestamp": "2025-10-25T16:43:39.699960",
+    "input": {
+      "total_data_size_gb": 800,
+      "table_count": 120,
+      "database_count": 6,
+      "qps": 8000,
+      "tps": 3000,
+      "concurrent_connections": 2000,
+      "peak_qps": 12000,
+      "avg_response_time_ms": 40,
+      "data_growth_rate": 20,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "business_type": "OLTP",
+      "max_table_size_gb": 80,
+      "avg_table_size_gb": 6.67,
+      "hot_data_ratio": 0.25,
+      "read_write_ratio": "5:5"
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 0,
+      "servers": {
+        "database": {
+          "count": 2,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "management": {
+          "count": 2,
+          "spec": "small",
+          "cpu": 8,
+          "memory_gb": 32,
+          "disk_gb": 500
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 1,
+          "type": "48port_1g"
+        },
+        "bandwidth_gbps": 1
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339701039",
+    "timestamp": "2025-10-25T16:43:39.701051",
+    "input": {
+      "total_data_size_gb": 50000,
+      "table_count": 1000,
+      "database_count": 50,
+      "qps": 200000,
+      "tps": 80000,
+      "concurrent_connections": 50000,
+      "peak_qps": 300000,
+      "avg_response_time_ms": 15,
+      "data_growth_rate": 60,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 1000,
+      "avg_table_size_gb": 50,
+      "hot_data_ratio": 0.1,
+      "read_write_ratio": "9:1"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 32,
+      "shard_count": 32,
+      "replica_count": 3,
+      "proxy_count": 8,
+      "servers": {
+        "database": {
+          "count": 96,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 8,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 4000
+        },
+        "management": {
+          "count": 7,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 4000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 8,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339702069",
+    "timestamp": "2025-10-25T16:43:39.702081",
+    "input": {
+      "total_data_size_gb": 5000,
+      "table_count": 300,
+      "database_count": 15,
+      "qps": 40000,
+      "tps": 15000,
+      "concurrent_connections": 8000,
+      "peak_qps": 60000,
+      "avg_response_time_ms": 25,
+      "data_growth_rate": 40,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 300,
+      "avg_table_size_gb": 16.67,
+      "hot_data_ratio": 0.2,
+      "read_write_ratio": "7:3"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 8,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "servers": {
+        "database": {
+          "count": 16,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 3,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 3,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 3,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339703034",
+    "timestamp": "2025-10-25T16:43:39.703040",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 150,
+      "database_count": 8,
+      "qps": 20000,
+      "tps": 8000,
+      "concurrent_connections": 10000,
+      "peak_qps": 35000,
+      "avg_response_time_ms": 30,
+      "data_growth_rate": 45,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 150,
+      "avg_table_size_gb": 13.33,
+      "hot_data_ratio": 0.3,
+      "read_write_ratio": "8:2"
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "servers": {
+        "database": {
+          "count": 8,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 4000
+        },
+        "proxy": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        },
+        "management": {
+          "count": 2,
+          "spec": "medium",
+          "cpu": 16,
+          "memory_gb": 64,
+          "disk_gb": 1000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 2,
+          "type": "48port_10g"
+        },
+        "bandwidth_gbps": 10
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025164339704448",
+    "timestamp": "2025-10-25T16:43:39.704492",
+    "input": {
+      "total_data_size_gb": 10000,
+      "table_count": 400,
+      "database_count": 25,
+      "qps": 60000,
+      "tps": 25000,
+      "concurrent_connections": 15000,
+      "peak_qps": 90000,
+      "avg_response_time_ms": 20,
+      "data_growth_rate": 55,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "business_type": "OLTP",
+      "max_table_size_gb": 400,
+      "avg_table_size_gb": 25,
+      "hot_data_ratio": 0.15,
+      "read_write_ratio": "6:4"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 12,
+      "shard_count": 12,
+      "replica_count": 3,
+      "proxy_count": 4,
+      "servers": {
+        "database": {
+          "count": 36,
+          "spec": "xlarge",
+          "cpu": 64,
+          "memory_gb": 256,
+          "disk_gb": 8000
+        },
+        "proxy": {
+          "count": 4,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        },
+        "management": {
+          "count": 5,
+          "spec": "large",
+          "cpu": 32,
+          "memory_gb": 128,
+          "disk_gb": 2000
+        }
+      },
+      "network": {
+        "switches": {
+          "count": 5,
+          "type": "32port_40g"
+        },
+        "bandwidth_gbps": 40
+      }
+    },
+    "feedback": {},
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106370845",
+    "timestamp": "2025-10-25T17:01:06.370878",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 10
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 500000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106373267",
+    "timestamp": "2025-10-25T17:01:06.373287",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 11
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 600000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106374545",
+    "timestamp": "2025-10-25T17:01:06.374554",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 12
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 700000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106375681",
+    "timestamp": "2025-10-25T17:01:06.375687",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 13
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 800000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106376846",
+    "timestamp": "2025-10-25T17:01:06.376851",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 14
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 900000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106377969",
+    "timestamp": "2025-10-25T17:01:06.377974",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 15
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1000000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106379115",
+    "timestamp": "2025-10-25T17:01:06.379121",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 16
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1100000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106380303",
+    "timestamp": "2025-10-25T17:01:06.380308",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 17
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1200000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106381490",
+    "timestamp": "2025-10-25T17:01:06.381495",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 18
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1300000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106382899",
+    "timestamp": "2025-10-25T17:01:06.382910",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 19
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 1400000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106384415",
+    "timestamp": "2025-10-25T17:01:06.384438",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 1500000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106385800",
+    "timestamp": "2025-10-25T17:01:06.385807",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 21
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1600000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106387067",
+    "timestamp": "2025-10-25T17:01:06.387072",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 22
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1700000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106388404",
+    "timestamp": "2025-10-25T17:01:06.388412",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 23
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1800000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106389758",
+    "timestamp": "2025-10-25T17:01:06.389762",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 24
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1900000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106391104",
+    "timestamp": "2025-10-25T17:01:06.391111",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 25
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 2000000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106392927",
+    "timestamp": "2025-10-25T17:01:06.392948",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 26
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 2100000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106394428",
+    "timestamp": "2025-10-25T17:01:06.394435",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 27
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 2200000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106395798",
+    "timestamp": "2025-10-25T17:01:06.395802",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 28
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 2300000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170106397188",
+    "timestamp": "2025-10-25T17:01:06.397192",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 29
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2400000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120252821",
+    "timestamp": "2025-10-25T17:01:20.252840",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 10
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 500000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120255186",
+    "timestamp": "2025-10-25T17:01:20.255202",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 11
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 600000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120256684",
+    "timestamp": "2025-10-25T17:01:20.256690",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 12
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 700000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120258390",
+    "timestamp": "2025-10-25T17:01:20.258401",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 13
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 800000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120259962",
+    "timestamp": "2025-10-25T17:01:20.259968",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 14
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 900000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120261451",
+    "timestamp": "2025-10-25T17:01:20.261456",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 15
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1000000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120262942",
+    "timestamp": "2025-10-25T17:01:20.262947",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 16
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1100000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120264430",
+    "timestamp": "2025-10-25T17:01:20.264434",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 17
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1200000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120265954",
+    "timestamp": "2025-10-25T17:01:20.265958",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 18
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1300000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120267893",
+    "timestamp": "2025-10-25T17:01:20.267915",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 19
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 1400000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120269854",
+    "timestamp": "2025-10-25T17:01:20.269867",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 1500000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120271525",
+    "timestamp": "2025-10-25T17:01:20.271531",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 21
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 1600000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120273156",
+    "timestamp": "2025-10-25T17:01:20.273161",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 22
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 1700000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120275206",
+    "timestamp": "2025-10-25T17:01:20.275211",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 23
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 1800000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120277314",
+    "timestamp": "2025-10-25T17:01:20.277349",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 24
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 3,
+      "estimated_cost": 1900000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120279288",
+    "timestamp": "2025-10-25T17:01:20.279294",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": false,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 25
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 2000000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120281054",
+    "timestamp": "2025-10-25T17:01:20.281059",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": false,
+      "data_growth_rate": 26
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 2,
+      "shard_count": 1,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 2100000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120282804",
+    "timestamp": "2025-10-25T17:01:20.282808",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 1500,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 27
+    },
+    "output": {
+      "architecture_type": "hybrid",
+      "node_count": 4,
+      "shard_count": 2,
+      "replica_count": 2,
+      "proxy_count": 3,
+      "estimated_cost": 2200000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120284600",
+    "timestamp": "2025-10-25T17:01:20.284605",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 300,
+      "qps": 2000,
+      "tps": 1000,
+      "concurrent_connections": 200,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": false,
+      "data_growth_rate": 28
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 6,
+      "shard_count": 3,
+      "replica_count": 1,
+      "proxy_count": 1,
+      "estimated_cost": 2300000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251025170120287052",
+    "timestamp": "2025-10-25T17:01:20.287080",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 800,
+      "qps": 5000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": false,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 29
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 8,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2400000
+    },
+    "feedback": {
+      "industry": "通用",
+      "scenario": "企业应用",
+      "verified": true,
+      "accuracy_rating": 4.3
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251026154405250016",
+    "timestamp": "2025-10-26T15:44:05.250039",
+    "input": {
+      "qps": 3000,
+      "data_volume": 300,
+      "ha_level": "medium",
+      "industry": "电商"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2
+    },
+    "feedback": {
+      "accuracy": 0.95,
+      "performance": "good",
+      "cost_effective": true
+    },
+    "used_for_training": false
+  },
+  {
+    "id": "case_20251026154437674556",
+    "timestamp": "2025-10-26T15:44:37.674569",
+    "input": {
+      "qps": 3000,
+      "data_volume": 300,
+      "ha_level": "medium",
+      "industry": "电商"
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2
+    },
+    "feedback": {
+      "accuracy": 0.95,
+      "performance": "good",
+      "cost_effective": true
+    },
+    "used_for_training": false
+  }
+]

@@ -1,0 +1,157 @@
+[
+  {
+    "id": "gaming_case_1",
+    "source": "community_gaming",
+    "timestamp": "2025-10-26T10:30:00.000000",
+    "input": {
+      "total_data_size_gb": 800,
+      "table_count": 400,
+      "qps": 100000,
+      "tps": 15000,
+      "concurrent_connections": 5000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 35
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 20,
+      "shard_count": 16,
+      "replica_count": 2,
+      "proxy_count": 8,
+      "estimated_cost": 5200000
+    },
+    "metadata": {
+      "industry": "手游",
+      "scenario": "MMORPG大型多人在线",
+      "verified": true,
+      "accuracy_rating": 4.9,
+      "notes": "低延迟<5ms，分区分服架构，实时排行榜"
+    }
+  },
+  {
+    "id": "gaming_case_2",
+    "source": "community_gaming",
+    "timestamp": "2025-10-26T10:35:00.000000",
+    "input": {
+      "total_data_size_gb": 400,
+      "table_count": 250,
+      "qps": 50000,
+      "tps": 8000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 28
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 10,
+      "shard_count": 8,
+      "replica_count": 1,
+      "proxy_count": 4,
+      "estimated_cost": 2400000
+    },
+    "metadata": {
+      "industry": "端游",
+      "scenario": "竞技类游戏",
+      "verified": true,
+      "accuracy_rating": 4.6,
+      "notes": "实时对战数据，延迟优化，赛季数据归档"
+    }
+  },
+  {
+    "id": "gaming_case_3",
+    "source": "community_gaming",
+    "timestamp": "2025-10-26T10:40:00.000000",
+    "input": {
+      "total_data_size_gb": 200,
+      "table_count": 150,
+      "qps": 30000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 22
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 1,
+      "proxy_count": 2,
+      "estimated_cost": 1300000
+    },
+    "metadata": {
+      "industry": "H5游戏",
+      "scenario": "休闲游戏",
+      "verified": true,
+      "accuracy_rating": 4.4,
+      "notes": "快速部署，弹性扩展，活动数据热备"
+    }
+  },
+  {
+    "id": "gaming_case_4",
+    "source": "community_gaming",
+    "timestamp": "2025-10-26T10:45:00.000000",
+    "input": {
+      "total_data_size_gb": 600,
+      "table_count": 350,
+      "qps": 70000,
+      "tps": 10000,
+      "concurrent_connections": 3000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 30
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 14,
+      "shard_count": 12,
+      "replica_count": 2,
+      "proxy_count": 6,
+      "estimated_cost": 3800000
+    },
+    "metadata": {
+      "industry": "页游",
+      "scenario": "策略类游戏",
+      "verified": true,
+      "accuracy_rating": 4.7,
+      "notes": "跨服战斗，联盟数据，实时同步"
+    }
+  },
+  {
+    "id": "gaming_case_5",
+    "source": "community_gaming",
+    "timestamp": "2025-10-26T10:50:00.000000",
+    "input": {
+      "total_data_size_gb": 100,
+      "table_count": 80,
+      "qps": 15000,
+      "tps": 2500,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": false,
+      "need_read_write_split": true,
+      "data_growth_rate": 20
+    },
+    "output": {
+      "architecture_type": "standalone",
+      "node_count": 3,
+      "shard_count": 1,
+      "replica_count": 2,
+      "proxy_count": 1,
+      "estimated_cost": 550000
+    },
+    "metadata": {
+      "industry": "手游",
+      "scenario": "小型独立游戏",
+      "verified": true,
+      "accuracy_rating": 4.2,
+      "notes": "成本优化，适合独立开发者"
+    }
+  }
+]

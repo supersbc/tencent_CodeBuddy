@@ -1,0 +1,722 @@
+[
+  {
+    "id": "community_finance_case_1",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220071",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_2",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220076",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_3",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220078",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_4",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220079",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_5",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220081",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_6",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220082",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_7",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220084",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_8",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220085",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_9",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220087",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_10",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220088",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_11",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220090",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_12",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220091",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_13",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220093",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_14",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220094",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_15",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220096",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_16",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220097",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_17",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220099",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_18",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220100",
+    "input": {
+      "total_data_size_gb": 2000,
+      "table_count": 5000,
+      "qps": 20000,
+      "tps": 10000,
+      "concurrent_connections": 2000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_19",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220101",
+    "input": {
+      "total_data_size_gb": 500,
+      "table_count": 1000,
+      "qps": 5000,
+      "tps": 2000,
+      "concurrent_connections": 500,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  },
+  {
+    "id": "community_finance_case_20",
+    "source": "community_finance",
+    "timestamp": "2025-10-25T16:55:12.220103",
+    "input": {
+      "total_data_size_gb": 1000,
+      "table_count": 2000,
+      "qps": 10000,
+      "tps": 5000,
+      "concurrent_connections": 1000,
+      "need_high_availability": true,
+      "need_disaster_recovery": true,
+      "need_read_write_split": true,
+      "data_growth_rate": 15,
+      "industry": "金融",
+      "compliance_required": true,
+      "data_encryption": true,
+      "backup_frequency": "hourly",
+      "rto_minutes": 5,
+      "rpo_minutes": 0
+    },
+    "output": {
+      "architecture_type": "distributed",
+      "node_count": 6,
+      "shard_count": 4,
+      "replica_count": 2,
+      "proxy_count": 2,
+      "estimated_cost": 2500000
+    },
+    "metadata": {
+      "industry": "金融",
+      "scenario": "核心交易系统",
+      "verified": true,
+      "accuracy_rating": 4.8
+    }
+  }
+]

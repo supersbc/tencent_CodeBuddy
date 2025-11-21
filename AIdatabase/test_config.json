@@ -1,0 +1,7 @@
+{
+  "industry": "游戏",
+  "qps": 20000,
+  "data_volume": 200,
+  "concurrent_users": 5000,
+  "availability": 99.95
+}
