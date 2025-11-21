@@ -1,0 +1,153 @@
+nohup: ignoring input
+
+============================================================
+🚀 TDSQL 部署资源预测系统 v4.2 (完整版)
+============================================================
+\n============================================================
+🚀 TDSQL 部署资源预测系统 v4.3
+============================================================
+📍 主页面: http://127.0.0.1:18080
+📍 导航页面: http://127.0.0.1:18080/nav
+📍 部署预测: http://127.0.0.1:18080/predict (新版)
+📍 模型库管理: http://127.0.0.1:18080/model_library
+📍 学习系统: http://127.0.0.1:18080/learning
+============================================================
+✨ 功能模块:
+  ✅ 部署资源预测 - 普通版/专业版双模式
+  ✅ Excel模板 - 下载模板，上传自动填充
+  ✅ 模型库管理 - 8个预置模型库
+  ✅ 自主训练 - 从实际案例中学习优化
+  ✅ 文件上传 - 支持JSON/Excel/图片/PDF
+============================================================
+
+ * Serving Flask app 'app_simple' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://21.91.205.22:18080/ (Press CTRL+C to quit)
+127.0.0.1 - - [12/Nov/2025 09:37:19] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:39:15] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:39:18] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:39:21] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:39:27] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:39:37] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:40:56] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:41:14] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:41:18] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:41:21] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:43:40] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:43:41] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:00] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:01] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:02] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:05] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:10] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:12] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:52:42] "[33mGET /predict_v2 HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 09:52:42] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 09:54:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:54:24] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:54:32] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:54:39] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:57:48] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:57:52] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:57:55] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:00] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:02] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:04] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:05] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:09] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:29] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 09:58:50] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:00:41] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:00:58] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:01:15] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:06:12] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:06:20] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:06:22] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:06:35] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:06:46] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:07:00] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:07:04] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:12:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:12:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 10:12:54] "[33mGET /unified HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 10:12:57] "[33mGET /optimized HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 10:12:59] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:13:17] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:13:21] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:13:23] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:14:49] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:15:12] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:17:12] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:17:12] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 10:17:42] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:17:54] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:18:07] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:18:18] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:18:21] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:23:39] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:23:44] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:23:51] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:27:11] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:27:15] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:27:21] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:28:06] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:28:26] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:28:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Nov/2025 10:28:58] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:29:10] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:29:46] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:29:55] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:30:03] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:30:12] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2025 10:30:48] "GET /predict HTTP/1.1" 200 -
+
+============================================================
+🚀 TDSQL 部署资源预测系统 v4.2 (完整版)
+============================================================
+\n============================================================
+🚀 TDSQL 部署资源预测系统 v4.3
+============================================================
+📍 主页面: http://127.0.0.1:18080
+📍 导航页面: http://127.0.0.1:18080/nav
+📍 部署预测: http://127.0.0.1:18080/predict (新版)
+📍 模型库管理: http://127.0.0.1:18080/model_library
+📍 学习系统: http://127.0.0.1:18080/learning
+============================================================
+✨ 功能模块:
+  ✅ 部署资源预测 - 普通版/专业版双模式
+  ✅ Excel模板 - 下载模板，上传自动填充
+  ✅ 模型库管理 - 8个预置模型库
+  ✅ 自主训练 - 从实际案例中学习优化
+  ✅ 文件上传 - 支持JSON/Excel/图片/PDF
+============================================================
+
+ * Serving Flask app 'app_simple' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Traceback (most recent call last):
+  File "app_simple.py", line 602, in <module>
+    use_reloader=False
+  File "/root/.local/lib/python3.6/site-packages/flask/app.py", line 920, in run
+    run_simple(t.cast(str, host), port, self, **options)
+  File "/root/.local/lib/python3.6/site-packages/werkzeug/serving.py", line 1017, in run_simple
+    inner()
+  File "/root/.local/lib/python3.6/site-packages/werkzeug/serving.py", line 966, in inner
+    fd=fd,
+  File "/root/.local/lib/python3.6/site-packages/werkzeug/serving.py", line 790, in make_server
+    host, port, app, request_handler, passthrough_errors, ssl_context, fd=fd
+  File "/root/.local/lib/python3.6/site-packages/werkzeug/serving.py", line 693, in __init__
+    super().__init__(server_address, handler)  # type: ignore
+  File "/usr/lib64/python3.6/socketserver.py", line 456, in __init__
+    self.server_bind()
+  File "/usr/lib64/python3.6/http/server.py", line 136, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/usr/lib64/python3.6/socketserver.py", line 470, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 98] Address already in use

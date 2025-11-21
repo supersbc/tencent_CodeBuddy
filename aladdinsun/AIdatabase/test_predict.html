@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>测试预测接口</title>
+</head>
+<body>
+    <h1>测试预测接口</h1>
+    <button onclick="testPredict()">点击测试</button>
+    <pre id="result"></pre>
+    
+    <script>
+    async function testPredict() {
+        const data = {
+            total_data_size_gb: 1000,
+            qps: 5000,
+            concurrent_users: 200,
+            enable_xinchuan: true,
+            xinchuan_mode: 'standard'
+        };
+        
+        try {
+            const response = await fetch('/api/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+            
+            if (result.success) {
+                alert('✅ 预测成功!');
+            } else {
+                alert('❌ 预测失败: ' + result.error);
+            }
+        } catch (error) {
+            alert('❌ 请求错误: ' + error.message);
+            console.error(error);
+        }
+    }
+    </script>
+</body>
+</html>

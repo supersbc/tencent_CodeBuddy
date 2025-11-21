@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TDSQL 部署资源预测系统</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>TDSQL 部署资源预测系统 v2.1</title>
     <style>
         * {
             margin: 0;
@@ -561,18 +564,18 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>数据规模 (GB) *</label>
-                                <input type="number" name="total_data_size_gb" required min="1">
+                                <label for="total_data_size_gb">数据规模 (GB) *</label>
+                                <input type="number" name="total_data_size_gb" id="total_data_size_gb" required min="1">
                                 <small>预计存储的总数据量</small>
                             </div>
                             <div class="form-group">
-                                <label>表数量 *</label>
-                                <input type="number" name="table_count" required min="1">
+                                <label for="table_count">表数量 *</label>
+                                <input type="number" name="table_count" id="table_count" required min="1">
                                 <small>数据库中的表总数</small>
                             </div>
                             <div class="form-group">
-                                <label>数据增长率 (%/年) *</label>
-                                <input type="number" name="data_growth_rate" required min="0" max="100">
+                                <label for="data_growth_rate">数据增长率 (%/年) *</label>
+                                <input type="number" name="data_growth_rate" id="data_growth_rate" required min="0" max="100">
                                 <small>预计每年数据增长的百分比</small>
                             </div>
                         </div>
@@ -585,18 +588,18 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>QPS (每秒查询数) *</label>
-                                <input type="number" name="qps" required min="1">
+                                <label for="qps">QPS (每秒查询数) *</label>
+                                <input type="number" name="qps" id="qps" required min="1">
                                 <small>系统每秒处理的查询请求数</small>
                             </div>
                             <div class="form-group">
-                                <label>TPS (每秒事务数) *</label>
-                                <input type="number" name="tps" required min="1">
+                                <label for="tps">TPS (每秒事务数) *</label>
+                                <input type="number" name="tps" id="tps" required min="1">
                                 <small>系统每秒处理的事务数</small>
                             </div>
                             <div class="form-group">
-                                <label>并发连接数 *</label>
-                                <input type="number" name="concurrent_connections" required min="1">
+                                <label for="concurrent_connections">并发连接数 *</label>
+                                <input type="number" name="concurrent_connections" id="concurrent_connections" required min="1">
                                 <small>同时连接到数据库的最大连接数</small>
                             </div>
                         </div>
@@ -609,16 +612,38 @@
                         </div>
                         <div class="form-grid">
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_high_availability" id="ha">
+                                <input type="checkbox" name="ha" id="ha">
                                 <label for="ha">需要高可用架构</label>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_disaster_recovery" id="dr">
+                                <input type="checkbox" name="dr" id="dr">
                                 <label for="dr">需要异地灾备</label>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_read_write_split" id="rw">
+                                <input type="checkbox" name="rw" id="rw">
                                 <label for="rw">需要读写分离</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🇨🇳</span>
+                            <span>信创国产化</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 2px solid #667eea;">
+                                <input type="checkbox" name="enable_xinchuan" id="enable_xinchuan">
+                                <label for="enable_xinchuan" style="font-weight: 700; color: #667eea;">✨ 启用信创国产化对比（可选）</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="xinchuan_mode_simple">信创模式级别</label>
+                                <select name="xinchuan_mode" id="xinchuan_mode_simple">
+                                    <option value="standard">标准信创（服务器+网络国产化，节约8-12%）</option>
+                                    <option value="strict">严格信创（全国产CPU，节约10-15%）</option>
+                                    <option value="full">完全信创（全栈国产，符合国家要求）</option>
+                                </select>
+                                <small>💡 信创模式将使用浪潮、华为等国产设备，享受成本优势和政策支持</small>
                             </div>
                         </div>
                     </div>
@@ -639,12 +664,12 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>项目名称</label>
-                                <input type="text" name="project_name">
+                                <label for="project_name">项目名称</label>
+                                <input type="text" name="project_name" id="project_name">
                             </div>
                             <div class="form-group">
-                                <label>行业类型</label>
-                                <select name="industry_type">
+                                <label for="industry_pro">行业类型</label>
+                                <select name="industry" id="industry_pro">
                                     <option value="">请选择</option>
                                     <option value="finance">金融</option>
                                     <option value="ecommerce">电商</option>
@@ -657,16 +682,16 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>业务场景</label>
-                                <input type="text" name="business_scenario" placeholder="如：核心交易、数据分析等">
+                                <label for="business_scenario">业务场景</label>
+                                <input type="text" name="business_scenario" id="business_scenario" placeholder="如：核心交易、数据分析等">
                             </div>
                             <div class="form-group">
-                                <label>预计上线时间</label>
-                                <input type="date" name="launch_date">
+                                <label for="launch_date">预计上线时间</label>
+                                <input type="date" name="launch_date" id="launch_date">
                             </div>
                             <div class="form-group">
-                                <label>预算范围 (万元)</label>
-                                <input type="number" name="budget_range" min="0">
+                                <label for="budget_range">预算范围 (万元)</label>
+                                <input type="number" name="budget_range" id="budget_range" min="0">
                             </div>
                         </div>
                     </div>
@@ -679,36 +704,36 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>当前数据规模 (GB) *</label>
-                                <input type="number" name="current_data_size_gb" required min="0">
+                                <label for="current_data_size_gb">当前数据规模 (GB) *</label>
+                                <input type="number" name="current_data_size_gb" id="current_data_size_gb" required min="0">
                             </div>
                             <div class="form-group">
-                                <label>预计3年后数据规模 (GB)</label>
-                                <input type="number" name="future_data_size_gb" min="0">
+                                <label for="future_data_size_gb">预计3年后数据规模 (GB)</label>
+                                <input type="number" name="future_data_size_gb" id="future_data_size_gb" min="0">
                             </div>
                             <div class="form-group">
-                                <label>数据库数量</label>
-                                <input type="number" name="database_count" min="1">
+                                <label for="database_count">数据库数量</label>
+                                <input type="number" name="database_count" id="database_count" min="1">
                             </div>
                             <div class="form-group">
-                                <label>表数量 *</label>
-                                <input type="number" name="table_count" required min="1">
+                                <label for="table_count">表数量 *</label>
+                                <input type="number" name="table_count" id="table_count" required min="1">
                             </div>
                             <div class="form-group">
-                                <label>单表最大记录数</label>
-                                <input type="number" name="max_table_rows" min="0">
+                                <label for="max_table_rows">单表最大记录数</label>
+                                <input type="number" name="max_table_rows" id="max_table_rows" min="0">
                             </div>
                             <div class="form-group">
-                                <label>平均行大小 (字节)</label>
-                                <input type="number" name="avg_row_size" min="0">
+                                <label for="avg_row_size">平均行大小 (字节)</label>
+                                <input type="number" name="avg_row_size" id="avg_row_size" min="0">
                             </div>
                             <div class="form-group">
-                                <label>数据增长率 (%/年) *</label>
-                                <input type="number" name="data_growth_rate" required min="0" max="100">
+                                <label for="data_growth_rate">数据增长率 (%/年) *</label>
+                                <input type="number" name="data_growth_rate" id="data_growth_rate" required min="0" max="100">
                             </div>
                             <div class="form-group">
-                                <label>数据保留期限 (年)</label>
-                                <input type="number" name="data_retention_years" min="1">
+                                <label for="data_retention_years">数据保留期限 (年)</label>
+                                <input type="number" name="data_retention_years" id="data_retention_years" min="1">
                             </div>
                         </div>
                     </div>
@@ -721,40 +746,40 @@
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>日常QPS *</label>
-                                <input type="number" name="normal_qps" required min="1">
+                                <label for="normal_qps">日常QPS *</label>
+                                <input type="number" name="normal_qps" id="normal_qps" required min="1">
                             </div>
                             <div class="form-group">
-                                <label>峰值QPS</label>
-                                <input type="number" name="peak_qps" min="1">
+                                <label for="peak_qps">峰值QPS</label>
+                                <input type="number" name="peak_qps" id="peak_qps" min="1">
                             </div>
                             <div class="form-group">
-                                <label>日常TPS *</label>
-                                <input type="number" name="normal_tps" required min="1">
+                                <label for="normal_tps">日常TPS *</label>
+                                <input type="number" name="normal_tps" id="normal_tps" required min="1">
                             </div>
                             <div class="form-group">
-                                <label>峰值TPS</label>
-                                <input type="number" name="peak_tps" min="1">
+                                <label for="peak_tps">峰值TPS</label>
+                                <input type="number" name="peak_tps" id="peak_tps" min="1">
                             </div>
                             <div class="form-group">
-                                <label>平均并发连接数 *</label>
-                                <input type="number" name="avg_concurrent_connections" required min="1">
+                                <label for="avg_concurrent_connections">平均并发连接数 *</label>
+                                <input type="number" name="avg_concurrent_connections" id="avg_concurrent_connections" required min="1">
                             </div>
                             <div class="form-group">
-                                <label>峰值并发连接数</label>
-                                <input type="number" name="peak_concurrent_connections" min="1">
+                                <label for="peak_concurrent_connections">峰值并发连接数</label>
+                                <input type="number" name="peak_concurrent_connections" id="peak_concurrent_connections" min="1">
                             </div>
                             <div class="form-group">
-                                <label>平均响应时间要求 (ms)</label>
-                                <input type="number" name="avg_response_time" min="0">
+                                <label for="avg_response_time">平均响应时间要求 (ms)</label>
+                                <input type="number" name="avg_response_time" id="avg_response_time" min="0">
                             </div>
                             <div class="form-group">
-                                <label>99分位响应时间要求 (ms)</label>
-                                <input type="number" name="p99_response_time" min="0">
+                                <label for="p99_response_time">99分位响应时间要求 (ms)</label>
+                                <input type="number" name="p99_response_time" id="p99_response_time" min="0">
                             </div>
                             <div class="form-group">
-                                <label>读写比例</label>
-                                <input type="text" name="read_write_ratio" placeholder="如：7:3">
+                                <label for="read_write_ratio">读写比例</label>
+                                <input type="text" name="read_write_ratio" id="read_write_ratio" placeholder="如：7:3">
                             </div>
                         </div>
                     </div>
@@ -771,8 +796,8 @@
                                 <label for="ha_pro">需要高可用架构</label>
                             </div>
                             <div class="form-group">
-                                <label>可用性要求</label>
-                                <select name="availability_requirement">
+                                <label for="availability_requirement">可用性要求</label>
+                                <select name="availability_requirement" id="availability_requirement">
                                     <option value="">请选择</option>
                                     <option value="99.9">99.9%</option>
                                     <option value="99.99">99.99%</option>
@@ -780,24 +805,24 @@
                                 </select>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_disaster_recovery" id="dr_pro">
+                                <input type="checkbox" name="dr_pro" id="dr_pro">
                                 <label for="dr_pro">需要异地灾备</label>
                             </div>
                             <div class="form-group">
-                                <label>RPO (恢复点目标)</label>
-                                <input type="text" name="rpo" placeholder="如：0、5分钟、1小时">
+                                <label for="rpo">RPO (恢复点目标)</label>
+                                <input type="text" name="rpo" id="rpo" placeholder="如：0、5分钟、1小时">
                             </div>
                             <div class="form-group">
-                                <label>RTO (恢复时间目标)</label>
-                                <input type="text" name="rto" placeholder="如：5分钟、30分钟">
+                                <label for="rto">RTO (恢复时间目标)</label>
+                                <input type="text" name="rto" id="rto" placeholder="如：5分钟、30分钟">
                             </div>
                             <div class="form-group">
-                                <label>灾备中心数量</label>
-                                <input type="number" name="dr_center_count" min="0">
+                                <label for="dr_center_count">灾备中心数量</label>
+                                <input type="number" name="dr_center_count" id="dr_center_count" min="0">
                             </div>
                             <div class="form-group">
-                                <label>主备切换方式</label>
-                                <select name="failover_mode">
+                                <label for="failover_mode">主备切换方式</label>
+                                <select name="failover_mode" id="failover_mode">
                                     <option value="">请选择</option>
                                     <option value="auto">自动</option>
                                     <option value="manual">手动</option>
@@ -814,28 +839,28 @@
                         </div>
                         <div class="form-grid">
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_read_write_split" id="rw_pro">
+                                <input type="checkbox" name="rw_pro" id="rw_pro">
                                 <label for="rw_pro">需要读写分离</label>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_sharding" id="sharding">
-                                <label for="sharding">需要分库分表</label>
+                                <input type="checkbox" name="need_sharding" id="need_sharding">
+                                <label for="need_sharding">需要分库分表</label>
                             </div>
                             <div class="form-group">
-                                <label>分片策略</label>
-                                <input type="text" name="sharding_strategy" placeholder="如：按用户ID、按时间等">
+                                <label for="sharding_strategy">分片策略</label>
+                                <input type="text" name="sharding_strategy" id="sharding_strategy" placeholder="如：按用户ID、按时间等">
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_cache" id="cache">
-                                <label for="cache">需要缓存层</label>
+                                <input type="checkbox" name="need_cache" id="need_cache">
+                                <label for="need_cache">需要缓存层</label>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_mq" id="mq">
-                                <label for="mq">需要消息队列</label>
+                                <input type="checkbox" name="need_mq" id="need_mq">
+                                <label for="need_mq">需要消息队列</label>
                             </div>
                             <div class="form-group">
-                                <label>部署方式</label>
-                                <select name="deployment_mode">
+                                <label for="deployment_mode">部署方式</label>
+                                <select name="deployment_mode" id="deployment_mode">
                                     <option value="">请选择</option>
                                     <option value="physical">物理机</option>
                                     <option value="vm">虚拟机</option>
@@ -844,8 +869,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>网络隔离要求</label>
-                                <input type="text" name="network_isolation" placeholder="如：VPC、专线等">
+                                <label for="network_isolation">网络隔离要求</label>
+                                <input type="text" name="network_isolation" id="network_isolation" placeholder="如：VPC、专线等">
                             </div>
                         </div>
                     </div>
@@ -858,12 +883,12 @@
                         </div>
                         <div class="form-grid">
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_encryption" id="encryption">
-                                <label for="encryption">需要数据加密</label>
+                                <input type="checkbox" name="need_encryption" id="need_encryption">
+                                <label for="need_encryption">需要数据加密</label>
                             </div>
                             <div class="form-group">
-                                <label>加密方式</label>
-                                <select name="encryption_type">
+                                <label for="encryption_type">加密方式</label>
+                                <select name="encryption_type" id="encryption_type">
                                     <option value="">请选择</option>
                                     <option value="transport">传输加密</option>
                                     <option value="storage">存储加密</option>
@@ -871,20 +896,52 @@
                                 </select>
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_audit" id="audit">
-                                <label for="audit">需要审计日志</label>
+                                <input type="checkbox" name="need_audit" id="need_audit">
+                                <label for="need_audit">需要审计日志</label>
                             </div>
                             <div class="form-group">
-                                <label>合规要求</label>
-                                <input type="text" name="compliance" placeholder="如：等保三级、PCI-DSS等">
+                                <label for="compliance">合规要求</label>
+                                <input type="text" name="compliance" id="compliance" placeholder="如：等保三级、PCI-DSS等">
                             </div>
                             <div class="form-group">
-                                <label>敏感数据类型</label>
-                                <input type="text" name="sensitive_data" placeholder="如：身份证、银行卡等">
+                                <label for="sensitive_data">敏感数据类型</label>
+                                <input type="text" name="sensitive_data" id="sensitive_data" placeholder="如：身份证、银行卡等">
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_masking" id="masking">
-                                <label for="masking">需要数据脱敏</label>
+                                <input type="checkbox" name="need_masking" id="need_masking">
+                                <label for="need_masking">需要数据脱敏</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 信创国产化 -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🇨🇳</span>
+                            <span>信创国产化</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="checkbox-group" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 2px solid #667eea;">
+                                <input type="checkbox" name="enable_xinchuan_pro" id="enable_xinchuan_pro">
+                                <label for="enable_xinchuan_pro" style="font-weight: 700; color: #667eea;">✨ 启用信创国产化对比（可选）</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="xinchuan_mode_pro">信创模式级别</label>
+                                <select name="xinchuan_mode" id="xinchuan_mode_pro">
+                                    <option value="standard">标准信创（服务器+网络国产化，节约8-12%）</option>
+                                    <option value="strict">严格信创（全国产CPU，节约10-15%）</option>
+                                    <option value="full">完全信创（全栈国产，符合国家要求）</option>
+                                </select>
+                                <small>💡 信创模式将使用浪潮、华为等国产设备，享受成本优势和政策支持</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="xinchuan_vendor_preference">设备偏好</label>
+                                <select name="xinchuan_vendor_preference" id="xinchuan_vendor_preference">
+                                    <option value="">不限</option>
+                                    <option value="inspur">优先浪潮</option>
+                                    <option value="huawei">优先华为</option>
+                                    <option value="lenovo">优先联想</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -897,12 +954,12 @@
                         </div>
                         <div class="form-grid">
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_monitoring" id="monitoring">
-                                <label for="monitoring">需要监控告警</label>
+                                <input type="checkbox" name="need_monitoring" id="need_monitoring">
+                                <label for="need_monitoring">需要监控告警</label>
                             </div>
                             <div class="form-group">
-                                <label>备份频率</label>
-                                <select name="backup_frequency">
+                                <label for="backup_frequency">备份频率</label>
+                                <select name="backup_frequency" id="backup_frequency">
                                     <option value="">请选择</option>
                                     <option value="realtime">实时</option>
                                     <option value="hourly">每小时</option>
@@ -910,20 +967,20 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>备份保留期限 (天)</label>
-                                <input type="number" name="backup_retention_days" min="1">
+                                <label for="backup_retention_days">备份保留期限 (天)</label>
+                                <input type="number" name="backup_retention_days" id="backup_retention_days" min="1">
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_auto_scaling" id="auto_scaling">
-                                <label for="auto_scaling">需要自动扩容</label>
+                                <input type="checkbox" name="need_auto_scaling" id="need_auto_scaling">
+                                <label for="need_auto_scaling">需要自动扩容</label>
                             </div>
                             <div class="form-group">
-                                <label>运维团队规模</label>
-                                <input type="number" name="ops_team_size" min="0">
+                                <label for="ops_team_size">运维团队规模</label>
+                                <input type="number" name="ops_team_size" id="ops_team_size" min="0">
                             </div>
                             <div class="checkbox-group">
-                                <input type="checkbox" name="need_24x7_support" id="support">
-                                <label for="support">需要7x24小时支持</label>
+                                <input type="checkbox" name="need_24x7_support" id="need_24x7_support">
+                                <label for="need_24x7_support">需要7x24小时支持</label>
                             </div>
                         </div>
                     </div>
@@ -1106,17 +1163,43 @@
                         body: JSON.stringify(data)
                     });
 
-                    const result = await response.json();
+                    console.log('API响应状态:', response.status);
+                    
+                    // 先获取文本，再解析JSON，以便捕获解析错误
+                    const text = await response.text();
+                    console.log('响应文本长度:', text.length);
+                    
+                    let result;
+                    try {
+                        result = JSON.parse(text);
+                    } catch (jsonError) {
+                        console.error('JSON解析失败:', jsonError);
+                        console.error('响应文本:', text.substring(0, 1000));
+                        alert('预测失败：服务器返回了无效的数据格式\n\n请打开浏览器控制台(F12)查看详细错误信息');
+                        location.reload();
+                        return;
+                    }
+                    
+                    console.log('API返回结果:', result);
                     
                     if (result.success) {
-                        displayResults(result.data);
+                        try {
+                            displayResults(result.data);
+                        } catch (displayError) {
+                            console.error('显示结果失败:', displayError);
+                            console.error('错误堆栈:', displayError.stack);
+                            console.error('结果数据:', result.data);
+                            alert('预测结果显示失败：' + displayError.message + '\n\n请打开浏览器控制台(F12)查看详细错误信息');
+                            location.reload();
+                        }
                     } else {
                         alert('预测失败：' + result.error);
                         location.reload();
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('预测失败，请重试');
+                    console.error('错误堆栈:', error.stack);
+                    alert('预测失败：' + error.message + '\n\n请打开浏览器控制台(F12)查看详细错误信息');
                     location.reload();
                 }
             });
@@ -1130,8 +1213,23 @@
             const arch = r.architecture || {};
             const topo = arch.topology || {};
             const cost = (r.cost_breakdown && r.cost_breakdown.summary) ? r.cost_breakdown.summary : {};
-            const equipment = r.equipment_list || {};
+            
+            // 处理equipment: 后端返回的是字典对象（包含servers, network_devices等分类）
+            let equipment = r.equipment || {};
+            
+            // 确保所有设备列表都存在
+            if (!equipment.servers) equipment.servers = [];
+            if (!equipment.network_devices) equipment.network_devices = [];
+            if (!equipment.storage) equipment.storage = [];
+            if (!equipment.infrastructure) equipment.infrastructure = [];
+            
             const costBreakdown = (r.cost_breakdown && r.cost_breakdown.breakdown) ? r.cost_breakdown.breakdown : {};
+            
+            // 信创成本变量（提升到函数作用域，供多处使用）
+            let originalCost = 0;
+            let xinchuanCost = 0;
+            let costSavings = 0;
+            let savingsPercent = 0;
             
             const mapped = {
                 architecture_type: arch.type || 'unknown',
@@ -1166,21 +1264,21 @@
                         <tbody>
                             ${equipment.servers.map((s, index) => `
                                 <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'}; transition: background 0.2s;">
-                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${s.id}</td>
-                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.role}</td>
-                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model}</td>
-                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.cpu}</td>
-                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.memory}</td>
-                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.disk}</td>
-                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.network}</td>
-                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(s.unit_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${index + 1}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${s.role || s.category || '-'}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${s.model || s.name || '-'}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.cpu || s.cpu_model || (s.cpu_cores ? s.cpu_cores + '核' : '-')}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.memory || (s.memory_gb ? s.memory_gb + 'GB' : '-')}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.disk || (s.disk_gb ? s.disk_gb + 'GB ' + (s.disk_type || '') : '-')}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${s.network || '-'}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">¥${Number(s.unit_price || 0).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
                             <tr style="background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%); border-top: 2px solid #bdc3c7;">
                                 <td colspan="7" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">服务器小计：</td>
-                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.servers.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.servers.reduce((sum, s) => sum + (s.total_price || 0), 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1206,20 +1304,20 @@
                         <tbody>
                             ${equipment.network_devices.map((n, index) => `
                                 <tr style="border-bottom: 1px solid #e8e8e8; background: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
-                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${n.id}</td>
-                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${n.type}</td>
-                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${n.model}</td>
-                                    <td style="padding: 12px; color: #555; font-size: 13px;">${n.ports || n.throughput || '-'}</td>
-                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${n.quantity}</td>
-                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">${Number(n.unit_price).toLocaleString()}</td>
-                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">${Number(n.total_price).toLocaleString()}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px;">${index + 1}</td>
+                                    <td style="padding: 12px; color: #2c3e50; font-size: 13px; font-weight: 500;">${n.type || n.category || '-'}</td>
+                                    <td style="padding: 12px; color: #34495e; font-size: 13px;">${n.model || n.name || '-'}</td>
+                                    <td style="padding: 12px; color: #555; font-size: 13px;">${n.ports || n.spec || n.throughput || '-'}</td>
+                                    <td style="padding: 12px; text-align: center; color: #555; font-size: 13px; font-weight: 600;">${n.quantity || 1}</td>
+                                    <td style="padding: 12px; text-align: right; color: #555; font-size: 13px;">¥${Number(n.unit_price || 0).toLocaleString()}</td>
+                                    <td style="padding: 12px; text-align: right; color: #27ae60; font-weight: 600; font-size: 13px;">¥${Number(n.total_price || 0).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                         <tfoot>
                             <tr style="background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%); border-top: 2px solid #a5d6a7;">
                                 <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">网络设备小计：</td>
-                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.network_devices.reduce((sum, n) => sum + n.total_price, 0)).toLocaleString()}</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.network_devices.reduce((sum, n) => sum + (n.total_price || 0), 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1258,7 +1356,7 @@
                         <tfoot>
                             <tr style="background: linear-gradient(135deg, #e8daef 0%, #d7bde2 100%); border-top: 2px solid #c39bd3;">
                                 <td colspan="6" style="padding: 14px 12px; text-align: right; color: #2c3e50; font-weight: 700; font-size: 14px;">存储设备小计：</td>
-                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.storage.reduce((sum, s) => sum + s.total_price, 0)).toLocaleString()}</td>
+                                <td style="padding: 14px 12px; text-align: right; color: #27ae60; font-weight: 700; font-size: 15px;">¥${Number(equipment.storage.reduce((sum, s) => sum + (s.total_price || 0), 0)).toLocaleString()}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1411,9 +1509,542 @@
                 `;
             }
             
+            // 生成信创对比卡片HTML
+            let xinchuanComparisonHTML = '';
+            if (r.xinchuan_enabled && r.xinchuan_solution && r.traditional_solution) {
+                const xcSolution = r.xinchuan_solution;
+                const traditionalSolution = r.traditional_solution;
+                const xcInfo = r.xinchuan_info || {};
+                const xcCost = xcSolution.cost_breakdown || {};
+                const traditionalCost = traditionalSolution.cost_breakdown || {};
+                
+                // 使用真实的成本对比数据（赋值给函数作用域的变量）
+                const costComparison = r.cost_comparison || {};
+                originalCost = costComparison.traditional_cost || traditionalCost.total_initial_cost || 0;
+                xinchuanCost = costComparison.xinchuan_cost || xcCost.total_initial_cost || 0;
+                costSavings = costComparison.cost_savings || (originalCost - xinchuanCost);
+                savingsPercent = costComparison.savings_percent || (originalCost > 0 ? ((costSavings / originalCost) * 100).toFixed(1) : 0);
+                
+                xinchuanComparisonHTML = `
+                    <div class="result-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 3px solid #667eea;">
+                        <h3 style="color: #667eea;">🇨🇳 信创国产化方案对比</h3>
+                        
+                        <!-- 架构对比说明 -->
+                        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin: 15px 0; border-radius: 6px;">
+                            <div style="font-weight: 600; color: #856404; margin-bottom: 5px;">📋 架构说明</div>
+                            <div style="font-size: 13px; color: #856404; line-height: 1.6;">
+                                传统方案和信创方案采用<strong>独立架构设计</strong>，根据各自设备性能优化配置。
+                                设备数量、规格可能不同，价格对比基于各自完整架构的总成本。
+                            </div>
+                        </div>
+                        
+                        <!-- 架构差异对比 -->
+                        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                                <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px;">🏗️</span>
+                                架构配置对比
+                            </h4>
+                            <table style="width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden;">
+                                <thead>
+                                    <tr style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                        <th style="padding: 15px; text-align: left; color: white; font-weight: 600; font-size: 14px; border: none;">配置项</th>
+                                        <th style="padding: 15px; text-align: center; color: white; font-weight: 600; font-size: 14px; border: none;">传统方案</th>
+                                        <th style="padding: 15px; text-align: center; color: white; font-weight: 600; font-size: 14px; border: none;">信创方案</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background: white;">
+                                        <td style="padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">数据库节点</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${traditionalSolution.architecture?.database_nodes || 0}台</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${xcSolution.architecture?.database_nodes || 0}台</td>
+                                    </tr>
+                                    <tr style="background: #f8f9fa;">
+                                        <td style="padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">代理节点</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${traditionalSolution.architecture?.proxy_nodes || 0}台</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${xcSolution.architecture?.proxy_nodes || 0}台</td>
+                                    </tr>
+                                    <tr style="background: white;">
+                                        <td style="padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">监控节点</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${traditionalSolution.architecture?.monitoring_nodes || 0}台</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #e9ecef; color: #6c757d;">${xcSolution.architecture?.monitoring_nodes || 0}台</td>
+                                    </tr>
+                                    <tr style="background: #f8f9fa;">
+                                        <td style="padding: 12px 15px; border-bottom: none; font-weight: 600; color: #495057;">节点规格</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: none; font-size: 13px; color: #6c757d;">${traditionalSolution.architecture?.node_spec || 'N/A'}</td>
+                                        <td style="padding: 12px 15px; text-align: center; border-bottom: none; font-size: 13px; color: #6c757d;">${xcSolution.architecture?.node_spec || 'N/A'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <div style="display: flex; justify-content: space-between; gap: 15px; margin-bottom: 20px;">
+                                <div style="flex: 1; text-align: center; padding: 20px; background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%); border-radius: 10px; border: 2px solid #dc3545; box-shadow: 0 2px 8px rgba(220,53,69,0.1);">
+                                    <div style="font-size: 14px; color: #721c24; margin-bottom: 10px; font-weight: 600;">传统方案（国外品牌）</div>
+                                    <div style="font-size: 28px; font-weight: bold; color: #dc3545; margin: 10px 0;">¥${Number(originalCost).toLocaleString()}</div>
+                                    <div style="font-size: 12px; color: #6c757d; margin-top: 8px; padding: 5px 10px; background: rgba(255,255,255,0.7); border-radius: 4px; display: inline-block;">Dell、Cisco等</div>
+                                </div>
+                                <div style="flex: 1; text-align: center; padding: 20px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-radius: 10px; border: 2px solid #28a745; box-shadow: 0 2px 8px rgba(40,167,69,0.15);">
+                                    <div style="font-size: 14px; color: #155724; margin-bottom: 10px; font-weight: 600;">信创方案（${r.xinchuan_mode === 'standard' ? '标准信创' : r.xinchuan_mode === 'strict' ? '严格信创' : '完全信创'}）</div>
+                                    <div style="font-size: 28px; font-weight: bold; color: #28a745; margin: 10px 0;">¥${Number(xinchuanCost).toLocaleString()}</div>
+                                    <div style="font-size: 12px; color: #155724; margin-top: 8px; padding: 5px 10px; background: rgba(255,255,255,0.7); border-radius: 4px; display: inline-block;">${xcInfo.servers ? xcInfo.servers.join('、') : '浪潮、华为'}</div>
+                                </div>
+                            </div>
+                            ${costSavings > 0 ? `
+                                <div style="text-align: center; padding: 18px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-radius: 10px; border: 2px solid #ffc107; box-shadow: 0 2px 8px rgba(255,193,7,0.15);">
+                                    <div style="font-size: 20px; font-weight: bold; color: #856404;">
+                                        💰 成本节约：¥${Number(costSavings).toLocaleString()} 
+                                        <span style="color: #28a745; margin-left: 10px;">(节约 ${savingsPercent}%)</span>
+                                    </div>
+                                    <div style="font-size: 13px; color: #856404; margin-top: 10px;">使用国产化设备，享受成本优势和政策支持</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${xcInfo.mode ? `
+                            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                                <div style="font-weight: 700; margin-bottom: 15px; color: #2c3e50; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px;">📋</span>
+                                    信创方案详情
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                        <div style="font-size: 12px; color: #6c757d; margin-bottom: 6px;">服务器品牌</div>
+                                        <div style="font-size: 15px; font-weight: 600; color: #495057;">${xcInfo.servers ? xcInfo.servers.join('、') : '-'}</div>
+                                    </div>
+                                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                        <div style="font-size: 12px; color: #6c757d; margin-bottom: 6px;">网络设备</div>
+                                        <div style="font-size: 15px; font-weight: 600; color: #495057;">${xcInfo.network ? xcInfo.network.join('、') : '-'}</div>
+                                    </div>
+                                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                        <div style="font-size: 12px; color: #6c757d; margin-bottom: 6px;">CPU芯片</div>
+                                        <div style="font-size: 15px; font-weight: 600; color: #495057;">${xcInfo.cpu ? xcInfo.cpu.join('、') : '-'}</div>
+                                    </div>
+                                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                        <div style="font-size: 12px; color: #6c757d; margin-bottom: 6px;">合规性</div>
+                                        <div style="font-size: 15px; font-weight: 600; color: #28a745;">${xcInfo.compliance || '符合信创要求'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // 生成信创设备清单对比HTML
+            let xinchuanEquipmentHTML = '';
+            if (r.xinchuan_enabled && r.xinchuan_solution && r.traditional_solution) {
+                const xcSolution = r.xinchuan_solution;
+                const traditionalSolution = r.traditional_solution;
+                const xcEquipment = xcSolution.equipment_list || [];
+                const traditionalEquipment = traditionalSolution.equipment_list || [];
+                
+                // 确保成本变量已初始化（移到这里，在使用前就计算好）
+                const costComparison = r.cost_comparison || {};
+                const xcCost = xcSolution.cost_breakdown || {};
+                const traditionalCost = traditionalSolution.cost_breakdown || {};
+                
+                // 无论之前是否赋值，都在这里重新赋值以确保在模板字符串中可用
+                originalCost = costComparison.traditional_cost || traditionalCost.total_initial_cost || 0;
+                xinchuanCost = costComparison.xinchuan_cost || xcCost.total_initial_cost || 0;
+                costSavings = costComparison.cost_savings || (originalCost - xinchuanCost);
+                savingsPercent = costComparison.savings_percent || (originalCost > 0 ? ((costSavings / originalCost) * 100).toFixed(1) : 0);
+                
+                xinchuanEquipmentHTML = `
+                    <div class="result-card" style="background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%); border: 2px solid #667eea; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <h3 style="color: #2c3e50; font-size: 20px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 36px; height: 36px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px;">📋</span>
+                            设备清单对比（传统方案 vs 信创方案）
+                        </h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <thead>
+                                    <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <th style="padding: 15px; text-align: left; color: white; font-weight: 600; font-size: 14px; border: none;">设备类型</th>
+                                        <th style="padding: 15px; text-align: left; color: white; font-weight: 600; font-size: 14px; border: none;">传统方案（国外品牌）</th>
+                                        <th style="padding: 15px; text-align: left; color: white; font-weight: 600; font-size: 14px; border: none;">信创方案（国产品牌）</th>
+                                        <th style="padding: 15px; text-align: center; color: white; font-weight: 600; font-size: 14px; border: none;">数量</th>
+                                        <th style="padding: 15px; text-align: right; color: white; font-weight: 600; font-size: 14px; border: none;">传统单价</th>
+                                        <th style="padding: 15px; text-align: right; color: white; font-weight: 600; font-size: 14px; border: none;">信创单价</th>
+                                        <th style="padding: 15px; text-align: right; color: white; font-weight: 600; font-size: 14px; border: none;">成本差异</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                // 创建设备映射表,按类别匹配传统方案和信创方案
+                const equipmentMap = new Map();
+                
+                // 将信创方案设备按类别分组（只按类别，不按数量）
+                xcEquipment.forEach(item => {
+                    const key = item.category;
+                    if (!equipmentMap.has(key)) {
+                        equipmentMap.set(key, { xc: [], traditional: [] });
+                    }
+                    equipmentMap.get(key).xc.push(item);
+                });
+                
+                // 将传统方案设备按类别分组（只按类别，不按数量）
+                traditionalEquipment.forEach(item => {
+                    const key = item.category;
+                    if (!equipmentMap.has(key)) {
+                        equipmentMap.set(key, { xc: [], traditional: [] });
+                    }
+                    equipmentMap.get(key).traditional.push(item);
+                });
+                
+                // 按类别顺序排序
+                const categoryOrder = ['数据库服务器', '代理服务器', '监控服务器', '核心交换机', '接入交换机', '安全防火墙', '存储设备'];
+                const sortedEntries = Array.from(equipmentMap.entries()).sort((a, b) => {
+                    const catA = a[0];
+                    const catB = b[0];
+                    const indexA = categoryOrder.indexOf(catA);
+                    const indexB = categoryOrder.indexOf(catB);
+                    return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+                });
+                
+                // 生成对比行
+                sortedEntries.forEach(([category, items]) => {
+                    const xcItems = items.xc;
+                    const tradItems = items.traditional;
+                    
+                    if (xcItems.length === 0 && tradItems.length === 0) return;
+                    
+                    // 确保至少有一项
+                    const maxItems = Math.max(xcItems.length, tradItems.length, 1);
+                    
+                    for (let i = 0; i < maxItems; i++) {
+                        const xcItem = xcItems[i] || {};
+                        const tradItem = tradItems[i] || {};
+                        
+                        // 如果传统方案没有对应设备，使用信创设备估算
+                        const traditionalName = tradItem.name || (xcItem.name ? xcItem.name.replace(/浪潮|华为|联想|天融信|启明星辰|锐捷|新华三/g, 'Dell/Cisco') : '-');
+                        const traditionalSpec = tradItem.spec || xcItem.spec || '-';
+                        const traditionalPrice = tradItem.unit_price || 0;
+                        const traditionalQuantity = tradItem.quantity || xcItem.quantity || 1;
+                        const traditionalVendor = tradItem.vendor || 'Dell/Cisco';
+                        
+                        const xcName = xcItem.name || '-';
+                        const xcSpec = xcItem.spec || '-';
+                        const xcPrice = xcItem.unit_price || 0;
+                        const xcQuantity = xcItem.quantity || traditionalQuantity;
+                        const xcVendor = xcItem.vendor || '-';
+                        const xcCert = xcItem.certification || '-';
+                        
+                        const priceDiff = traditionalPrice - xcPrice;
+                        const itemSavingsPercent = traditionalPrice > 0 ? ((priceDiff / traditionalPrice) * 100).toFixed(1) : 0;
+                        
+                        xinchuanEquipmentHTML += `
+                            <tr style="border-bottom: 1px solid #eee; ${i === 0 ? 'border-top: 2px solid #667eea;' : ''}">
+                                ${i === 0 ? `<td rowspan="${maxItems}" style="padding: 12px; font-weight: 600; color: #667eea; border: 1px solid #ddd; vertical-align: middle; background: #f8f9fa;">${category}</td>` : ''}
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div style="font-weight: 600; color: #dc3545; margin-bottom: 5px;">${traditionalName}</div>
+                                    <div style="font-size: 12px; color: #999; line-height: 1.5;">${traditionalSpec}</div>
+                                    <div style="font-size: 11px; color: #999; margin-top: 3px;">厂商: ${traditionalVendor}</div>
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div style="font-weight: 600; color: #28a745; margin-bottom: 5px;">${xcName}</div>
+                                    <div style="font-size: 12px; color: #666; line-height: 1.5;">${xcSpec}</div>
+                                    <div style="font-size: 11px; color: #999; margin-top: 3px;">厂商: ${xcVendor}</div>
+                                    ${xcCert !== '-' ? `<div style="font-size: 11px; color: #667eea; margin-top: 2px;">🏅 ${xcCert}</div>` : ''}
+                                </td>
+                                <td style="padding: 12px; text-align: center; font-weight: 600; border: 1px solid #ddd;">${xcQuantity}</td>
+                                <td style="padding: 12px; text-align: right; color: #dc3545; border: 1px solid #ddd;">¥${traditionalPrice.toLocaleString()}</td>
+                                <td style="padding: 12px; text-align: right; color: #28a745; font-weight: 600; border: 1px solid #ddd;">¥${xcPrice.toLocaleString()}</td>
+                                <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">
+                                    <div style="color: #28a745; font-weight: 600;">-¥${priceDiff.toLocaleString()}</div>
+                                    <div style="font-size: 11px; color: #666;">(省${itemSavingsPercent}%)</div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                xinchuanEquipmentHTML += `
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; font-weight: bold;">
+                                        <td colspan="4" style="padding: 16px; text-align: right; border: 1px solid #ddd;">💰 总成本对比：</td>
+                                        <td style="padding: 16px; text-align: right; font-size: 16px; border: 1px solid #ddd;">¥${Number(originalCost).toLocaleString()}</td>
+                                        <td style="padding: 16px; text-align: right; font-size: 16px; border: 1px solid #ddd;">¥${Number(xinchuanCost).toLocaleString()}</td>
+                                        <td style="padding: 16px; text-align: right; font-size: 16px; border: 1px solid #ddd;">-¥${Number(costSavings).toLocaleString()}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <!-- 详细设备配置清单 -->
+                        <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-bottom: 3px solid #667eea; padding-bottom: 12px;">
+                                <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px;">📦</span>
+                                信创设备详细配置清单
+                            </h4>
+                            
+                            <!-- 服务器配置清单 -->
+                            <div style="margin-bottom: 25px;">
+                                <h5 style="color: #495057; margin-bottom: 15px; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: #667eea; color: white; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px;">🖥️</span>
+                                    服务器配置清单
+                                </h5>
+                                <table style="width: 100%; border-collapse: separate; border-spacing: 0; background: white; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <thead>
+                                        <tr style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备名称</th>
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">CPU配置</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">内存</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">硬盘</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">网络</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">功耗</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">数量</th>
+                                            <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border: none;">单价</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${xcEquipment.filter(item => ['数据库服务器', '代理服务器', '监控服务器'].includes(item.category)).map((item, idx) => `
+                                            <tr style="border-bottom: 1px solid #dee2e6; ${idx % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                                                    <div style="font-weight: 600; color: #333;">${item.name}</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.vendor || '-'} | ${item.use_case || '-'}</div>
+                                                </td>
+                                                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                                                    <div style="color: #495057;">${item.cpu_model || '-'}</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.cpu_cores || '-'}核心</div>
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; font-weight: 600; color: #495057;">
+                                                    ${item.memory_gb || '-'}GB
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6;">
+                                                    <div style="font-weight: 600; color: #495057;">${item.disk_gb || '-'}GB</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.disk_type || '-'}</div>
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; font-size: 12px; color: #495057;">
+                                                    ${item.network || '-'}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+                                                    ${item.power_w || '-'}W
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; font-weight: 600; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.quantity}
+                                                </td>
+                                                <td style="padding: 10px; text-align: right; font-weight: 600; color: #28a745; border: 1px solid #dee2e6;">
+                                                    ¥${item.unit_price.toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                        ${xcEquipment.filter(item => ['核心交换机', '接入交换机', '安全防火墙'].includes(item.category)).length === 0 ? `
+                                            <tr>
+                                                <td colspan="7" style="padding: 20px; text-align: center; color: #999;">暂无网络设备数据</td>
+                                            </tr>
+                                        ` : ''}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- 存储设备配置清单（如果有） -->
+                            ${xcEquipment.filter(item => item.category === '存储设备').length > 0 ? `
+                            <div style="margin-top: 25px;">
+                                <h5 style="color: #495057; margin-bottom: 15px; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: #667eea; color: white; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px;">💾</span>
+                                    存储设备配置清单
+                                </h5>
+                                <table style="width: 100%; border-collapse: separate; border-spacing: 0; background: white; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <thead>
+                                        <tr style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备名称</th>
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备类型</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">容量/性能</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">接口</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">功耗</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">数量</th>
+                                            <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border: none;">单价</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${xcEquipment.filter(item => item.category === '存储设备').map((item, idx) => `
+                                            <tr style="border-bottom: 1px solid #dee2e6; ${idx % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                                                    <div style="font-weight: 600; color: #333;">${item.name}</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.vendor || '-'}</div>
+                                                </td>
+                                                <td style="padding: 10px; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.device_type || item.category}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6;">
+                                                    ${item.capacity ? `<div style="font-weight: 600; color: #495057;">${item.capacity}</div>` : ''}
+                                                    ${item.iops ? `<div style="font-size: 11px; color: #6c757d;">IOPS: ${item.iops}</div>` : ''}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; font-size: 12px; color: #6c757d;">
+                                                    ${item.interface || '-'}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+                                                    ${item.power_w || '-'}W
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; font-weight: 600; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.quantity}
+                                                </td>
+                                                <td style="padding: 10px; text-align: right; font-weight: 600; color: #28a745; border: 1px solid #dee2e6;">
+                                                    ¥${item.unit_price.toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ` : ''}
+                            
+                            <!-- 网络设备配置清单 -->
+                            <div>
+                                <h5 style="color: #495057; margin-bottom: 15px; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: #667eea; color: white; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px;">🌐</span>
+                                    网络设备配置清单
+                                </h5>
+                                <table style="width: 100%; border-collapse: separate; border-spacing: 0; background: white; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <thead>
+                                        <tr style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备名称</th>
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备类型</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">端口/性能</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">上联</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">功耗</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">数量</th>
+                                            <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border: none;">单价</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${xcEquipment.filter(item => ['核心交换机', '接入交换机', '安全防火墙'].includes(item.category)).map((item, idx) => `
+                                            <tr style="border-bottom: 1px solid #dee2e6; ${idx % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                                                    <div style="font-weight: 600; color: #333;">${item.name}</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.vendor || '-'}</div>
+                                                </td>
+                                                <td style="padding: 10px; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.device_type || item.category}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6;">
+                                                    ${item.ports ? `<div style="font-weight: 600; color: #495057;">${item.ports}口</div>` : ''}
+                                                    ${item.speed ? `<div style="font-size: 11px; color: #6c757d;">${item.speed}</div>` : ''}
+                                                    ${item.throughput ? `<div style="font-weight: 600; color: #495057;">${item.throughput}</div>` : ''}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; font-size: 12px; color: #6c757d;">
+                                                    ${item.uplink || '-'}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+                                                    ${item.power_w || '-'}W
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; font-weight: 600; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.quantity}
+                                                </td>
+                                                <td style="padding: 10px; text-align: right; font-weight: 600; color: #28a745; border: 1px solid #dee2e6;">
+                                                    ¥${item.unit_price.toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                        ${xcEquipment.filter(item => ['核心交换机', '接入交换机', '安全防火墙'].includes(item.category)).length === 0 ? `
+                                            <tr>
+                                                <td colspan="7" style="padding: 20px; text-align: center; color: #999;">暂无网络设备数据</td>
+                                            </tr>
+                                        ` : ''}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- 存储设备配置清单（如果有） -->
+                            ${xcEquipment.filter(item => item.category === '存储设备').length > 0 ? `
+                            <div style="margin-top: 25px;">
+                                <h5 style="color: #495057; margin-bottom: 15px; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: #667eea; color: white; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px;">💾</span>
+                                    存储设备配置清单
+                                </h5>
+                                <table style="width: 100%; border-collapse: separate; border-spacing: 0; background: white; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <thead>
+                                        <tr style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备名称</th>
+                                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border: none;">设备类型</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">容量/性能</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">接口</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">功耗</th>
+                                            <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border: none;">数量</th>
+                                            <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border: none;">单价</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${xcEquipment.filter(item => item.category === '存储设备').map((item, idx) => `
+                                            <tr style="border-bottom: 1px solid #dee2e6; ${idx % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                                                    <div style="font-weight: 600; color: #333;">${item.name}</div>
+                                                    <div style="font-size: 11px; color: #6c757d;">${item.vendor || '-'}</div>
+                                                </td>
+                                                <td style="padding: 10px; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.device_type || item.category}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6;">
+                                                    ${item.capacity ? `<div style="font-weight: 600; color: #495057;">${item.capacity}</div>` : ''}
+                                                    ${item.iops ? `<div style="font-size: 11px; color: #6c757d;">IOPS: ${item.iops}</div>` : ''}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; font-size: 12px; color: #6c757d;">
+                                                    ${item.interface || '-'}
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+                                                    ${item.power_w || '-'}W
+                                                </td>
+                                                <td style="padding: 10px; text-align: center; font-weight: 600; border: 1px solid #dee2e6; color: #495057;">
+                                                    ${item.quantity}
+                                                </td>
+                                                <td style="padding: 10px; text-align: right; font-weight: 600; color: #28a745; border: 1px solid #dee2e6;">
+                                                    ¥${item.unit_price.toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-radius: 8px; border-left: 4px solid #28a745;">
+                            <div style="font-weight: 600; color: #155724; margin-bottom: 8px;">✨ 信创方案优势</div>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
+                                <li>成本节约：单台设备平均节约 8-12%</li>
+                                <li>自主可控：核心技术完全掌握，无后门风险</li>
+                                <li>政策支持：符合国家信创要求，享受政府补贴</li>
+                                <li>本土服务：售后响应快，技术支持及时</li>
+                                <li>持续优化：国产品牌快速迭代，性价比持续提升</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+
             resultsContent.innerHTML = `
+                ${xinchuanComparisonHTML}
+                ${xinchuanEquipmentHTML}
+                
+                ${r.xinchuan_enabled ? `
+                <div style="margin: 40px 0; padding: 0; position: relative;">
+                    <div style="height: 3px; background: linear-gradient(90deg, 
+                        rgba(102, 126, 234, 0) 0%, 
+                        rgba(102, 126, 234, 0.3) 10%, 
+                        rgba(102, 126, 234, 0.8) 30%, 
+                        #667eea 50%, 
+                        rgba(102, 126, 234, 0.8) 70%, 
+                        rgba(102, 126, 234, 0.3) 90%, 
+                        rgba(102, 126, 234, 0) 100%); 
+                        border-radius: 2px;"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        color: white; 
+                        padding: 8px 24px; 
+                        border-radius: 20px; 
+                        font-weight: 700; 
+                        font-size: 14px; 
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                        letter-spacing: 1px;">
+                        ⬇️ 非信创传统方案 ⬇️
+                    </div>
+                </div>
+                ` : ''}
+                
                 <div class="result-card">
-                    <h3>🏗️ 架构方案</h3>
+                    <h3>🏗️ 架构方案${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     <div class="result-grid">
                         <div class="result-item">
                             <label>架构类型</label>
@@ -1453,7 +2084,7 @@
                 </div>
 
                 <div class="result-card">
-                    <h3>💰 成本总览</h3>
+                    <h3>💰 成本总览${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     <div class="result-grid">
                         <div class="result-item">
                             <label>初始投资</label>
@@ -1475,29 +2106,29 @@
                 </div>
 
                 <div class="result-card">
-                    <h3>🖥️ 服务器配置清单</h3>
+                    <h3>🖥️ 服务器配置清单${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     <p style="color: #666; margin-bottom: 10px;">共 ${equipment.servers ? equipment.servers.length : 0} 台服务器</p>
                     ${serversHTML}
                 </div>
 
                 <div class="result-card">
-                    <h3>🌐 网络设备清单</h3>
+                    <h3>🌐 网络设备清单${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     <p style="color: #666; margin-bottom: 10px;">共 ${equipment.network_devices ? equipment.network_devices.length : 0} 台网络设备</p>
                     ${networkHTML}
                 </div>
 
                 <div class="result-card">
-                    <h3>💾 存储设备清单</h3>
+                    <h3>💾 存储设备清单${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     ${storageHTML}
                 </div>
 
                 <div class="result-card">
-                    <h3>🏢 基础设施清单</h3>
+                    <h3>🏢 基础设施清单${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     ${infraHTML}
                 </div>
 
                 <div class="result-card">
-                    <h3>📊 详细报价单</h3>
+                    <h3>📊 详细报价单${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     ${quotationHTML}
                 </div>
 
