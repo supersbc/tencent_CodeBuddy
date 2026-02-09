@@ -159,3 +159,254 @@ nohup: ignoring input
 127.0.0.1 - - [06/Jan/2026 23:07:42] "GET / HTTP/1.1" 200 -
 127.0.0.1 - - [06/Jan/2026 23:07:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 127.0.0.1 - - [06/Jan/2026 23:11:49] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 21:10:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 21:10:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [20/Jan/2026 15:04:34] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [23/Jan/2026 08:50:50] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [04/Feb/2026 11:08:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Feb/2026 11:08:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [04/Feb/2026 18:22:26] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [04/Feb/2026 18:22:45] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [04/Feb/2026 18:23:04] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 05:16:19] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Feb/2026 04:35:04] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2026 02:36:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 03:28:07] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 14:21:02] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 14:50:31] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:03:07] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:03:22] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:04:17] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:07:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:07:35] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:07:56] "POST /api/parse_excel HTTP/1.1" 200 -
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: standard
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'standard'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+📦 正在加载模型库管理器...
+✅ 模型库管理器加载完成
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: standard
+  全部参数: {'total_data_size_gb': 1, 'table_count': 1, 'data_growth_rate': 20, 'qps': 1, 'tps': 1, 'concurrent_connections': 1, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'standard'}
+============================================================
+
+
+🏗️  架构设计: 3个数据库节点, 2个代理节点, 1个监控节点
+📊 数据量: 1.0TB, 日事务: 86,400, 节点规格: db_small
+
+🏗️  架构设计: 3个数据库节点, 2个代理节点, 1个监控节点
+📊 数据量: 1.0TB, 日事务: 86,400, 节点规格: db_small
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 8
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R440', 'spec': '8核 Intel Xeon Silver 4208, 32GB内存, 1000GB SSD SATA', 'cpu_cores': 8, 'cpu_model': 'Intel Xeon Silver 4208', 'memory_gb': 32, 'disk_gb': 1000, 'disk_type': 'SSD SATA', 'network': '双万兆网卡', 'power_w': 350, 'quantity': 1, 'unit_price': 28000, 'total_price': 28000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '小型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=5, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: standard
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'standard'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: standard
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'standard'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}127.0.0.1 - - [09/Feb/2026 15:08:16] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:08:55] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:08:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [09/Feb/2026 15:31:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:52:43] "GET /model_library HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:52:44] "GET /api/model_libraries HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:53:24] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:53:25] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:53:53] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:54:07] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:54:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 15:54:46] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:00:31] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:16:11] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:16:30] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:16:42] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:23:31] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:23:56] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:24:05] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:26:25] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:26:36] "POST /api/parse_excel HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:26:46] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:31:48] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:31:51] "GET /predict HTTP/1.1" 200 -
+127.0.0.1 - - [09/Feb/2026 16:32:04] "POST /api/parse_excel HTTP/1.1" 200 -
+
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: None
+  xinchuan_mode: full
+  全部参数: {'project_name': '测试', 'industry': 'finance', 'business_scenario': '', 'launch_date': '2027-01-09', 'budget_range': 5000, 'current_data_size_gb': 30000, 'future_data_size_gb': 40000, 'database_count': 13, 'table_count': 800, 'max_table_rows': 0, 'avg_row_size': 0, 'data_growth_rate': 10, 'data_retention_years': 0, 'normal_qps': 208200, 'peak_qps': 0, 'normal_tps': 20820, 'peak_tps': 0, 'avg_concurrent_connections': 1000, 'peak_concurrent_connections': 0, 'avg_response_time': 0, 'p99_response_time': 0, 'read_write_ratio': '', 'need_high_availability': True, 'availability_requirement': '', 'rpo': '', 'rto': '', 'dr_center_count': 0, 'failover_mode': '', 'rw_pro': True, 'need_sharding': True, 'sharding_strategy': '', 'deployment_mode': '', 'network_isolation': '', 'encryption_type': '', 'compliance': '', 'sensitive_data': '', 'enable_xinchuan_pro': True, 'xinchuan_mode': 'full', 'xinchuan_vendor_preference': 'huawei', 'backup_frequency': '', 'backup_retention_days': 0, 'ops_team_size': 0}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 30000.0TB, 日事务: 1,798,848,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 26
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=3, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'rw': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🏗️  架构设计: 20个数据库节点, 6个代理节点, 2个监控节点
+📊 数据量: 500.0TB, 日事务: 172,800,000, 节点规格: db_xlarge
+
+🔍 调试(非信创模式) - traditional_equipment 总数: 25
+🔍 调试(非信创模式) - 第一个设备示例: {'category': '数据库服务器', 'name': 'Dell PowerEdge R940', 'spec': '64核 Intel Xeon Platinum 8280, 256GB内存, 8000GB NVMe SSD', 'cpu_cores': 64, 'cpu_model': 'Intel Xeon Platinum 8280', 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD', 'network': '双万兆网卡', 'power_w': 1200, 'quantity': 1, 'unit_price': 180000, 'total_price': 180000, 'vendor': 'Dell', 'certification': 'Standard', 'use_case': '超大型数据库节点', 'xinchuan_compliant': False}
+🔍 调试(非信创模式) - 分类后: servers=22, network=2, storage=1, infrastructure=6
+
+============================================================
+📥 收到的请求参数:
+  enable_xinchuan: True
+  xinchuan_mode: full
+  全部参数: {'total_data_size_gb': 500, 'table_count': 300, 'data_growth_rate': 20, 'qps': 5000, 'tps': 2000, 'concurrent_connections': 500, 'ha': True, 'dr': True, 'enable_xinchuan': True, 'xinchuan_mode': 'full'}
+============================================================
+127.0.0.1 - - [09/Feb/2026 16:32:13] "POST /api/predict HTTP/1.1" 200 -

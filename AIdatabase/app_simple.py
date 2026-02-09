@@ -3,7 +3,7 @@ TDSQL 部署资源预测系统 - 完整版
 整合：部署预测、模型库管理、自主训练
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 import json
 import os
 from werkzeug.utils import secure_filename
@@ -13,14 +13,15 @@ app = Flask(__name__)
 
 # 配置
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'xlsx', 'xls', 'pdf', 'json', 'txt'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'xlsx', 'xls', 'pdf', 'json', 'txt', 'log', 'gz', 'zip'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024  # 2GB max for log files
 
 # 创建必要目录
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs('model_libraries', exist_ok=True)
 os.makedirs('training_data', exist_ok=True)
+os.makedirs('log_uploads', exist_ok=True)
 
 print("\n" + "=" * 60)
 print("🚀 TDSQL 部署资源预测系统 v4.2 (完整版)")
@@ -31,6 +32,18 @@ predictor = None
 library_manager = None
 training_system = None
 model = None
+
+log_analyzer = None
+
+def get_log_analyzer():
+    """延迟加载日志分析器"""
+    global log_analyzer
+    if log_analyzer is None:
+        print("📦 正在加载日志分析引擎...")
+        from log_analyzer import TDSQLLogAnalyzer
+        log_analyzer = TDSQLLogAnalyzer()
+        print("✅ 日志分析引擎加载完成")
+    return log_analyzer
 
 def get_predictor():
     """延迟加载预测器"""
@@ -67,12 +80,22 @@ def get_training_system():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+def _normalize_vendor_list(value):
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [item for item in value if item]
+    if isinstance(value, str):
+        return [value] if value else []
+    return []
+
 # ==================== 页面路由 ====================
 
 @app.route('/')
 def index():
-    """主页 - 导航页面"""
-    return render_template('navigation.html')
+    """主页 - 默认进入导航页"""
+    return redirect('/nav')
 
 @app.route('/nav')
 def navigation():
@@ -98,6 +121,16 @@ def model_library():
 def learning():
     """学习系统页面"""
     return render_template('index_learning.html')
+
+@app.route('/log_analysis')
+def log_analysis_page():
+    """日志分析与健康评分页面"""
+    return render_template('log_analysis.html')
+
+@app.route('/experiment')
+def experiment_page():
+    """异常检测实验 - 技术方案与结果展示"""
+    return render_template('experiment.html')
 
 # ==================== API路由 ====================
 
@@ -155,6 +188,12 @@ def predict():
         # 其他可选需求
         data['need_disaster_recovery'] = bool(raw.get('need_disaster_recovery'))
         data['need_read_write_split'] = bool(raw.get('need_read_write_split'))
+
+        # 厂商偏好（可多选）
+        data['server_vendors'] = _normalize_vendor_list(raw.get('server_vendors'))
+        data['network_vendors'] = _normalize_vendor_list(raw.get('network_vendors'))
+        data['storage_vendors'] = _normalize_vendor_list(raw.get('storage_vendors'))
+        data['software_vendors'] = _normalize_vendor_list(raw.get('software_vendors'))
         
         # 获取预测器
         pred = get_predictor()
@@ -401,6 +440,236 @@ def evaluate_model():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# ==================== 日志分析 API ====================
+
+@app.route('/api/log_analysis/analyze', methods=['POST'])
+def analyze_logs():
+    """日志分析API - 支持直接粘贴日志内容或上传文件"""
+    try:
+        analyzer = get_log_analyzer()
+
+        # 获取参数
+        window_size = 60
+        window_step = 30
+
+        # 方式1: 上传日志文件
+        if 'log_file' in request.files:
+            file = request.files['log_file']
+            if file.filename:
+                filename = secure_filename(file.filename)
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filepath = os.path.join('log_uploads', f"{timestamp}_{filename}")
+                file.save(filepath)
+
+                # 读取参数
+                window_size = int(request.form.get('window_size', 60))
+                window_step = int(request.form.get('window_step', 30))
+
+                result = analyzer.analyze_file(filepath, window_size, window_step)
+                return jsonify(result)
+
+        # 方式2: JSON body（直接粘贴日志 或 指定日志文件路径）
+        data = request.get_json() or {}
+
+        window_size = int(data.get('window_size', window_size))
+        window_step = int(data.get('window_step', window_step))
+
+        # 从日志内容分析
+        log_content = data.get('log_content', '')
+        if log_content:
+            result = analyzer.analyze(log_content, window_size, window_step)
+            return jsonify(result)
+
+        # 从日志文件路径分析
+        log_path = data.get('log_path', '')
+        if log_path:
+            if not os.path.exists(log_path):
+                return jsonify({'error': f'日志路径不存在: {log_path}'}), 400
+            result = analyzer.analyze_file(log_path, window_size, window_step)
+            return jsonify(result)
+
+        return jsonify({'error': '请提供日志内容(log_content)、日志文件路径(log_path)或上传日志文件'}), 400
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/log_analysis/upload', methods=['POST'])
+def upload_log_file():
+    """上传日志文件"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': '没有文件'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': '文件名为空'}), 400
+
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        save_name = f"{timestamp}_{filename}"
+        filepath = os.path.join('log_uploads', save_name)
+        file.save(filepath)
+
+        # 读取前几行预览
+        preview_lines = []
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for i, line in enumerate(f):
+                    if i >= 10:
+                        break
+                    preview_lines.append(line.rstrip())
+        except Exception:
+            pass
+
+        # 统计文件行数
+        line_count = 0
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for _ in f:
+                    line_count += 1
+        except Exception:
+            pass
+
+        return jsonify({
+            'success': True,
+            'filename': save_name,
+            'filepath': filepath,
+            'line_count': line_count,
+            'preview': preview_lines,
+            'file_size': os.path.getsize(filepath)
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/log_analysis/browse', methods=['POST'])
+def browse_directory():
+    """浏览服务器目录，选择日志文件"""
+    try:
+        data = request.get_json() or {}
+        path = data.get('path', '/data/workspace')
+
+        if not os.path.exists(path):
+            return jsonify({'error': f'路径不存在: {path}'}), 400
+
+        if os.path.isfile(path):
+            # 返回文件信息
+            size = os.path.getsize(path)
+            preview = []
+            try:
+                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                    for i, line in enumerate(f):
+                        if i >= 5:
+                            break
+                        preview.append(line.rstrip()[:200])
+            except Exception:
+                pass
+            return jsonify({
+                'type': 'file',
+                'path': path,
+                'name': os.path.basename(path),
+                'size': size,
+                'size_mb': round(size / 1024 / 1024, 1),
+                'preview': preview
+            })
+
+        # 列出目录内容
+        items = []
+        try:
+            entries = sorted(os.listdir(path))
+        except PermissionError:
+            return jsonify({'error': '无权限访问该目录'}), 403
+
+        for name in entries:
+            if name.startswith('.'):
+                continue
+            full = os.path.join(path, name)
+            try:
+                if os.path.isdir(full):
+                    items.append({'name': name, 'type': 'dir', 'path': full})
+                else:
+                    size = os.path.getsize(full)
+                    ext = os.path.splitext(name)[1].lower()
+                    # 只显示可能是日志的文件
+                    is_log = ext in ('.log', '.txt', '.json', '.gz', '.zip', '') or 'log' in name.lower() or 'interf' in name.lower()
+                    if is_log or size < 10 * 1024:  # 小文件也显示
+                        items.append({
+                            'name': name,
+                            'type': 'file',
+                            'path': full,
+                            'size': size,
+                            'size_mb': round(size / 1024 / 1024, 1)
+                        })
+            except Exception:
+                continue
+
+        return jsonify({
+            'type': 'dir',
+            'path': path,
+            'parent': os.path.dirname(path),
+            'items': items
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/log_analysis/chunk_upload', methods=['POST'])
+def chunk_upload():
+    """分片上传大文件"""
+    try:
+        chunk = request.files.get('chunk')
+        if not chunk:
+            return jsonify({'success': False, 'error': '无分片数据'}), 400
+
+        filename = request.form.get('filename', 'unknown')
+        chunk_index = int(request.form.get('chunk_index', 0))
+        total_chunks = int(request.form.get('total_chunks', 1))
+        upload_id = request.form.get('upload_id', '')
+
+        safe_name = secure_filename(filename)
+        if not upload_id:
+            upload_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        target_path = os.path.join('log_uploads', f"{upload_id}_{safe_name}")
+
+        mode = 'ab' if chunk_index > 0 else 'wb'
+        with open(target_path, mode) as f:
+            f.write(chunk.read())
+
+        # 最后一个分片
+        if chunk_index == total_chunks - 1:
+            final_size = os.path.getsize(target_path)
+            preview = []
+            try:
+                with open(target_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    for i, line in enumerate(f):
+                        if i >= 5:
+                            break
+                        preview.append(line.rstrip()[:200])
+            except Exception:
+                pass
+            return jsonify({
+                'success': True,
+                'done': True,
+                'filepath': target_path,
+                'filename': f"{upload_id}_{safe_name}",
+                'file_size': final_size,
+                'preview': preview
+            })
+
+        return jsonify({
+            'success': True,
+            'done': False,
+            'chunk_index': chunk_index,
+            'total_chunks': total_chunks,
+            'progress': round((chunk_index + 1) / total_chunks * 100, 1)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/download_template/<version>')
 def download_template(version):
     """下载Excel模板"""
@@ -494,6 +763,8 @@ if __name__ == '__main__':
     print(f"📍 部署预测: http://127.0.0.1:18080/predict (新版)")
     print(f"📍 模型库管理: http://127.0.0.1:18080/model_library")
     print(f"📍 学习系统: http://127.0.0.1:18080/learning")
+    print(f"📍 日志分析: http://127.0.0.1:18080/log_analysis")
+    print(f"📍 实验分析: http://127.0.0.1:18080/experiment")
     print("=" * 60)
     print("✨ 功能模块:")
     print("  ✅ 部署资源预测 - 普通版/专业版双模式")
@@ -501,6 +772,8 @@ if __name__ == '__main__':
     print("  ✅ 模型库管理 - 8个预置模型库")
     print("  ✅ 自主训练 - 从实际案例中学习优化")
     print("  ✅ 文件上传 - 支持JSON/Excel/图片/PDF")
+    print("  ✅ 日志分析 - 基于E-Log的数据库健康评分")
+    print("  ✅ 实验分析 - 异常检测技术方案与结果展示")
     print("=" * 60)
     print()
     

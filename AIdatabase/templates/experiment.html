@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDSQL 异常检测实验 - 技术方案与结果</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:#f0f2f5;color:#333;line-height:1.6}
+        .top-bar{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:16px 30px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:100}
+        .top-bar h1{font-size:1.4em;font-weight:700}
+        .nav-links{display:flex;gap:18px}
+        .nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.95em;padding:6px 14px;border-radius:6px;transition:.2s}
+        .nav-links a:hover,.nav-links a.active{background:rgba(255,255,255,.2);color:#fff}
+        .main-content{max-width:1400px;margin:0 auto;padding:24px}
+        .tab-nav{display:flex;gap:4px;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:24px;overflow-x:auto}
+        .tab-btn{padding:12px 24px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-size:.95em;font-weight:600;color:#666;transition:.2s;white-space:nowrap}
+        .tab-btn:hover{background:#f0f0f0;color:#333}
+        .tab-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+        .tab-panel{display:none}.tab-panel.active{display:block}
+        .card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .card-header{font-size:1.2em;font-weight:700;color:#333;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;gap:10px}
+        .card-header .icon{font-size:1.3em}
+        .data-table{width:100%;border-collapse:collapse;font-size:.9em}
+        .data-table th{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
+        .data-table th:first-child{border-radius:8px 0 0 0}.data-table th:last-child{border-radius:0 8px 0 0}
+        .data-table td{padding:10px 16px;border-bottom:1px solid #f0f0f0}
+        .data-table tr:hover td{background:#f8f9ff}
+        .stars{color:#f5a623;letter-spacing:2px}.stars-dim{color:#ddd}
+        .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600}
+        .tag-recommended{background:#e8f5e9;color:#2e7d32}.tag-good{background:#e3f2fd;color:#1565c0}
+        .tag-warning{background:#fff3e0;color:#e65100}.tag-best{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+        .stat-card{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .stat-card .value{font-size:2em;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .stat-card .label{font-size:.85em;color:#888;margin-top:4px}.stat-card .sub{font-size:.78em;color:#aaa;margin-top:2px}
+        .chart-container{position:relative;height:350px;margin:16px 0}
+        .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+        .pipeline{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 0}
+        .pipeline-step{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 20px;border-radius:10px;font-weight:600;font-size:.9em;text-align:center;min-width:120px}
+        .pipeline-arrow{font-size:1.5em;color:#667eea;font-weight:bold}
+        .highlight-row td{background:#f0f4ff!important;font-weight:600}
+        .importance-bar-wrap{display:flex;align-items:center;gap:10px}
+        .importance-bar{flex:1;height:22px;background:#f0f0f0;border-radius:11px;overflow:hidden}
+        .importance-bar-fill{height:100%;border-radius:11px;background:linear-gradient(90deg,#667eea,#764ba2);transition:width .6s}
+        .importance-label{min-width:160px;font-weight:600;font-size:.88em}
+        .importance-value{min-width:50px;text-align:right;font-weight:700;color:#667eea;font-size:.88em}
+        .decision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px}
+        .decision-card{border:2px solid #e8e8e8;border-radius:12px;padding:20px;transition:.2s}
+        .decision-card:hover{border-color:#667eea}
+        .decision-card h4{font-size:1.05em;margin-bottom:12px;color:#333}
+        .decision-card .conclusion{background:#f0f4ff;padding:10px 14px;border-radius:8px;margin-top:12px;font-weight:600;color:#4a5bbd;font-size:.9em}
+        .tech-code{background:#1e1e2e;color:#cdd6f4;padding:20px;border-radius:10px;font-family:'Fira Code','Consolas',monospace;font-size:.88em;line-height:1.7;overflow-x:auto}
+        .tech-code .key{color:#89b4fa}.tech-code .value{color:#a6e3a1}.tech-code .comment{color:#6c7086}
+        .cm-grid{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:4px;max-width:350px;margin:20px auto}
+        .cm-cell{padding:16px;text-align:center;border-radius:8px;font-weight:700;font-size:1.2em}
+        .cm-header{padding:10px;text-align:center;font-weight:600;font-size:.85em;color:#666}
+        .cm-tp{background:#c8e6c9;color:#2e7d32}.cm-tn{background:#bbdefb;color:#1565c0}
+        .cm-fp{background:#ffcdd2;color:#c62828}.cm-fn{background:#ffe0b2;color:#e65100}
+        @media(max-width:768px){.chart-row{grid-template-columns:1fr}.decision-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.pipeline{flex-direction:column}.pipeline-arrow{transform:rotate(90deg)}.top-bar{flex-direction:column;gap:10px}}
+    </style>
+</head>
+<body>
+<div class="top-bar">
+    <h1>TDSQL 异常检测实验</h1>
+    <div class="nav-links">
+        <a href="/nav">系统导航</a>
+        <a href="/predict">部署预测</a>
+        <a href="/model_library">模型库</a>
+        <a href="/log_analysis">日志分析</a>
+        <a href="/experiment" class="active">实验分析</a>
+    </div>
+</div>
+<div class="main-content">
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('overview',this)">实验概览</button>
+        <button class="tab-btn" onclick="switchTab('scheme',this)">技术方案对比</button>
+        <button class="tab-btn" onclick="switchTab('results',this)">实验结果</button>
+        <button class="tab-btn" onclick="switchTab('ablation',this)">消融实验</button>
+        <button class="tab-btn" onclick="switchTab('feature',this)">特征分析</button>
+        <button class="tab-btn" onclick="switchTab('training',this)">训练过程</button>
+    </div>
+
+    <!-- Tab 1: 实验概览 -->
+    <div id="tab-overview" class="tab-panel active">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value">94.93%</div><div class="label">最佳 F1-Score</div><div class="sub">LSTM 完整训练 100 轮</div></div>
+            <div class="stat-card"><div class="value">+27.6%</div><div class="label">超越 IoTBench 基准</div><div class="sub">IoTBench F1: 70.59%</div></div>
+            <div class="stat-card"><div class="value">2,043</div><div class="label">时间窗口样本</div><div class="sub">1,430 训练 / 613 测试</div></div>
+            <div class="stat-card"><div class="value">437,750</div><div class="label">原始日志行数</div><div class="sub">237MB TDSQL 生产日志</div></div>
+            <div class="stat-card"><div class="value">14.5h</div><div class="label">日志时间跨度</div><div class="sub">2025-08-04</div></div>
+            <div class="stat-card"><div class="value">9,426</div><div class="label">Drain 日志模板</div><div class="sub">自动提取</div></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">🔄</span> 实验技术路线</div>
+            <div class="pipeline">
+                <div class="pipeline-step">TDSQL 原始日志<br><small>437,750行/237MB</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">Drain 日志解析<br><small>9,426 模板</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">多规则异常标注<br><small>ERROR/timecost/resultcode</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">滑动窗口切分<br><small>60s窗口/30s步长</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">特征提取<br><small>序列+数值(14维)</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step">LSTM 模型<br><small>多模态融合</small></div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step" style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c30">F1=94.93%<br><small>超越IoTBench 27.6%</small></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">🛠️</span> 最终技术栈</div>
+            <div class="tech-code">
+                <span class="comment"># TDSQL 异常检测最终推荐配置</span><br>
+                最终推荐 = {<br>
+                &nbsp;&nbsp;<span class="key">'日志解析'</span>: <span class="value">'Drain算法 (depth=4, sim_th=0.4)'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'异常标注'</span>: <span class="value">'ERROR + timecost>10s + resultcode!=0'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'基础模型'</span>: <span class="value">'LSTM + Attention (657,859参数)'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'损失函数'</span>: <span class="value">'FocalLoss + ClassWeight'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'特征融合'</span>: <span class="value">'文本特征(序列) + 数值特征(14维)'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'优化器'</span>: <span class="value">'AdamW (lr=0.001, wd=0.01)'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'数据划分'</span>: <span class="value">'时间序列划分 7:3'</span>,<br>
+                &nbsp;&nbsp;<span class="key">'最佳F1'</span>: <span class="value">'94.93%'</span>,<br>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 2: 技术方案对比 -->
+    <div id="tab-scheme" class="tab-panel">
+        <div class="card">
+            <div class="card-header"><span class="icon">📋</span> 日志解析算法对比</div>
+            <table class="data-table"><thead><tr><th>算法</th><th>原理</th><th>优点</th><th>缺点</th><th>推荐度</th></tr></thead><tbody>
+                <tr class="highlight-row"><td>Drain <span class="tag tag-recommended">推荐</span></td><td>基于树结构在线解析</td><td>速度快、准确率高</td><td>需要调参</td><td><span class="stars">★★★★★</span></td></tr>
+                <tr><td>Spell</td><td>最长公共子序列</td><td>简单易懂</td><td>速度慢</td><td><span class="stars">★★★</span><span class="stars-dim">★★</span></td></tr>
+                <tr><td>AEL</td><td>编辑距离</td><td>准确率高</td><td>计算复杂</td><td><span class="stars">★★</span><span class="stars-dim">★★★</span></td></tr>
+                <tr><td>正则表达式</td><td>手工规则</td><td>完全可控</td><td>维护困难</td><td><span class="stars">★★</span><span class="stars-dim">★★★</span></td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">🧠</span> 异常检测模型对比</div>
+            <table class="data-table"><thead><tr><th>模型类型</th><th>代表方法</th><th>优点</th><th>缺点</th><th>数据要求</th><th>推荐度</th></tr></thead><tbody>
+                <tr class="highlight-row"><td>深度学习 <span class="tag tag-recommended">推荐</span></td><td>LSTM、Transformer</td><td>效果好、自动特征</td><td>需要大量数据</td><td>1000+样本</td><td><span class="stars">★★★★★</span></td></tr>
+                <tr><td>传统ML</td><td>SVM、随机森林</td><td>训练快、可解释</td><td>需要手工特征</td><td>100+样本</td><td><span class="stars">★★★</span><span class="stars-dim">★★</span></td></tr>
+                <tr><td>统计方法</td><td>孤立森林、LOF</td><td>无需标注</td><td>效果一般</td><td>任意</td><td><span class="stars">★★</span><span class="stars-dim">★★★</span></td></tr>
+                <tr><td>规则方法</td><td>阈值、正则</td><td>简单直接</td><td>维护困难</td><td>无</td><td><span class="stars">★</span><span class="stars-dim">★★★★</span></td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">⚖️</span> 数据不平衡处理方案</div>
+            <p style="margin-bottom:12px;color:#666">TDSQL 数据: 正常~1600 / 异常~140，比例约 1:11.4</p>
+            <table class="data-table"><thead><tr><th>方案</th><th>原理</th><th>难度</th><th>效果</th><th>推荐度</th></tr></thead><tbody>
+                <tr class="highlight-row"><td>类别权重 <span class="tag tag-recommended">推荐</span></td><td>给少数类更高权重</td><td>简单</td><td>中等</td><td><span class="stars">★★★★★</span></td></tr>
+                <tr class="highlight-row"><td>焦点损失 <span class="tag tag-recommended">推荐</span></td><td>关注难分类样本</td><td>中等</td><td>好</td><td><span class="stars">★★★★</span><span class="stars-dim">★</span></td></tr>
+                <tr><td>SMOTE</td><td>生成合成样本</td><td>中等</td><td>中等</td><td><span class="stars">★★★</span><span class="stars-dim">★★</span></td></tr>
+                <tr><td>欠采样</td><td>减少多数类</td><td>简单</td><td>差</td><td><span class="stars">★★</span><span class="stars-dim">★★★</span></td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">🎯</span> 关键技术决策</div>
+            <div class="decision-grid">
+                <div class="decision-card">
+                    <h4>为什么选 LSTM 而非 Transformer?</h4>
+                    <table class="data-table" style="font-size:.85em"><tr><th>方面</th><th>LSTM</th><th>Transformer</th></tr>
+                        <tr><td>数据需求</td><td>中等(1000+)</td><td>大(10000+)</td></tr>
+                        <tr><td>训练速度</td><td>快</td><td>慢</td></tr>
+                        <tr><td>序列建模</td><td>好</td><td>很好</td></tr>
+                    </table>
+                    <div class="conclusion">TDSQL仅1,740样本，LSTM性价比最高</div>
+                </div>
+                <div class="decision-card">
+                    <h4>为什么用多模态融合?</h4>
+                    <table class="data-table" style="font-size:.85em"><tr><th>特征类型</th><th>信息量</th><th>效果提升</th></tr>
+                        <tr><td>纯文本</td><td>中等</td><td>基线</td></tr>
+                        <tr class="highlight-row"><td>文本+数值</td><td>丰富</td><td>+3~5%</td></tr>
+                    </table>
+                    <div class="conclusion">TDSQL有丰富数值特征(timecost/clientIP)，多模态收益高</div>
+                </div>
+                <div class="decision-card">
+                    <h4>为什么用规则标注?</h4>
+                    <table class="data-table" style="font-size:.85em"><tr><th>标注方法</th><th>准确性</th><th>工作量</th></tr>
+                        <tr class="highlight-row"><td>规则标注</td><td>高</td><td>中等</td></tr>
+                        <tr><td>人工标注</td><td>很高</td><td>很大</td></tr>
+                        <tr><td>无监督</td><td>中等</td><td>小</td></tr>
+                    </table>
+                    <div class="conclusion">TDSQL有明确错误标识，规则标注准确且可控</div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">📊</span> 技术方案效果: 预测 vs 实际</div>
+            <table class="data-table"><thead><tr><th>技术组合</th><th>预期F1</th><th>实际F1</th><th>训练时间</th><th>状态</th></tr></thead><tbody>
+                <tr><td>基线: Drain+LSTM</td><td>88~93%</td><td><strong>90.61%</strong></td><td>~8min</td><td><span class="tag tag-recommended">已完成</span></td></tr>
+                <tr><td>+类别权重</td><td>90~94%</td><td><strong>90.06%</strong></td><td>~8min</td><td><span class="tag tag-recommended">已完成</span></td></tr>
+                <tr class="highlight-row"><td>完整训练100轮 <span class="tag tag-best">最佳</span></td><td>91~95%</td><td><strong>94.93%</strong></td><td>~87hr</td><td><span class="tag tag-recommended">已完成</span></td></tr>
+                <tr><td>Transformer对比</td><td>-</td><td><strong>89.17%</strong></td><td>~1min</td><td><span class="tag tag-good">已完成</span></td></tr>
+            </tbody></table>
+        </div>
+    </div>
+
+    <!-- Tab 3: 实验结果 -->
+    <div id="tab-results" class="tab-panel">
+        <div class="card">
+            <div class="card-header"><span class="icon">🏆</span> 模型性能对比</div>
+            <div class="chart-row">
+                <div><div class="chart-container"><canvas id="modelCompareChart"></canvas></div></div>
+                <div><div class="chart-container"><canvas id="iotbenchChart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">📊</span> 详细指标</div>
+            <table class="data-table"><thead><tr><th>模型</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>TP</th><th>FP</th><th>FN</th><th>TN</th></tr></thead><tbody>
+                <tr class="highlight-row"><td>LSTM(100轮) <span class="tag tag-best">最佳</span></td><td>94.13%</td><td>94.66%</td><td>95.20%</td><td><b>94.93%</b></td><td>337</td><td>19</td><td>17</td><td>240</td></tr>
+                <tr><td>LSTM(早停)</td><td>89.72%</td><td>95.90%</td><td>85.88%</td><td>90.61%</td><td>304</td><td>13</td><td>50</td><td>246</td></tr>
+                <tr><td>LSTM(交叉验证)</td><td>89.23%</td><td>96.45%</td><td>84.46%</td><td>90.06%</td><td>299</td><td>11</td><td>55</td><td>248</td></tr>
+                <tr><td>Transformer</td><td>87.60%</td><td>89.94%</td><td>88.42%</td><td>89.17%</td><td>313</td><td>35</td><td>41</td><td>224</td></tr>
+                <tr style="background:#f8f0ff"><td>IoTBench基准</td><td>-</td><td>-</td><td>-</td><td>70.59%</td><td colspan="4" style="text-align:center;color:#888">E-Log原始基准</td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">🔢</span> 混淆矩阵 (LSTM 100轮)</div>
+            <div style="display:flex;justify-content:center">
+                <div><p style="text-align:center;margin-bottom:10px;color:#666;font-size:.9em">预测值 →</p>
+                    <div class="cm-grid">
+                        <div class="cm-header"></div><div class="cm-header">预测异常</div><div class="cm-header">预测正常</div>
+                        <div class="cm-header">真实异常</div><div class="cm-cell cm-tp">TP<br>337</div><div class="cm-cell cm-fn">FN<br>17</div>
+                        <div class="cm-header">真实正常</div><div class="cm-cell cm-fp">FP<br>19</div><div class="cm-cell cm-tn">TN<br>240</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 4: 消融实验 -->
+    <div id="tab-ablation" class="tab-panel">
+        <div class="card">
+            <div class="card-header"><span class="icon">🔬</span> 消融实验: 特征组合效果</div>
+            <div class="chart-row">
+                <div><div class="chart-container"><canvas id="ablationChart"></canvas></div></div>
+                <div>
+                    <table class="data-table" style="margin-top:20px"><thead><tr><th>特征组合</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead><tbody>
+                        <tr><td>仅序列特征</td><td>80.91%</td><td>96.11%</td><td>69.77%</td><td>80.85%</td></tr>
+                        <tr><td>仅统计特征</td><td>88.91%</td><td>95.54%</td><td>84.75%</td><td>89.82%</td></tr>
+                        <tr class="highlight-row"><td>序列+统计 <span class="tag tag-best">最佳</span></td><td>89.23%</td><td>96.45%</td><td>84.46%</td><td>90.06%</td></tr>
+                    </tbody></table>
+                    <div style="margin-top:16px;padding:16px;background:#f8f9ff;border-radius:8px">
+                        <p style="font-weight:700;margin-bottom:8px">消融分析结论:</p>
+                        <ul style="padding-left:20px;font-size:.9em;color:#555">
+                            <li><b>统计特征 > 序列特征</b>: 统计F1(89.82%) > 序列F1(80.85%)</li>
+                            <li><b>多模态融合有效</b>: 融合后F1(90.06%) > 任何单一特征</li>
+                            <li>TDSQL数值信息(timecost, error_rate)信息量大</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 5: 特征分析 -->
+    <div id="tab-feature" class="tab-panel">
+        <div class="card">
+            <div class="card-header"><span class="icon">📈</span> 特征重要性排序</div>
+            <div id="featureImportance" style="padding:10px 0"></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">📋</span> 数值特征说明</div>
+            <table class="data-table"><thead><tr><th>特征名</th><th>中文说明</th><th>类型</th><th>重要性</th></tr></thead><tbody>
+                <tr><td>seq_length</td><td>序列长度</td><td>序列</td><td><span class="tag tag-recommended">高</span></td></tr>
+                <tr><td>unique_templates</td><td>唯一模板数</td><td>序列</td><td><span class="tag tag-recommended">高</span></td></tr>
+                <tr><td>single_occurrence</td><td>单次出现模板</td><td>序列</td><td><span class="tag tag-recommended">高</span></td></tr>
+                <tr><td>template_diversity</td><td>模板多样性</td><td>序列</td><td><span class="tag tag-recommended">高</span></td></tr>
+                <tr><td>unique_client_count</td><td>唯一客户端</td><td>数值</td><td><span class="tag tag-recommended">高</span></td></tr>
+                <tr><td>error_rate</td><td>错误率</td><td>数值</td><td><span class="tag tag-good">中</span></td></tr>
+                <tr><td>max_template_freq</td><td>最高模板频率</td><td>序列</td><td><span class="tag tag-good">中</span></td></tr>
+                <tr><td>avg/max/min_timecost</td><td>响应时间统计</td><td>数值</td><td><span class="tag tag-warning">低</span></td></tr>
+                <tr><td>request_rate</td><td>请求率(QPS)</td><td>数值</td><td><span class="tag tag-warning">低</span></td></tr>
+                <tr><td>log_count</td><td>日志数量</td><td>数值</td><td><span class="tag tag-warning">低</span></td></tr>
+            </tbody></table>
+        </div>
+    </div>
+
+    <!-- Tab 6: 训练过程 -->
+    <div id="tab-training" class="tab-panel">
+        <div class="card">
+            <div class="card-header"><span class="icon">📉</span> LSTM 训练曲线 (100轮)</div>
+            <div class="chart-row">
+                <div><h4 style="text-align:center;color:#666;margin-bottom:8px">Loss 曲线</h4><div class="chart-container"><canvas id="lossChart"></canvas></div></div>
+                <div><h4 style="text-align:center;color:#666;margin-bottom:8px">F1-Score 曲线</h4><div class="chart-container"><canvas id="f1Chart"></canvas></div></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="icon">⚙️</span> 训练配置</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                <table class="data-table"><thead><tr><th colspan="2">模型配置</th></tr></thead><tbody>
+                    <tr><td>模型类型</td><td>LSTM (多模态)</td></tr>
+                    <tr><td>参数量</td><td>657,859</td></tr>
+                    <tr><td>最大序列长度</td><td>512</td></tr>
+                    <tr><td>批量大小</td><td>32</td></tr>
+                    <tr><td>训练轮数</td><td>100</td></tr>
+                    <tr><td>早停</td><td>否(完整训练)</td></tr>
+                </tbody></table>
+                <table class="data-table"><thead><tr><th colspan="2">优化配置</th></tr></thead><tbody>
+                    <tr><td>优化器</td><td>AdamW</td></tr>
+                    <tr><td>学习率</td><td>0.001</td></tr>
+                    <tr><td>权重衰减</td><td>0.01</td></tr>
+                    <tr><td>损失函数</td><td>CrossEntropyLoss</td></tr>
+                    <tr><td>特征维度</td><td>14(数值)+序列</td></tr>
+                    <tr><td>数据集</td><td>1,430训练/613测试</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    setTimeout(() => {
+        if (name === 'results') renderResultCharts();
+        if (name === 'ablation') renderAblationChart();
+        if (name === 'feature') renderFeatureImportance();
+        if (name === 'training') renderTrainingCharts();
+    }, 50);
+}
+
+const DATA = {
+    models: {'LSTM(100轮)':{acc:94.13,prec:94.66,rec:95.20,f1:94.93},'LSTM(早停)':{acc:89.72,prec:95.90,rec:85.88,f1:90.61},'LSTM(交叉验证)':{acc:89.23,prec:96.45,rec:84.46,f1:90.06},'Transformer':{acc:87.60,prec:89.94,rec:88.42,f1:89.17}},
+    featureImportance: [
+        {label:'序列长度',value:0.709},{label:'唯一模板数',value:0.627},{label:'单次出现模板',value:0.593},
+        {label:'模板多样性',value:0.586},{label:'唯一客户端',value:0.588},{label:'错误率',value:0.388},
+        {label:'最高模板频率',value:0.300},{label:'最小响应时间',value:0.180},{label:'最大响应时间',value:0.171},
+        {label:'平均响应时间',value:0.163},{label:'请求率',value:0.107},{label:'日志数量',value:0.107}
+    ],
+    trainingCurve: [
+        {e:1,loss:0.356,f1:92.86},{e:2,loss:0.179,f1:90.38},{e:3,loss:0.162,f1:92.50},
+        {e:4,loss:0.154,f1:90.67},{e:5,loss:0.145,f1:94.93},{e:6,loss:0.124,f1:91.98},
+        {e:7,loss:0.109,f1:93.64},{e:8,loss:0.112,f1:91.15},{e:9,loss:0.112,f1:92.27},{e:10,loss:0.113,f1:94.62}
+    ]
+};
+
+let charts = {};
+function destroyChart(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
+
+function renderResultCharts() {
+    destroyChart('mc');
+    const ctx1 = document.getElementById('modelCompareChart').getContext('2d');
+    const m = DATA.models, labels = ['Accuracy','Precision','Recall','F1'];
+    const colors = ['rgba(102,126,234,.7)','rgba(118,75,162,.5)','rgba(243,156,18,.5)','rgba(46,204,113,.5)'];
+    const borders = ['#667eea','#764ba2','#f39c12','#2ecc71'];
+    charts['mc'] = new Chart(ctx1, {
+        type:'radar',
+        data:{labels, datasets:Object.keys(m).map((n,i)=>({label:n,data:[m[n].acc,m[n].prec,m[n].rec,m[n].f1],backgroundColor:colors[i],borderColor:borders[i],borderWidth:2,pointRadius:4}))},
+        options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:75,max:100,ticks:{stepSize:5}}},plugins:{title:{display:true,text:'模型性能雷达图',font:{size:14}}}}
+    });
+    destroyChart('iot');
+    const ctx2 = document.getElementById('iotbenchChart').getContext('2d');
+    charts['iot'] = new Chart(ctx2, {
+        type:'bar',
+        data:{labels:['IoTBench','Transformer','LSTM(早停)','LSTM(CV)','LSTM(100轮)'],
+            datasets:[{label:'F1(%)',data:[70.59,89.17,90.61,90.06,94.93],
+                backgroundColor:['rgba(200,200,200,.8)','rgba(46,204,113,.7)','rgba(243,156,18,.7)','rgba(118,75,162,.7)','rgba(102,126,234,.9)'],
+                borderColor:['#ccc','#27ae60','#f39c12','#764ba2','#667eea'],borderWidth:2,borderRadius:8}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'F1对比(vs IoTBench)',font:{size:14}},legend:{display:false}},scales:{y:{min:60,max:100,ticks:{callback:v=>v+'%'}}}}
+    });
+}
+
+function renderAblationChart() {
+    destroyChart('abl');
+    const ctx = document.getElementById('ablationChart').getContext('2d');
+    const labels = ['仅序列','仅统计','序列+统计'];
+    const f1s = [80.85,89.82,90.06], recs = [69.77,84.75,84.46], precs = [96.11,95.54,96.45];
+    charts['abl'] = new Chart(ctx, {
+        type:'bar',
+        data:{labels, datasets:[
+            {label:'F1',data:f1s,backgroundColor:'rgba(102,126,234,.8)',borderRadius:6},
+            {label:'Recall',data:recs,backgroundColor:'rgba(118,75,162,.6)',borderRadius:6},
+            {label:'Precision',data:precs,backgroundColor:'rgba(46,204,113,.6)',borderRadius:6}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'消融实验: 特征组合效果',font:{size:14}}},scales:{y:{min:60,max:100,ticks:{callback:v=>v+'%'}}}}
+    });
+}
+
+function renderFeatureImportance() {
+    const c = document.getElementById('featureImportance');
+    const fs = DATA.featureImportance, mx = Math.max(...fs.map(f=>f.value));
+    c.innerHTML = fs.map(f=>{
+        const pct = (f.value/mx*100).toFixed(1);
+        return `<div class="importance-bar-wrap" style="margin-bottom:8px">
+            <span class="importance-label">${f.label}</span>
+            <div class="importance-bar"><div class="importance-bar-fill" style="width:${pct}%"></div></div>
+            <span class="importance-value">${f.value.toFixed(3)}</span>
+        </div>`;
+    }).join('');
+}
+
+function renderTrainingCharts() {
+    const curve = DATA.trainingCurve, epochs = curve.map(c=>c.e);
+    destroyChart('loss');
+    charts['loss'] = new Chart(document.getElementById('lossChart').getContext('2d'), {
+        type:'line',
+        data:{labels:epochs,datasets:[{label:'Loss',data:curve.map(c=>c.loss),borderColor:'#e74c3c',backgroundColor:'rgba(231,76,60,.1)',fill:true,tension:.3,pointRadius:3}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Epoch'}},y:{title:{display:true,text:'Loss'}}}}
+    });
+    destroyChart('f1c');
+    charts['f1c'] = new Chart(document.getElementById('f1Chart').getContext('2d'), {
+        type:'line',
+        data:{labels:epochs,datasets:[{label:'F1(%)',data:curve.map(c=>c.f1),borderColor:'#667eea',backgroundColor:'rgba(102,126,234,.1)',fill:true,tension:.3,pointRadius:3}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Epoch'}},y:{min:88,max:96,title:{display:true,text:'F1-Score(%)'}}}}
+    });
+}
+</script>
+</body>
+</html>

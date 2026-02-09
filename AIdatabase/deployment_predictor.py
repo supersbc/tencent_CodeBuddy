@@ -19,7 +19,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 32, 'disk_gb': 1000, 'disk_type': 'SSD SATA',
                 'network': '双万兆网卡',
                 'price': 28000, 'power_w': 350,
-                'use_case': '小型数据库节点'
+                'use_case': '小型数据库节点',
+                'vendor': 'Dell'
             },
             'db_medium': {
                 'name': 'Dell PowerEdge R640',
@@ -27,7 +28,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 64, 'disk_gb': 2000, 'disk_type': 'SSD SATA',
                 'network': '双万兆网卡',
                 'price': 45000, 'power_w': 500,
-                'use_case': '中型数据库节点'
+                'use_case': '中型数据库节点',
+                'vendor': 'Dell'
             },
             'db_large': {
                 'name': 'Dell PowerEdge R740',
@@ -35,7 +37,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 128, 'disk_gb': 4000, 'disk_type': 'NVMe SSD',
                 'network': '双万兆网卡',
                 'price': 85000, 'power_w': 750,
-                'use_case': '大型数据库节点'
+                'use_case': '大型数据库节点',
+                'vendor': 'Dell'
             },
             'db_xlarge': {
                 'name': 'Dell PowerEdge R940',
@@ -43,7 +46,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 256, 'disk_gb': 8000, 'disk_type': 'NVMe SSD',
                 'network': '双万兆网卡',
                 'price': 180000, 'power_w': 1200,
-                'use_case': '超大型数据库节点'
+                'use_case': '超大型数据库节点',
+                'vendor': 'Dell'
             },
             'app_server': {
                 'name': 'Dell PowerEdge R340',
@@ -51,7 +55,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 16, 'disk_gb': 500, 'disk_type': 'SSD SATA',
                 'network': '双千兆网卡',
                 'price': 18000, 'power_w': 250,
-                'use_case': '应用服务器'
+                'use_case': '应用服务器',
+                'vendor': 'Dell'
             },
             'proxy_server': {
                 'name': 'Dell PowerEdge R340',
@@ -59,7 +64,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 32, 'disk_gb': 500, 'disk_type': 'SSD SATA',
                 'network': '双万兆网卡',
                 'price': 22000, 'power_w': 300,
-                'use_case': 'TDSQL代理节点'
+                'use_case': 'TDSQL代理节点',
+                'vendor': 'Dell'
             },
             'monitor_server': {
                 'name': 'Dell PowerEdge R340',
@@ -67,7 +73,8 @@ class DeploymentResourcePredictor:
                 'memory_gb': 16, 'disk_gb': 1000, 'disk_type': 'SSD SATA',
                 'network': '双千兆网卡',
                 'price': 20000, 'power_w': 250,
-                'use_case': '监控服务器'
+                'use_case': '监控服务器',
+                'vendor': 'Dell'
             }
         }
         
@@ -78,46 +85,53 @@ class DeploymentResourcePredictor:
                 'type': '核心交换机',
                 'ports': 48, 'speed': '10Gbps',
                 'uplink': '6x40Gbps',
-                'price': 85000, 'power_w': 250
+                'price': 85000, 'power_w': 250,
+                'vendor': 'Cisco'
             },
             'core_switch_40g': {
                 'name': 'Cisco Nexus 9336C-FX2',
                 'type': '核心交换机',
                 'ports': 36, 'speed': '40Gbps',
                 'uplink': '100Gbps',
-                'price': 280000, 'power_w': 400
+                'price': 280000, 'power_w': 400,
+                'vendor': 'Cisco'
             },
             'access_switch_1g': {
                 'name': 'Cisco Catalyst 2960-X',
                 'type': '接入交换机',
                 'ports': 48, 'speed': '1Gbps',
                 'uplink': '4x10Gbps',
-                'price': 12000, 'power_w': 100
+                'price': 12000, 'power_w': 100,
+                'vendor': 'Cisco'
             },
             'access_switch_10g': {
                 'name': 'Cisco Catalyst 9300',
                 'type': '接入交换机',
                 'ports': 48, 'speed': '10Gbps',
                 'uplink': '8x40Gbps',
-                'price': 45000, 'power_w': 200
+                'price': 45000, 'power_w': 200,
+                'vendor': 'Cisco'
             },
             'firewall': {
                 'name': 'Fortinet FortiGate 600E',
                 'type': '防火墙',
                 'throughput': '10Gbps',
-                'price': 120000, 'power_w': 150
+                'price': 120000, 'power_w': 150,
+                'vendor': 'Fortinet'
             },
             'load_balancer': {
                 'name': 'F5 BIG-IP 4200v',
                 'type': '负载均衡器',
                 'throughput': '20Gbps',
-                'price': 150000, 'power_w': 200
+                'price': 150000, 'power_w': 200,
+                'vendor': 'F5'
             },
             'router': {
                 'name': 'Cisco ASR 1001-X',
                 'type': '路由器',
                 'throughput': '20Gbps',
-                'price': 80000, 'power_w': 180
+                'price': 80000, 'power_w': 180,
+                'vendor': 'Cisco'
             }
         }
         
@@ -128,21 +142,24 @@ class DeploymentResourcePredictor:
                 'model': 'Samsung 870 EVO',
                 'price_per_tb': 1200,
                 'iops': 50000,
-                'throughput_mbps': 550
+                'throughput_mbps': 550,
+                'vendor': 'Samsung'
             },
             'ssd_nvme': {
                 'type': 'NVMe SSD',
                 'model': 'Samsung 980 PRO',
                 'price_per_tb': 2500,
                 'iops': 500000,
-                'throughput_mbps': 7000
+                'throughput_mbps': 7000,
+                'vendor': 'Samsung'
             },
             'hdd': {
                 'type': 'SATA HDD',
                 'model': 'Seagate Exos X16',
                 'price_per_tb': 300,
                 'iops': 150,
-                'throughput_mbps': 250
+                'throughput_mbps': 250,
+                'vendor': 'Seagate'
             }
         }
         
@@ -151,22 +168,26 @@ class DeploymentResourcePredictor:
             'tdsql_enterprise': {
                 'name': 'TDSQL企业版',
                 'price_per_core': 3000,
-                'annual_maintenance_rate': 0.20
+                'annual_maintenance_rate': 0.20,
+                'vendor': '腾讯'
             },
             'os_redhat': {
                 'name': 'Red Hat Enterprise Linux',
                 'price_per_server': 5000,
-                'annual_maintenance_rate': 0.15
+                'annual_maintenance_rate': 0.15,
+                'vendor': 'Red Hat'
             },
             'monitoring_prometheus': {
                 'name': 'Prometheus监控套件',
                 'price_per_node': 2000,
-                'annual_maintenance_rate': 0.10
+                'annual_maintenance_rate': 0.10,
+                'vendor': 'Prometheus'
             },
             'backup_software': {
                 'name': '备份软件',
                 'price_per_tb': 500,
-                'annual_maintenance_rate': 0.15
+                'annual_maintenance_rate': 0.15,
+                'vendor': '通用'
             }
         }
         
@@ -233,6 +254,13 @@ class DeploymentResourcePredictor:
         concurrent_users = data.get('concurrent_users', 100)
         ha_level = data.get('ha_level', 'high')
         industry = data.get('industry', 'general')
+
+        vendor_preferences = {
+            'servers': self._normalize_vendor_list(data.get('server_vendors')),
+            'network': self._normalize_vendor_list(data.get('network_vendors')),
+            'storage': self._normalize_vendor_list(data.get('storage_vendors')),
+            'software': self._normalize_vendor_list(data.get('software_vendors'))
+        }
         
         # 计算峰值
         peak_qps = qps * 1.5
@@ -367,6 +395,10 @@ class DeploymentResourcePredictor:
         """计算设备清单"""
         scale = analysis['summary']['scale']
         topology = architecture['topology']
+        vendor_preferences = analysis.get('vendor_preferences', {})
+        server_vendors = vendor_preferences.get('servers', [])
+        network_vendors = vendor_preferences.get('network', [])
+        storage_vendors = vendor_preferences.get('storage', [])
         
         # 选择合适的服务器规格
         if scale == 'small':
@@ -386,7 +418,7 @@ class DeploymentResourcePredictor:
         }
         
         # 数据库服务器
-        db_server = self.server_catalog[db_spec]
+        db_server = self._pick_catalog_item(self.server_catalog, db_spec, server_vendors)
         for i in range(topology['db_nodes']):
             shard_id = i // (topology['replica_count'] + 1)
             role = 'master' if i % (topology['replica_count'] + 1) == 0 else 'slave'
@@ -401,11 +433,12 @@ class DeploymentResourcePredictor:
                 'quantity': 1,
                 'unit_price': db_server['price'],
                 'total_price': db_server['price'],
-                'power_w': db_server['power_w']
+                'power_w': db_server['power_w'],
+                'vendor': db_server.get('vendor')
             })
         
         # 代理服务器
-        proxy_server = self.server_catalog['proxy_server']
+        proxy_server = self._pick_catalog_item(self.server_catalog, 'proxy_server', server_vendors)
         for i in range(topology['proxy_nodes']):
             equipment['servers'].append({
                 'id': f'proxy-{i+1:02d}',
@@ -418,11 +451,12 @@ class DeploymentResourcePredictor:
                 'quantity': 1,
                 'unit_price': proxy_server['price'],
                 'total_price': proxy_server['price'],
-                'power_w': proxy_server['power_w']
+                'power_w': proxy_server['power_w'],
+                'vendor': proxy_server.get('vendor')
             })
         
         # 应用服务器
-        app_server = self.server_catalog['app_server']
+        app_server = self._pick_catalog_item(self.server_catalog, 'app_server', server_vendors)
         for i in range(topology['app_nodes']):
             equipment['servers'].append({
                 'id': f'app-{i+1:02d}',
@@ -435,11 +469,12 @@ class DeploymentResourcePredictor:
                 'quantity': 1,
                 'unit_price': app_server['price'],
                 'total_price': app_server['price'],
-                'power_w': app_server['power_w']
+                'power_w': app_server['power_w'],
+                'vendor': app_server.get('vendor')
             })
         
         # 监控服务器
-        monitor_server = self.server_catalog['monitor_server']
+        monitor_server = self._pick_catalog_item(self.server_catalog, 'monitor_server', server_vendors)
         equipment['servers'].append({
             'id': 'monitor-01',
             'role': '监控服务器',
@@ -451,7 +486,8 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': monitor_server['price'],
             'total_price': monitor_server['price'],
-            'power_w': monitor_server['power_w']
+            'power_w': monitor_server['power_w'],
+            'vendor': monitor_server.get('vendor')
         })
         
         # 备份服务器
@@ -466,14 +502,16 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': monitor_server['price'],
             'total_price': monitor_server['price'],
-            'power_w': monitor_server['power_w']
+            'power_w': monitor_server['power_w'],
+            'vendor': monitor_server.get('vendor')
         })
         
         # 网络设备
         total_servers = len(equipment['servers'])
         
         # 核心交换机（双机热备）
-        core_switch = self.network_catalog['core_switch_10g'] if scale in ['small', 'medium'] else self.network_catalog['core_switch_40g']
+        core_switch_key = 'core_switch_10g' if scale in ['small', 'medium'] else 'core_switch_40g'
+        core_switch = self._pick_catalog_item(self.network_catalog, core_switch_key, network_vendors)
         equipment['network_devices'].append({
             'id': 'core-sw-01',
             'type': '核心交换机（主）',
@@ -483,7 +521,8 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': core_switch['price'],
             'total_price': core_switch['price'],
-            'power_w': core_switch['power_w']
+            'power_w': core_switch['power_w'],
+            'vendor': core_switch.get('vendor')
         })
         equipment['network_devices'].append({
             'id': 'core-sw-02',
@@ -494,12 +533,14 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': core_switch['price'],
             'total_price': core_switch['price'],
-            'power_w': core_switch['power_w']
+            'power_w': core_switch['power_w'],
+            'vendor': core_switch.get('vendor')
         })
         
         # 接入交换机
         access_switch_count = math.ceil(total_servers / 40)  # 每台交换机接40台服务器
-        access_switch = self.network_catalog['access_switch_1g'] if scale == 'small' else self.network_catalog['access_switch_10g']
+        access_switch_key = 'access_switch_1g' if scale == 'small' else 'access_switch_10g'
+        access_switch = self._pick_catalog_item(self.network_catalog, access_switch_key, network_vendors)
         for i in range(access_switch_count):
             equipment['network_devices'].append({
                 'id': f'access-sw-{i+1:02d}',
@@ -510,11 +551,12 @@ class DeploymentResourcePredictor:
                 'quantity': 1,
                 'unit_price': access_switch['price'],
                 'total_price': access_switch['price'],
-                'power_w': access_switch['power_w']
+                'power_w': access_switch['power_w'],
+                'vendor': access_switch.get('vendor')
             })
         
         # 防火墙（双机热备）
-        firewall = self.network_catalog['firewall']
+        firewall = self._pick_catalog_item(self.network_catalog, 'firewall', network_vendors)
         equipment['network_devices'].append({
             'id': 'firewall-01',
             'type': '防火墙（主）',
@@ -523,7 +565,8 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': firewall['price'],
             'total_price': firewall['price'],
-            'power_w': firewall['power_w']
+            'power_w': firewall['power_w'],
+            'vendor': firewall.get('vendor')
         })
         equipment['network_devices'].append({
             'id': 'firewall-02',
@@ -533,11 +576,12 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': firewall['price'],
             'total_price': firewall['price'],
-            'power_w': firewall['power_w']
+            'power_w': firewall['power_w'],
+            'vendor': firewall.get('vendor')
         })
         
         # 负载均衡器（双机热备）
-        lb = self.network_catalog['load_balancer']
+        lb = self._pick_catalog_item(self.network_catalog, 'load_balancer', network_vendors)
         equipment['network_devices'].append({
             'id': 'lb-01',
             'type': '负载均衡器（主）',
@@ -546,7 +590,8 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': lb['price'],
             'total_price': lb['price'],
-            'power_w': lb['power_w']
+            'power_w': lb['power_w'],
+            'vendor': lb.get('vendor')
         })
         equipment['network_devices'].append({
             'id': 'lb-02',
@@ -556,11 +601,12 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': lb['price'],
             'total_price': lb['price'],
-            'power_w': lb['power_w']
+            'power_w': lb['power_w'],
+            'vendor': lb.get('vendor')
         })
         
         # 路由器
-        router = self.network_catalog['router']
+        router = self._pick_catalog_item(self.network_catalog, 'router', network_vendors)
         equipment['network_devices'].append({
             'id': 'router-01',
             'type': '边界路由器',
@@ -569,13 +615,14 @@ class DeploymentResourcePredictor:
             'quantity': 1,
             'unit_price': router['price'],
             'total_price': router['price'],
-            'power_w': router['power_w']
+            'power_w': router['power_w'],
+            'vendor': router.get('vendor')
         })
         
         # 存储设备（额外存储）
         total_storage_tb = math.ceil(analysis['requirements']['storage_gb_needed'] / 1000)
         storage_type = 'ssd_nvme' if scale in ['large', 'xlarge'] else 'ssd_sata'
-        storage_spec = self.storage_catalog[storage_type]
+        storage_spec = self._pick_catalog_item(self.storage_catalog, storage_type, storage_vendors)
         equipment['storage'].append({
             'type': storage_spec['type'],
             'model': storage_spec['model'],
@@ -583,7 +630,8 @@ class DeploymentResourcePredictor:
             'iops': storage_spec['iops'],
             'throughput': f"{storage_spec['throughput_mbps']}MB/s",
             'unit_price_per_tb': storage_spec['price_per_tb'],
-            'total_price': total_storage_tb * storage_spec['price_per_tb']
+            'total_price': total_storage_tb * storage_spec['price_per_tb'],
+            'vendor': storage_spec.get('vendor')
         })
         
         # 基础设施
@@ -712,6 +760,24 @@ class DeploymentResourcePredictor:
             }
         }
     
+    def _normalize_vendor_list(self, vendors):
+        if vendors is None:
+            return []
+        if isinstance(vendors, list):
+            return [item for item in vendors if item]
+        if isinstance(vendors, str):
+            return [vendors] if vendors else []
+        return []
+
+    def _pick_catalog_item(self, catalog, primary_key, preferred_vendors):
+        keys = [primary_key] + [key for key in catalog.keys() if key.startswith(f"{primary_key}_")]
+        vendors = self._normalize_vendor_list(preferred_vendors)
+        if vendors:
+            for key in keys:
+                if catalog[key].get('vendor') in vendors:
+                    return catalog[key]
+        return catalog[primary_key]
+
     def _design_network_topology(self, architecture, equipment):
         """设计网络拓扑"""
         return {

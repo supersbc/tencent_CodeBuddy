@@ -18,7 +18,45 @@ class ArchitectureCalculator:
             '48port_10g': {'ports': 48, 'speed': '10Gbps', 'price': 15000},
             '32port_40g': {'ports': 32, 'speed': '40Gbps', 'price': 50000}
         }
+
+        # TDSQL 云计费口径（按月，参考官方定价）
+        self.tdsql_pricing = {
+            'unit': 'CNY/GB/月',
+            'default_region': '广州',
+            'region_profiles': {
+                '广州': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '北京': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '上海': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '深圳': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '南京': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '成都': {'memory_price_per_gb_month': 35.70, 'disk_price_per_gb_month': 0.252},
+                '重庆': {'memory_price_per_gb_month': 35.70, 'disk_price_per_gb_month': 0.252},
+                '北京金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '深圳金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '上海金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '中国香港': {'memory_price_per_gb_month': 68.85, 'disk_price_per_gb_month': 0.540},
+                '海外': {'memory_price_per_gb_month': 89.00, 'disk_price_per_gb_month': 0.400}
+            }
+        }
     
+    def _resolve_pricing_model(self, data):
+        """解析成本模型"""
+        pricing_model = data.get('pricing_model')
+        if pricing_model:
+            return pricing_model
+        if data.get('prefer_on_premise') or data.get('prefer_hybrid'):
+            return 'on_prem'
+        return 'cloud_tdsql'
+
+    def _get_pricing_profile(self, data):
+        """获取计费区域配置"""
+        region = data.get('pricing_region') or data.get('deployment_region') or self.tdsql_pricing['default_region']
+        profile = self.tdsql_pricing['region_profiles'].get(region)
+        if not profile:
+            profile = self.tdsql_pricing['region_profiles'][self.tdsql_pricing['default_region']]
+            region = self.tdsql_pricing['default_region']
+        return region, profile
+
     def calculate_resources(self, data, architecture):
         """计算所需资源"""
         total_data_gb = data.get('total_data_size_gb', 0)
@@ -42,7 +80,7 @@ class ArchitectureCalculator:
         network = self._calculate_network(qps, total_data_gb)
         
         # 计算成本
-        cost = self._calculate_cost(servers, switches, storage)
+        cost = self._calculate_cost(data, architecture, servers, switches, storage)
         
         return {
             'servers': servers,
@@ -185,32 +223,69 @@ class ArchitectureCalculator:
             'network_cards': '双万兆网卡（冗余）'
         }
     
-    def _calculate_cost(self, servers, switches, storage):
+    def _calculate_cost(self, data, architecture, servers, switches, storage):
         """计算成本估算"""
+        pricing_model = self._resolve_pricing_model(data)
+        if pricing_model == 'cloud_tdsql':
+            region, profile = self._get_pricing_profile(data)
+            db_config = servers['database_servers']['config']
+            memory_gb = db_config['memory_gb']
+            disk_gb = db_config['disk_gb']
+            replica_count = max(1, int(architecture.get('replica_count', 1)))
+            shard_count = max(1, int(architecture.get('shard_count', 1)))
+
+            memory_cost_monthly = memory_gb * profile['memory_price_per_gb_month'] * replica_count * shard_count
+            disk_cost_monthly = disk_gb * profile['disk_price_per_gb_month'] * replica_count * shard_count
+            monthly_total = memory_cost_monthly + disk_cost_monthly
+
+            billing_months = int(data.get('billing_period_months') or (data.get('tco_years', 1) * 12) or 12)
+            first_year_total = monthly_total * 12
+
+            return {
+                'hardware_cost': round(first_year_total, 2),
+                'storage_cost': round(disk_cost_monthly * 12, 2),
+                'annual_maintenance': 0,
+                'total_first_year': round(first_year_total, 2),
+                'monthly_estimate': round(monthly_total, 2),
+                'total_billing_period': round(monthly_total * billing_months, 2),
+                'billing_period_months': billing_months,
+                'pricing_model': pricing_model,
+                'pricing_region': region,
+                'pricing_unit': self.tdsql_pricing['unit'],
+                'pricing_basis': {
+                    'memory_price_per_gb_month': profile['memory_price_per_gb_month'],
+                    'disk_price_per_gb_month': profile['disk_price_per_gb_month'],
+                    'replica_count': replica_count,
+                    'shard_count': shard_count
+                },
+                'currency': 'CNY'
+            }
+
         total_cost = 0
-        
+
         # 服务器成本
         for server_type, config in servers.items():
             count = config['count']
             price = config['config']['price']
             total_cost += count * price
-        
+
         # 交换机成本
         for switch_type, config in switches.items():
             count = config['count']
             price = config['config']['price']
             total_cost += count * price
-        
+
         # 存储成本（SSD: 2元/GB, HDD: 0.5元/GB）
         storage_gb = storage['total_capacity_gb']
         storage_cost = storage_gb * 2  # 假设使用 SSD
         total_cost += storage_cost
-        
+
         return {
             'hardware_cost': round(total_cost, 2),
             'storage_cost': round(storage_cost, 2),
             'annual_maintenance': round(total_cost * 0.15, 2),  # 15% 维护费
             'total_first_year': round(total_cost * 1.15, 2),
+            'pricing_model': pricing_model,
             'currency': 'CNY'
         }
     

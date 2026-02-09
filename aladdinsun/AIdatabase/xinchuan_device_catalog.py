@@ -10,20 +10,6 @@ class XinChuangDeviceCatalog:
         # 国产服务器配置库
         self.server_catalog = {
             'db_small': {
-                'name': '浪潮 NF5280M6',  # 国产品牌
-                'cpu_cores': 8, 
-                'cpu_model': '鲲鹏920 2.6GHz',  # 华为鲲鹏
-                'memory_gb': 32, 
-                'disk_gb': 1000, 
-                'disk_type': 'SSD SATA',
-                'network': '双万兆网卡',
-                'price': 26000,  # 国产设备更有价格优势
-                'power_w': 320,
-                'use_case': '小型数据库节点',
-                'vendor': '浪潮',
-                'certification': '信创认证'
-            },
-            'db_small_alt': {
                 'name': '华为 TaiShan 200 2280',
                 'cpu_cores': 8,
                 'cpu_model': '鲲鹏920 2.6GHz',
@@ -37,21 +23,21 @@ class XinChuangDeviceCatalog:
                 'vendor': '华为',
                 'certification': '信创认证'
             },
-            'db_medium': {
-                'name': '浪潮 NF8260M6',
-                'cpu_cores': 16,
-                'cpu_model': '鲲鹏920 3.0GHz',
-                'memory_gb': 64,
-                'disk_gb': 2000,
+            'db_small_alt': {
+                'name': '浪潮 NF5280M6',  # 国产品牌
+                'cpu_cores': 8,
+                'cpu_model': '鲲鹏920 2.6GHz',  # 华为鲲鹏
+                'memory_gb': 32,
+                'disk_gb': 1000,
                 'disk_type': 'SSD SATA',
                 'network': '双万兆网卡',
-                'price': 42000,
-                'power_w': 480,
-                'use_case': '中型数据库节点',
+                'price': 26000,  # 国产设备更有价格优势
+                'power_w': 320,
+                'use_case': '小型数据库节点',
                 'vendor': '浪潮',
                 'certification': '信创认证'
             },
-            'db_medium_alt': {
+            'db_medium': {
                 'name': '联想 ThinkSystem SR650',
                 'cpu_cores': 16,
                 'cpu_model': '海光 EPYC 7542',  # 海光国产CPU
@@ -65,21 +51,21 @@ class XinChuangDeviceCatalog:
                 'vendor': '联想',
                 'certification': '信创认证'
             },
-            'db_large': {
-                'name': '浪潮 NF8480M6',
-                'cpu_cores': 32,
-                'cpu_model': '鲲鹏920 3.0GHz (双路)',
-                'memory_gb': 128,
-                'disk_gb': 4000,
-                'disk_type': 'NVMe SSD',
+            'db_medium_alt': {
+                'name': '浪潮 NF8260M6',
+                'cpu_cores': 16,
+                'cpu_model': '鲲鹏920 3.0GHz',
+                'memory_gb': 64,
+                'disk_gb': 2000,
+                'disk_type': 'SSD SATA',
                 'network': '双万兆网卡',
-                'price': 78000,
-                'power_w': 700,
-                'use_case': '大型数据库节点',
+                'price': 42000,
+                'power_w': 480,
+                'use_case': '中型数据库节点',
                 'vendor': '浪潮',
                 'certification': '信创认证'
             },
-            'db_large_alt': {
+            'db_large': {
                 'name': '华为 TaiShan 200 2480',
                 'cpu_cores': 32,
                 'cpu_model': '鲲鹏920 3.0GHz (双路)',
@@ -93,21 +79,21 @@ class XinChuangDeviceCatalog:
                 'vendor': '华为',
                 'certification': '信创认证'
             },
-            'db_xlarge': {
-                'name': '浪潮 NF8680M6 (四路)',
-                'cpu_cores': 64,
-                'cpu_model': '鲲鹏920 3.0GHz (四路)',
-                'memory_gb': 256,
-                'disk_gb': 8000,
+            'db_large_alt': {
+                'name': '浪潮 NF8480M6',
+                'cpu_cores': 32,
+                'cpu_model': '鲲鹏920 3.0GHz (双路)',
+                'memory_gb': 128,
+                'disk_gb': 4000,
                 'disk_type': 'NVMe SSD',
                 'network': '双万兆网卡',
-                'price': 165000,
-                'power_w': 1150,
-                'use_case': '超大型数据库节点',
+                'price': 78000,
+                'power_w': 700,
+                'use_case': '大型数据库节点',
                 'vendor': '浪潮',
                 'certification': '信创认证'
             },
-            'db_xlarge_alt': {
+            'db_xlarge': {
                 'name': '华为 TaiShan 200 5280 (四路)',
                 'cpu_cores': 64,
                 'cpu_model': '鲲鹏920 3.0GHz (四路)',
@@ -119,6 +105,20 @@ class XinChuangDeviceCatalog:
                 'power_w': 1100,
                 'use_case': '超大型数据库节点',
                 'vendor': '华为',
+                'certification': '信创认证'
+            },
+            'db_xlarge_alt': {
+                'name': '浪潮 NF8680M6 (四路)',
+                'cpu_cores': 64,
+                'cpu_model': '鲲鹏920 3.0GHz (四路)',
+                'memory_gb': 256,
+                'disk_gb': 8000,
+                'disk_type': 'NVMe SSD',
+                'network': '双万兆网卡',
+                'price': 165000,
+                'power_w': 1150,
+                'use_case': '超大型数据库节点',
+                'vendor': '浪潮',
                 'certification': '信创认证'
             },
             'app_server': {

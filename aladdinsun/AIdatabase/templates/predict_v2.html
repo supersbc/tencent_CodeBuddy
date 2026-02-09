@@ -2084,6 +2084,12 @@
                 </div>
 
                 <div class="result-card">
+                    <h3>🧭 架构图${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
+                    <p style="color: #666; margin-bottom: 12px;">根据本次输入与拓扑结果自动生成的架构示意图。</p>
+                    <div id="architectureDiagramContainer" style="border: 1px solid #e6e8ef; border-radius: 12px; padding: 12px; background: #fafbff;"></div>
+                </div>
+
+                <div class="result-card">
                     <h3>💰 成本总览${r.xinchuan_enabled ? ' (非信创方案)' : ''}</h3>
                     <div class="result-grid">
                         <div class="result-item">
@@ -2142,8 +2148,89 @@
                 </div>
             `;
 
+            renderArchitectureDiagram(topo, arch, mapped);
+
             // 滚动到结果区域
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderArchitectureDiagram(topo, arch, mapped) {
+            const container = document.getElementById('architectureDiagramContainer');
+            if (!container) return;
+
+            const db = topo.db_nodes || 0;
+            const proxy = topo.proxy_nodes || 0;
+            const app = topo.app_nodes || 0;
+            const monitor = (topo.monitor_nodes || 0) + (topo.backup_nodes || 0);
+            const shard = mapped.shard_count || 0;
+            const replica = mapped.replica_count || 0;
+
+            const title = arch.description || mapped.architecture_type || '推荐架构';
+
+            const svg = `
+                <svg width="100%" height="520" viewBox="0 0 980 520" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="bg" x1="0" x2="1">
+                            <stop offset="0%" stop-color="#f7f9ff" />
+                            <stop offset="100%" stop-color="#f2f4ff" />
+                        </linearGradient>
+                        <linearGradient id="card" x1="0" x2="1">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="100%" stop-color="#f7f8ff" />
+                        </linearGradient>
+                        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#6471ff" flood-opacity="0.18" />
+                        </filter>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L9,3 L0,6 Z" fill="#5b6cff" />
+                        </marker>
+                    </defs>
+
+                    <rect x="20" y="20" width="940" height="480" rx="22" fill="url(#bg)" stroke="#e3e7f5" />
+                    <text x="44" y="54" font-size="18" font-weight="700" fill="#2f355e">${title}</text>
+                    <text x="44" y="78" font-size="12" fill="#7a80a8">分片 ${shard} · 副本 ${replica}</text>
+
+                    <rect x="700" y="40" width="220" height="56" rx="12" fill="#ffffff" stroke="#dbe2ff" filter="url(#shadow)" />
+                    <text x="810" y="66" text-anchor="middle" font-size="12" fill="#7a80a8">运维保障</text>
+                    <text x="810" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5b6cff">监控/备份 ${monitor}</text>
+
+                    <rect x="60" y="110" width="860" height="82" rx="16" fill="url(#card)" stroke="#dde3ff" filter="url(#shadow)" />
+                    <text x="86" y="145" font-size="14" font-weight="700" fill="#2f355e">接入与安全层</text>
+                    <text x="86" y="168" font-size="12" fill="#7a80a8">公网接入 · 防护 · 流量调度</text>
+                    <rect x="560" y="126" width="110" height="36" rx="18" fill="#eef2ff" stroke="#cfd8ff" />
+                    <text x="615" y="149" text-anchor="middle" font-size="12" fill="#5060c6">防火墙</text>
+                    <rect x="680" y="126" width="110" height="36" rx="18" fill="#eef2ff" stroke="#cfd8ff" />
+                    <text x="735" y="149" text-anchor="middle" font-size="12" fill="#5060c6">负载均衡</text>
+                    <rect x="800" y="126" width="110" height="36" rx="18" fill="#eef2ff" stroke="#cfd8ff" />
+                    <text x="855" y="149" text-anchor="middle" font-size="12" fill="#5060c6">核心交换</text>
+
+                    <rect x="60" y="210" width="860" height="82" rx="16" fill="url(#card)" stroke="#dde3ff" filter="url(#shadow)" />
+                    <text x="86" y="245" font-size="14" font-weight="700" fill="#2f355e">应用层</text>
+                    <text x="86" y="268" font-size="12" fill="#7a80a8">业务服务 · API · 应用集群</text>
+                    <rect x="720" y="226" width="190" height="36" rx="18" fill="#eaf7ff" stroke="#bfe6ff" />
+                    <text x="815" y="249" text-anchor="middle" font-size="12" fill="#2f7bbf">应用节点 ${app}</text>
+
+                    <rect x="60" y="310" width="860" height="82" rx="16" fill="url(#card)" stroke="#dde3ff" filter="url(#shadow)" />
+                    <text x="86" y="345" font-size="14" font-weight="700" fill="#2f355e">数据库访问层</text>
+                    <text x="86" y="368" font-size="12" fill="#7a80a8">连接管理 · 读写分离 · 路由</text>
+                    <rect x="720" y="326" width="190" height="36" rx="18" fill="#f2ecff" stroke="#d8c8ff" />
+                    <text x="815" y="349" text-anchor="middle" font-size="12" fill="#6a46c7">代理节点 ${proxy}</text>
+
+                    <rect x="60" y="410" width="860" height="82" rx="16" fill="url(#card)" stroke="#dde3ff" filter="url(#shadow)" />
+                    <text x="86" y="445" font-size="14" font-weight="700" fill="#2f355e">数据库集群层</text>
+                    <text x="86" y="468" font-size="12" fill="#7a80a8">分片存储 · 高可用 · 一致性</text>
+                    <rect x="640" y="426" width="130" height="36" rx="18" fill="#e8fff2" stroke="#bdebd0" />
+                    <text x="705" y="449" text-anchor="middle" font-size="12" fill="#2a8b57">数据库节点 ${db}</text>
+                    <rect x="780" y="426" width="130" height="36" rx="18" fill="#e8fff2" stroke="#bdebd0" />
+                    <text x="845" y="449" text-anchor="middle" font-size="12" fill="#2a8b57">分片 ${shard} · 副本 ${replica}</text>
+
+                    <line x1="490" y1="192" x2="490" y2="210" stroke="#5b6cff" stroke-width="2" marker-end="url(#arrow)" />
+                    <line x1="490" y1="292" x2="490" y2="310" stroke="#5b6cff" stroke-width="2" marker-end="url(#arrow)" />
+                    <line x1="490" y1="392" x2="490" y2="410" stroke="#5b6cff" stroke-width="2" marker-end="url(#arrow)" />
+                </svg>
+            `;
+
+            container.innerHTML = svg;
         }
         
         // 导出Excel功能

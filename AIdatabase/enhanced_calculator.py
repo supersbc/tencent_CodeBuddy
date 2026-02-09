@@ -91,7 +91,45 @@ class EnhancedArchitectureCalculator:
             'annual_power_per_kw': 5000,  # 年电费
             'annual_cooling_ratio': 0.4  # 制冷成本占电费比例
         }
+
+        # TDSQL 云计费口径（按月，参考官方定价）
+        self.tdsql_pricing = {
+            'unit': 'CNY/GB/月',
+            'default_region': '广州',
+            'region_profiles': {
+                '广州': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '北京': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '上海': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '深圳': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '南京': {'memory_price_per_gb_month': 45.90, 'disk_price_per_gb_month': 0.324},
+                '成都': {'memory_price_per_gb_month': 35.70, 'disk_price_per_gb_month': 0.252},
+                '重庆': {'memory_price_per_gb_month': 35.70, 'disk_price_per_gb_month': 0.252},
+                '北京金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '深圳金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '上海金融': {'memory_price_per_gb_month': 113.60, 'disk_price_per_gb_month': 0.640},
+                '中国香港': {'memory_price_per_gb_month': 68.85, 'disk_price_per_gb_month': 0.540},
+                '海外': {'memory_price_per_gb_month': 89.00, 'disk_price_per_gb_month': 0.400}
+            }
+        }
     
+    def _resolve_pricing_model(self, data):
+        """解析成本模型"""
+        pricing_model = data.get('pricing_model')
+        if pricing_model:
+            return pricing_model
+        if data.get('prefer_on_premise') or data.get('prefer_hybrid'):
+            return 'on_prem'
+        return 'cloud_tdsql'
+
+    def _get_pricing_profile(self, data):
+        """获取计费区域配置"""
+        region = data.get('pricing_region') or data.get('deployment_region') or self.tdsql_pricing['default_region']
+        profile = self.tdsql_pricing['region_profiles'].get(region)
+        if not profile:
+            profile = self.tdsql_pricing['region_profiles'][self.tdsql_pricing['default_region']]
+            region = self.tdsql_pricing['default_region']
+        return region, profile
+
     def calculate_resources(self, data, architecture):
         """计算所需资源（增强版）"""
         total_data_gb = data.get('total_data_size_gb', 0)
@@ -122,7 +160,7 @@ class EnhancedArchitectureCalculator:
         software = self._calculate_software_licenses(servers)
         
         # 计算详细成本
-        cost = self._calculate_cost_detailed(servers, network, storage, infrastructure, software)
+        cost = self._calculate_cost_detailed(data, architecture, servers, network, storage, infrastructure, software)
         
         return {
             'servers': servers,
@@ -450,9 +488,86 @@ class EnhancedArchitectureCalculator:
         
         return software
     
-    def _calculate_cost_detailed(self, servers, network, storage, infrastructure, software):
+    def _calculate_cost_detailed(self, data, architecture, servers, network, storage, infrastructure, software):
         """计算详细成本"""
-        
+        pricing_model = self._resolve_pricing_model(data)
+        if pricing_model == 'cloud_tdsql':
+            region, profile = self._get_pricing_profile(data)
+            db_config = servers['database_servers']['config']
+            memory_gb = db_config['memory_gb']
+            disk_gb = db_config['disk_gb']
+            replica_count = max(1, int(architecture.get('replica_count', 1)))
+            shard_count = max(1, int(architecture.get('shard_count', 1)))
+
+            memory_cost_monthly = memory_gb * profile['memory_price_per_gb_month'] * replica_count * shard_count
+            disk_cost_monthly = disk_gb * profile['disk_price_per_gb_month'] * replica_count * shard_count
+            monthly_total = memory_cost_monthly + disk_cost_monthly
+
+            billing_months = int(data.get('billing_period_months') or (data.get('tco_years', 1) * 12) or 12)
+            memory_cost_year = memory_cost_monthly * 12
+            disk_cost_year = disk_cost_monthly * 12
+
+            hardware_cost = {
+                'servers': memory_cost_year,
+                'network': 0,
+                'storage': disk_cost_year,
+                'infrastructure': 0,
+                'subtotal': memory_cost_year + disk_cost_year
+            }
+            software_cost = {
+                'licenses': 0,
+                'subtotal': 0
+            }
+            deployment_cost = {
+                'deployment': 0,
+                'training': 0,
+                'subtotal': 0
+            }
+            annual_operation_cost = {
+                'software_maintenance': 0,
+                'power': 0,
+                'cooling': 0,
+                'personnel': 0,
+                'subtotal': 0
+            }
+
+            total_cost = {
+                'hardware': hardware_cost['subtotal'],
+                'software': software_cost['subtotal'],
+                'deployment': deployment_cost['subtotal'],
+                'first_year_operation': annual_operation_cost['subtotal'],
+                'total_first_year': hardware_cost['subtotal'],
+                'annual_operation': annual_operation_cost['subtotal'],
+                'monthly_estimate': round(monthly_total, 2),
+                'total_billing_period': round(monthly_total * billing_months, 2),
+                'billing_period_months': billing_months
+            }
+
+            return {
+                'hardware': hardware_cost,
+                'software': software_cost,
+                'deployment': deployment_cost,
+                'annual_operation': annual_operation_cost,
+                'total': total_cost,
+                'pricing': {
+                    'pricing_model': pricing_model,
+                    'pricing_region': region,
+                    'pricing_unit': self.tdsql_pricing['unit'],
+                    'pricing_basis': {
+                        'memory_price_per_gb_month': profile['memory_price_per_gb_month'],
+                        'disk_price_per_gb_month': profile['disk_price_per_gb_month'],
+                        'replica_count': replica_count,
+                        'shard_count': shard_count
+                    }
+                },
+                'breakdown': {
+                    '硬件成本': hardware_cost,
+                    '软件成本': software_cost,
+                    '实施成本': deployment_cost,
+                    '年度运维成本': annual_operation_cost
+                }
+            }
+
         # 硬件成本
         hardware_cost = {
             'servers': sum(s.get('total_price', 0) for s in servers.values() if s),
@@ -462,13 +577,13 @@ class EnhancedArchitectureCalculator:
             'subtotal': 0
         }
         hardware_cost['subtotal'] = sum(hardware_cost.values())
-        
+
         # 软件成本
         software_cost = {
             'licenses': software['total_price'],
             'subtotal': software['total_price']
         }
-        
+
         # 实施成本
         total_servers = sum(s['count'] for s in servers.values() if s)
         deployment_cost = {
@@ -476,7 +591,7 @@ class EnhancedArchitectureCalculator:
             'training': self.other_costs['training'],
             'subtotal': self.other_costs['deployment_per_server'] * total_servers + self.other_costs['training']
         }
-        
+
         # 年度运维成本
         total_power_kw = infrastructure['total_power_kw']
         annual_operation_cost = {
@@ -487,7 +602,7 @@ class EnhancedArchitectureCalculator:
             'subtotal': 0
         }
         annual_operation_cost['subtotal'] = sum(annual_operation_cost.values())
-        
+
         # 总成本
         total_cost = {
             'hardware': hardware_cost['subtotal'],
@@ -502,13 +617,16 @@ class EnhancedArchitectureCalculator:
             ),
             'annual_operation': annual_operation_cost['subtotal']
         }
-        
+
         return {
             'hardware': hardware_cost,
             'software': software_cost,
             'deployment': deployment_cost,
             'annual_operation': annual_operation_cost,
             'total': total_cost,
+            'pricing': {
+                'pricing_model': pricing_model
+            },
             'breakdown': {
                 '硬件成本': hardware_cost,
                 '软件成本': software_cost,

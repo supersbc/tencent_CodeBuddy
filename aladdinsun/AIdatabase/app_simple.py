@@ -3,14 +3,9 @@ TDSQL 部署资源预测系统 - 完整版
 整合：部署预测、模型库管理、自主训练
 """
 
-# 修复OpenBLAS线程资源问题 - 必须在导入任何科学计算库之前设置
-import os
-os.environ['OPENBLAS_NUM_THREADS'] = '4'
-os.environ['OMP_NUM_THREADS'] = '4'
-os.environ['MKL_NUM_THREADS'] = '4'
-
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 import json
+import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -18,14 +13,15 @@ app = Flask(__name__)
 
 # 配置
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'xlsx', 'xls', 'pdf', 'json', 'txt'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'xlsx', 'xls', 'pdf', 'json', 'txt', 'log', 'gz', 'zip'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024  # 2GB max for log files
 
 # 创建必要目录
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs('model_libraries', exist_ok=True)
 os.makedirs('training_data', exist_ok=True)
+os.makedirs('log_uploads', exist_ok=True)
 
 print("\n" + "=" * 60)
 print("🚀 TDSQL 部署资源预测系统 v4.2 (完整版)")
@@ -36,6 +32,18 @@ predictor = None
 library_manager = None
 training_system = None
 model = None
+
+log_analyzer = None
+
+def get_log_analyzer():
+    """延迟加载日志分析器"""
+    global log_analyzer
+    if log_analyzer is None:
+        print("📦 正在加载日志分析引擎...")
+        from log_analyzer import TDSQLLogAnalyzer
+        log_analyzer = TDSQLLogAnalyzer()
+        print("✅ 日志分析引擎加载完成")
+    return log_analyzer
 
 def get_predictor():
     """延迟加载预测器"""
@@ -72,12 +80,22 @@ def get_training_system():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+def _normalize_vendor_list(value):
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [item for item in value if item]
+    if isinstance(value, str):
+        return [value] if value else []
+    return []
+
 # ==================== 页面路由 ====================
 
 @app.route('/')
 def index():
-    """主页 - 导航页面"""
-    return render_template('navigation.html')
+    """主页 - 默认进入导航页"""
+    return redirect('/nav')
 
 @app.route('/nav')
 def navigation():
@@ -104,15 +122,15 @@ def learning():
     """学习系统页面"""
     return render_template('index_learning.html')
 
-@app.route('/test_predict')
-def test_predict():
-    """测试预测接口页面"""
-    return render_template('test_simple.html')
+@app.route('/log_analysis')
+def log_analysis_page():
+    """日志分析与健康评分页面"""
+    return render_template('log_analysis.html')
 
-@app.route('/test_debug')
-def test_debug():
-    """调试测试页面"""
-    return render_template('test_simple.html')
+@app.route('/experiment')
+def experiment_page():
+    """异常检测实验 - 技术方案与结果展示"""
+    return render_template('experiment.html')
 
 # ==================== API路由 ====================
 
@@ -130,14 +148,6 @@ def predict():
     """部署资源预测API"""
     try:
         raw = request.get_json() or {}
-        
-        # 调试：打印收到的原始数据
-        print("\n" + "=" * 60)
-        print("📥 收到的请求参数:")
-        print(f"  enable_xinchuan: {raw.get('enable_xinchuan')}")
-        print(f"  xinchuan_mode: {raw.get('xinchuan_mode')}")
-        print(f"  全部参数: {raw}")
-        print("=" * 60 + "\n")
         
         # 统一字段映射（兼容普通版/专业版表单字段）
         data = {}
@@ -178,249 +188,18 @@ def predict():
         # 其他可选需求
         data['need_disaster_recovery'] = bool(raw.get('need_disaster_recovery'))
         data['need_read_write_split'] = bool(raw.get('need_read_write_split'))
-        
-        # 信创模式参数
-        enable_xinchuan = raw.get('enable_xinchuan', False)  # 默认关闭，需要用户主动勾选
-        xinchuan_mode = raw.get('xinchuan_mode', 'standard')  # 默认标准信创
-        
-        # 无论是否启用信创模式，都使用新版预测器（确保生成完整的设备清单）
-        from deployment_predictor_xinchuan import DeploymentResourcePredictorXinChuan
-        
-        # 转换数据格式（统一定义）
-        common_data = {
-            'data_size_gb': data['data_volume'] * 1024,  # 转换为GB
-            'transactions_per_day': data['tps'] * 86400,
-            'max_connections': data['concurrent_users'],
-            'business_type': 'OLTP',
-            'high_availability': need_ha,
-            'disaster_recovery': data['need_disaster_recovery']
-        }
-        
-        # 如果启用信创模式，生成传统方案和信创方案的完整对比
-        if enable_xinchuan:
-            
-            # 生成传统方案(使用国外品牌设备) - 独立架构设计
-            traditional_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode='off')
-            traditional_result = traditional_predictor.predict(common_data)
-            
-            # 生成信创方案(使用国产设备) - 独立架构设计
-            xc_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode=xinchuan_mode)
-            xc_result = xc_predictor.predict(common_data)
-            
-            # 计算真实的成本差异
-            traditional_cost = traditional_result.get('cost_breakdown', {}).get('total_initial_cost', 0)
-            xinchuan_cost = xc_result.get('cost_breakdown', {}).get('total_initial_cost', 0)
-            cost_savings = traditional_cost - xinchuan_cost
-            savings_percent = (cost_savings / traditional_cost * 100) if traditional_cost > 0 else 0
-            
-            # 使用传统方案作为基础结果（确保前端显示一致）
-            result = traditional_result.copy()
-            
-            # 先获取成本明细（避免变量未定义错误）
-            traditional_cost_breakdown = traditional_result.get('cost_breakdown', {})
-            traditional_equipment = traditional_result.get('equipment_list', [])
-            traditional_architecture = traditional_result.get('architecture', {})
-            
-            # 适配前端字段名（兼容旧版显示）
-            result['cost'] = {
-                'initial_investment': traditional_cost,  # 映射到旧字段
-                'three_year_tco': traditional_cost * 1.5,  # 估算3年TCO
-                'total_hardware': traditional_cost_breakdown.get('hardware_cost', 0),
-                'total_software': traditional_cost_breakdown.get('software_cost', 0),
-                'annual_operating': traditional_cost * 0.15  # 估算年运营成本
-            }
-            
-            # 调试：打印设备清单数据（非信创模式）
-            print(f"\n🔍 调试(非信创模式) - traditional_equipment 总数: {len(traditional_equipment)}")
-            if traditional_equipment:
-                print(f"🔍 调试(非信创模式) - 第一个设备示例: {traditional_equipment[0]}")
-            else:
-                print("⚠️  调试(非信创模式) - traditional_equipment 为空列表！")
-            
-            # 适配设备清单字段（按类别分组）
-            servers = [item for item in traditional_equipment if item.get('category') in ['数据库服务器', '代理服务器', '监控服务器']]
-            network_devices = [item for item in traditional_equipment if item.get('category') in ['核心交换机', '接入交换机', '安全防火墙']]
-            storage_devices = [item for item in traditional_equipment if item.get('category') == '存储设备']
-            infrastructure_items = traditional_cost_breakdown.get('infrastructure_items', [])
-            
-            print(f"🔍 调试(非信创模式) - 分类后: servers={len(servers)}, network={len(network_devices)}, storage={len(storage_devices)}, infrastructure={len(infrastructure_items)}")
-            
-            result['equipment'] = {
-                'servers': servers,
-                'network_devices': network_devices,
-                'storage': storage_devices,  # ✅ 改为 storage（前端期待）
-                'infrastructure': infrastructure_items  # ✅ 添加基础设施清单
-            }
-            result['equipment_list'] = traditional_equipment  # 新版字段
 
-            
-            # 适配架构字段
-            result['architecture'] = {
-                'type': 'cluster',
-                'topology': {
-                    'db_nodes': traditional_architecture.get('database_nodes', 0),
-                    'proxy_nodes': traditional_architecture.get('proxy_nodes', 0),
-                    'monitor_nodes': traditional_architecture.get('monitoring_nodes', 0),
-                    'shard_count': 0,
-                    'replica_count': 3
-                }
-            }
-            result['cost_breakdown'] = {
-                'summary': result['cost'],
-                'breakdown': {  # ✅ 添加 breakdown 包裹层
-                    'hardware': {
-                        'servers': sum(item.get('total_price', 0) for item in servers),
-                        'network_devices': sum(item.get('total_price', 0) for item in network_devices),
-                        'storage': sum(item.get('total_price', 0) for item in storage_devices),
-                        'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
-                    },
-                    'software': {
-                        'tdsql_license': 0,  # 信创模式免费
-                        'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
-                        'monitoring': 0,
-                        'backup': 0
-                    },
-                    'services': {
-                        'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
-                        'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
-                    }
-                },
-                # 同时保留顶层字段（向后兼容）
-                'hardware': {
-                    'servers': sum(item.get('total_price', 0) for item in servers),
-                    'network_devices': sum(item.get('total_price', 0) for item in network_devices),
-                    'storage': sum(item.get('total_price', 0) for item in storage_devices),
-                    'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
-                },
-                'software': {
-                    'tdsql_license': 0,
-                    'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
-                    'monitoring': 0,
-                    'backup': 0
-                },
-                'services': {
-                    'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
-                    'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
-                },
-                'software_items': traditional_cost_breakdown.get('software_items', []),
-                'annual_operating': {}
-            }
-            
-            # 添加完整的对比信息
-            result['xinchuan_enabled'] = True
-            result['xinchuan_mode'] = xinchuan_mode
-            result['traditional_solution'] = traditional_result  # 传统方案(独立架构)
-            result['xinchuan_solution'] = xc_result  # 信创方案(独立架构)
-            result['xinchuan_info'] = xc_result.get('xinchuan_info', {})
-            result['cost_comparison'] = {
-                'traditional_cost': traditional_cost,
-                'xinchuan_cost': xinchuan_cost,
-                'cost_savings': cost_savings,
-                'savings_percent': round(savings_percent, 1),
-                'note': f'使用信创方案相比传统方案节约 ¥{cost_savings:,.0f} ({savings_percent:.1f}%)'
-            }
-        else:
-            # 不启用信创模式，只生成传统方案（国外品牌）
-            traditional_predictor = DeploymentResourcePredictorXinChuan(xinchuan_mode='off')
-            traditional_result = traditional_predictor.predict(common_data)
-            
-            # 获取成本和设备信息
-            traditional_cost_breakdown = traditional_result.get('cost_breakdown', {})
-            traditional_equipment = traditional_result.get('equipment_list', [])
-            traditional_architecture = traditional_result.get('architecture', {})
-            traditional_cost = traditional_cost_breakdown.get('total_initial_cost', 0)
-            
-            # 使用传统方案作为结果
-            result = traditional_result.copy()
-            
-            # 适配前端字段名（兼容旧版显示）
-            result['cost'] = {
-                'initial_investment': traditional_cost,
-                'three_year_tco': traditional_cost * 1.5,
-                'total_hardware': traditional_cost_breakdown.get('hardware_cost', 0),
-                'total_software': traditional_cost_breakdown.get('software_cost', 0),
-                'annual_operating': traditional_cost * 0.15
-            }
-            
-            # 调试：打印设备清单数据（非信创模式）
-            print(f"\n🔍 调试(非信创模式) - traditional_equipment 总数: {len(traditional_equipment)}")
-            if traditional_equipment:
-                print(f"🔍 调试(非信创模式) - 第一个设备示例: {traditional_equipment[0]}")
-            else:
-                print("⚠️  调试(非信创模式) - traditional_equipment 为空列表！")
-            
-            # 适配设备清单字段（按类别分组）
-            servers = [item for item in traditional_equipment if item.get('category') in ['数据库服务器', '代理服务器', '监控服务器']]
-            network_devices = [item for item in traditional_equipment if item.get('category') in ['核心交换机', '接入交换机', '安全防火墙']]
-            storage_devices = [item for item in traditional_equipment if item.get('category') == '存储设备']
-            infrastructure_items = traditional_cost_breakdown.get('infrastructure_items', [])
-            
-            print(f"🔍 调试(非信创模式) - 分类后: servers={len(servers)}, network={len(network_devices)}, storage={len(storage_devices)}, infrastructure={len(infrastructure_items)}")
-            
-            result['equipment'] = {
-                'servers': servers,
-                'network_devices': network_devices,
-                'storage': storage_devices,  # ✅ 改为 storage（前端期待）
-                'infrastructure': infrastructure_items  # ✅ 添加基础设施清单
-            }
-            result['equipment_list'] = traditional_equipment
-
-            
-            # 适配架构字段
-            result['architecture'] = {
-                'type': 'cluster',
-                'topology': {
-                    'db_nodes': traditional_architecture.get('database_nodes', 0),
-                    'proxy_nodes': traditional_architecture.get('proxy_nodes', 0),
-                    'monitor_nodes': traditional_architecture.get('monitoring_nodes', 0),
-                    'shard_count': 0,
-                    'replica_count': 3
-                }
-            }
-            
-            result['cost_breakdown'] = {
-                'summary': result['cost'],
-                'breakdown': {  # ✅ 添加 breakdown 包裹层
-                    'hardware': {
-                        'servers': sum(item.get('total_price', 0) for item in servers),
-                        'network_devices': sum(item.get('total_price', 0) for item in network_devices),
-                        'storage': sum(item.get('total_price', 0) for item in storage_devices),
-                        'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
-                    },
-                    'software': {
-                        'tdsql_license': 0,
-                        'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
-                        'monitoring': 0,
-                        'backup': 0
-                    },
-                    'services': {
-                        'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
-                        'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
-                    }
-                },
-                # 同时保留顶层字段（向后兼容）
-                'hardware': {
-                    'servers': sum(item.get('total_price', 0) for item in servers),
-                    'network_devices': sum(item.get('total_price', 0) for item in network_devices),
-                    'storage': sum(item.get('total_price', 0) for item in storage_devices),
-                    'infrastructure': traditional_cost_breakdown.get('infrastructure_cost', 0)
-                },
-                'software': {
-                    'tdsql_license': 0,
-                    'os_license': sum(item.get('total', 0) for item in traditional_cost_breakdown.get('software_items', []) if 'OS' in item.get('name', '') or 'Red Hat' in item.get('name', '')),
-                    'monitoring': 0,
-                    'backup': 0
-                },
-                'services': {
-                    'deployment': sum(item.get('total_price', 0) for item in infrastructure_items if '实施' in item.get('category', '')),
-                    'training': sum(item.get('total_price', 0) for item in infrastructure_items if '培训' in item.get('category', ''))
-                },
-                'software_items': traditional_cost_breakdown.get('software_items', []),
-                'annual_operating': {}
-            }
-            
-            # 标记未启用信创模式
-            result['xinchuan_enabled'] = False
+        # 厂商偏好（可多选）
+        data['server_vendors'] = _normalize_vendor_list(raw.get('server_vendors'))
+        data['network_vendors'] = _normalize_vendor_list(raw.get('network_vendors'))
+        data['storage_vendors'] = _normalize_vendor_list(raw.get('storage_vendors'))
+        data['software_vendors'] = _normalize_vendor_list(raw.get('software_vendors'))
+        
+        # 获取预测器
+        pred = get_predictor()
+        
+        # 执行预测
+        result = pred.predict(data)
         
         return jsonify({
             'success': True,
@@ -428,8 +207,6 @@ def predict():
         })
         
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
@@ -663,6 +440,236 @@ def evaluate_model():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# ==================== 日志分析 API ====================
+
+@app.route('/api/log_analysis/analyze', methods=['POST'])
+def analyze_logs():
+    """日志分析API - 支持直接粘贴日志内容或上传文件"""
+    try:
+        analyzer = get_log_analyzer()
+
+        # 获取参数
+        window_size = 60
+        window_step = 30
+
+        # 方式1: 上传日志文件
+        if 'log_file' in request.files:
+            file = request.files['log_file']
+            if file.filename:
+                filename = secure_filename(file.filename)
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filepath = os.path.join('log_uploads', f"{timestamp}_{filename}")
+                file.save(filepath)
+
+                # 读取参数
+                window_size = int(request.form.get('window_size', 60))
+                window_step = int(request.form.get('window_step', 30))
+
+                result = analyzer.analyze_file(filepath, window_size, window_step)
+                return jsonify(result)
+
+        # 方式2: JSON body（直接粘贴日志 或 指定日志文件路径）
+        data = request.get_json() or {}
+
+        window_size = int(data.get('window_size', window_size))
+        window_step = int(data.get('window_step', window_step))
+
+        # 从日志内容分析
+        log_content = data.get('log_content', '')
+        if log_content:
+            result = analyzer.analyze(log_content, window_size, window_step)
+            return jsonify(result)
+
+        # 从日志文件路径分析
+        log_path = data.get('log_path', '')
+        if log_path:
+            if not os.path.exists(log_path):
+                return jsonify({'error': f'日志路径不存在: {log_path}'}), 400
+            result = analyzer.analyze_file(log_path, window_size, window_step)
+            return jsonify(result)
+
+        return jsonify({'error': '请提供日志内容(log_content)、日志文件路径(log_path)或上传日志文件'}), 400
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/log_analysis/upload', methods=['POST'])
+def upload_log_file():
+    """上传日志文件"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': '没有文件'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': '文件名为空'}), 400
+
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        save_name = f"{timestamp}_{filename}"
+        filepath = os.path.join('log_uploads', save_name)
+        file.save(filepath)
+
+        # 读取前几行预览
+        preview_lines = []
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for i, line in enumerate(f):
+                    if i >= 10:
+                        break
+                    preview_lines.append(line.rstrip())
+        except Exception:
+            pass
+
+        # 统计文件行数
+        line_count = 0
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for _ in f:
+                    line_count += 1
+        except Exception:
+            pass
+
+        return jsonify({
+            'success': True,
+            'filename': save_name,
+            'filepath': filepath,
+            'line_count': line_count,
+            'preview': preview_lines,
+            'file_size': os.path.getsize(filepath)
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/log_analysis/browse', methods=['POST'])
+def browse_directory():
+    """浏览服务器目录，选择日志文件"""
+    try:
+        data = request.get_json() or {}
+        path = data.get('path', '/data/workspace')
+
+        if not os.path.exists(path):
+            return jsonify({'error': f'路径不存在: {path}'}), 400
+
+        if os.path.isfile(path):
+            # 返回文件信息
+            size = os.path.getsize(path)
+            preview = []
+            try:
+                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                    for i, line in enumerate(f):
+                        if i >= 5:
+                            break
+                        preview.append(line.rstrip()[:200])
+            except Exception:
+                pass
+            return jsonify({
+                'type': 'file',
+                'path': path,
+                'name': os.path.basename(path),
+                'size': size,
+                'size_mb': round(size / 1024 / 1024, 1),
+                'preview': preview
+            })
+
+        # 列出目录内容
+        items = []
+        try:
+            entries = sorted(os.listdir(path))
+        except PermissionError:
+            return jsonify({'error': '无权限访问该目录'}), 403
+
+        for name in entries:
+            if name.startswith('.'):
+                continue
+            full = os.path.join(path, name)
+            try:
+                if os.path.isdir(full):
+                    items.append({'name': name, 'type': 'dir', 'path': full})
+                else:
+                    size = os.path.getsize(full)
+                    ext = os.path.splitext(name)[1].lower()
+                    # 只显示可能是日志的文件
+                    is_log = ext in ('.log', '.txt', '.json', '.gz', '.zip', '') or 'log' in name.lower() or 'interf' in name.lower()
+                    if is_log or size < 10 * 1024:  # 小文件也显示
+                        items.append({
+                            'name': name,
+                            'type': 'file',
+                            'path': full,
+                            'size': size,
+                            'size_mb': round(size / 1024 / 1024, 1)
+                        })
+            except Exception:
+                continue
+
+        return jsonify({
+            'type': 'dir',
+            'path': path,
+            'parent': os.path.dirname(path),
+            'items': items
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/log_analysis/chunk_upload', methods=['POST'])
+def chunk_upload():
+    """分片上传大文件"""
+    try:
+        chunk = request.files.get('chunk')
+        if not chunk:
+            return jsonify({'success': False, 'error': '无分片数据'}), 400
+
+        filename = request.form.get('filename', 'unknown')
+        chunk_index = int(request.form.get('chunk_index', 0))
+        total_chunks = int(request.form.get('total_chunks', 1))
+        upload_id = request.form.get('upload_id', '')
+
+        safe_name = secure_filename(filename)
+        if not upload_id:
+            upload_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        target_path = os.path.join('log_uploads', f"{upload_id}_{safe_name}")
+
+        mode = 'ab' if chunk_index > 0 else 'wb'
+        with open(target_path, mode) as f:
+            f.write(chunk.read())
+
+        # 最后一个分片
+        if chunk_index == total_chunks - 1:
+            final_size = os.path.getsize(target_path)
+            preview = []
+            try:
+                with open(target_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    for i, line in enumerate(f):
+                        if i >= 5:
+                            break
+                        preview.append(line.rstrip()[:200])
+            except Exception:
+                pass
+            return jsonify({
+                'success': True,
+                'done': True,
+                'filepath': target_path,
+                'filename': f"{upload_id}_{safe_name}",
+                'file_size': final_size,
+                'preview': preview
+            })
+
+        return jsonify({
+            'success': True,
+            'done': False,
+            'chunk_index': chunk_index,
+            'total_chunks': total_chunks,
+            'progress': round((chunk_index + 1) / total_chunks * 100, 1)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/download_template/<version>')
 def download_template(version):
     """下载Excel模板"""
@@ -748,7 +755,7 @@ def parse_excel():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("\n" + "=" * 60)
+    print("\\n" + "=" * 60)
     print("🚀 TDSQL 部署资源预测系统 v4.3")
     print("=" * 60)
     print(f"📍 主页面: http://127.0.0.1:18080")
@@ -756,6 +763,8 @@ if __name__ == '__main__':
     print(f"📍 部署预测: http://127.0.0.1:18080/predict (新版)")
     print(f"📍 模型库管理: http://127.0.0.1:18080/model_library")
     print(f"📍 学习系统: http://127.0.0.1:18080/learning")
+    print(f"📍 日志分析: http://127.0.0.1:18080/log_analysis")
+    print(f"📍 实验分析: http://127.0.0.1:18080/experiment")
     print("=" * 60)
     print("✨ 功能模块:")
     print("  ✅ 部署资源预测 - 普通版/专业版双模式")
@@ -763,6 +772,8 @@ if __name__ == '__main__':
     print("  ✅ 模型库管理 - 8个预置模型库")
     print("  ✅ 自主训练 - 从实际案例中学习优化")
     print("  ✅ 文件上传 - 支持JSON/Excel/图片/PDF")
+    print("  ✅ 日志分析 - 基于E-Log的数据库健康评分")
+    print("  ✅ 实验分析 - 异常检测技术方案与结果展示")
     print("=" * 60)
     print()
     
