@@ -13,23 +13,28 @@
             line-height: 1.6;
         }
         .top-bar {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
-            padding: 16px 32px;
+            padding: 16px 30px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .top-bar h1 { font-size: 1.4em; font-weight: 700; }
+        .top-bar .nav-links { display: flex; gap: 18px; }
         .top-bar .nav-links a {
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.85);
             text-decoration: none;
-            margin-left: 20px;
-            font-size: 0.9em;
-            transition: color 0.2s;
+            font-size: 0.95em;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: 0.2s;
         }
-        .top-bar .nav-links a:hover { color: #fff; }
+        .top-bar .nav-links a:hover, .top-bar .nav-links a.active { background: rgba(255,255,255,0.2); color: #fff; }
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
         /* 输入区域 */
@@ -587,7 +592,8 @@
             <a href="/nav">系统导航</a>
             <a href="/predict">部署预测</a>
             <a href="/model_library">模型库</a>
-            <a href="/log_analysis">日志分析</a>
+            <a href="/log_analysis" class="active">日志分析</a>
+            <a href="/experiment">实验分析</a>
         </div>
     </div>
 

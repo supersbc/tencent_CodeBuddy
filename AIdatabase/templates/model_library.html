@@ -13,14 +13,15 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f2f5;
             min-height: 100vh;
-            padding: 20px;
+            margin: 0;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 24px;
         }
         
         .header {
@@ -227,19 +228,32 @@
             font-size: 18px;
         }
         
-        .back-link {
-            display: inline-block;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 6px;
-            margin-bottom: 20px;
-            transition: background 0.3s;
+        /* 统一顶栏导航 */
+        .top-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .back-link:hover {
-            background: rgba(255,255,255,0.3);
+        .top-bar h1 { font-size: 1.4em; font-weight: 700; }
+        .nav-links { display: flex; gap: 18px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95em;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
         }
         
         .modal {
@@ -323,9 +337,17 @@
     </style>
 </head>
 <body>
+<div class="top-bar">
+    <h1>模型库管理</h1>
+    <div class="nav-links">
+        <a href="/nav">系统导航</a>
+        <a href="/predict">部署预测</a>
+        <a href="/model_library" class="active">模型库</a>
+        <a href="/log_analysis">日志分析</a>
+        <a href="/experiment">实验分析</a>
+    </div>
+</div>
     <div class="container">
-        <a href="/" class="back-link">← 返回导航</a>
-        
         <div class="header">
             <h1>📚 模型库管理中心</h1>
             <p>选择和管理TDSQL架构预测模型库，提升预测准确率</p>

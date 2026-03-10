@@ -41,31 +41,32 @@
             opacity: 0.9;
         }
 
-        /* 返回导航按钮 */
-        .back-nav-btn {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
+        /* 统一顶栏导航 */
+        .top-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 16px 30px;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-
-        .back-nav-btn:hover {
-            background: white;
-            color: #667eea;
-            transform: translateX(-5px);
+        .top-bar h1 { font-size: 1.4em; font-weight: 700; }
+        .nav-links { display: flex; gap: 18px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95em;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
         }
 
         /* 版本切换 */
@@ -469,7 +470,7 @@
                 padding: 0;
             }
 
-            .header, .back-nav-btn, .version-switch, .back-to-top {
+            .header, .top-bar, .version-switch, .back-to-top {
                 display: none !important;
             }
 
@@ -524,12 +525,18 @@
     </style>
 </head>
 <body>
+<div class="top-bar">
+    <h1>TDSQL 部署资源预测</h1>
+    <div class="nav-links">
+        <a href="/nav">系统导航</a>
+        <a href="/predict" class="active">部署预测</a>
+        <a href="/model_library">模型库</a>
+        <a href="/log_analysis">日志分析</a>
+        <a href="/experiment">实验分析</a>
+    </div>
+</div>
     <div class="container">
         <div class="header">
-            <a href="/" class="back-nav-btn">
-                <span>←</span>
-                <span>返回导航</span>
-            </a>
             <h1>🚀 TDSQL 部署资源预测系统</h1>
             <p>智能分析 · 精准预测 · 专业建议</p>
         </div>
