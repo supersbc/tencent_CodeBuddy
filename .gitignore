@@ -40,6 +40,13 @@ test_architecture.png
 *.swo
 *~
 
+# Core dump 文件
+core.*
+
+# 大文件上传
+AIdatabase/log_uploads/
+**/log_uploads/
+
 # 数据库
 *.db
 *.sqlite
