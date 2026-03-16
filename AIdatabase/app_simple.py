@@ -90,6 +90,20 @@ def _normalize_vendor_list(value):
         return [value] if value else []
     return []
 
+# ==================== 全局错误处理（API返回JSON） ====================
+
+@app.errorhandler(500)
+def handle_500(e):
+    import traceback
+    traceback.print_exc()
+    return jsonify({'error': f'服务器内部错误: {str(e)}'}), 500
+
+@app.errorhandler(404)
+def handle_404(e):
+    if request.path.startswith('/api/'):
+        return jsonify({'error': f'接口不存在: {request.path}'}), 404
+    return e
+
 # ==================== 页面路由 ====================
 
 @app.route('/')
